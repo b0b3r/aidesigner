@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import VisualControls from './VisualControls';
-import { extractElementProperties, applyElementProperties, getElementInfo } from '../utils/htmlParser';
+import { extractElementProperties, applyElementProperties, getElementInfo, makeElementsSelectable } from '../utils/htmlParser';
 import './VisualEditor.css';
 
 const VisualEditor = ({ 
@@ -20,7 +20,7 @@ const VisualEditor = ({
       // Сбрасываем выбор при изменении контента
       setSelectedElementData(null);
     }
-  }, [element?.content]);
+  }, [element?.content, currentContent]);
 
   // Обновляем selectedElementData при изменении selectedInternalElement
   useEffect(() => {
@@ -31,14 +31,18 @@ const VisualEditor = ({
     if (selectedInternalElement && element) {
       console.log('📌 Обновляем данные выбранного внутреннего элемента:', selectedInternalElement);
       
-      // Получаем информацию об элементе из HTML
-      const elementInfo = getElementInfo(currentContent, selectedInternalElement);
+      // Обрабатываем HTML чтобы добавить data-element-id если их нет
+      const selectableContent = makeElementsSelectable(currentContent);
+      console.log('🔍 DEBUG: selectableContent создан');
+      
+      // Получаем информацию об элементе из обработанного HTML
+      const elementInfo = getElementInfo(selectableContent, selectedInternalElement);
       console.log('🔍 DEBUG: elementInfo:', elementInfo);
       
       if (elementInfo) {
         // Создаем временный DOM элемент для извлечения стилей
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = currentContent;
+        tempDiv.innerHTML = selectableContent;
         const domElement = tempDiv.querySelector(`[data-element-id="${selectedInternalElement}"]`);
         console.log('🔍 DEBUG: domElement найден:', !!domElement);
         
@@ -78,13 +82,21 @@ const VisualEditor = ({
 
     console.log('🔧 Изменяем свойство:', property, '→', value);
 
+    // Обрабатываем HTML чтобы добавить data-element-id для правильного поиска
+    const selectableContent = makeElementsSelectable(currentContent);
+    
     // Обновляем HTML с новым свойством
-    const updatedContent = applyElementProperties(currentContent, selectedInternalElement, {
+    const updatedSelectableContent = applyElementProperties(selectableContent, selectedInternalElement, {
       [property]: value
     });
 
+    // Удаляем data-element-id атрибуты для сохранения чистого HTML
+    const cleanContent = updatedSelectableContent.replace(/\s*data-element-id="[^"]*"/g, '')
+                                                  .replace(/\s*data-element-type="[^"]*"/g, '')
+                                                  .replace(/\s*data-original-style="[^"]*"/g, '');
+
     // Обновляем локальное состояние
-    setCurrentContent(updatedContent);
+    setCurrentContent(cleanContent);
 
     // Обновляем свойства выбранного элемента
     setSelectedElementData(prev => ({
@@ -97,12 +109,12 @@ const VisualEditor = ({
 
     // Уведомляем родительский компонент
     if (onContentChange) {
-      onContentChange(updatedContent);
+      onContentChange(cleanContent);
     }
 
     // Обновляем элемент в родительском состоянии
     if (onElementUpdate && element) {
-      onElementUpdate(element.id, { content: updatedContent });
+      onElementUpdate(element.id, { content: cleanContent });
     }
   }, [selectedInternalElement, selectedElementData, currentContent, onContentChange, onElementUpdate, element]);
 
