@@ -13,8 +13,15 @@ import '@xyflow/react/dist/style.css';
 
 // Кастомный узел для UI компонента
 const UIComponentNode = ({ data, selected }) => {
+  const nodeStyle = {
+    width: data.width ? `${data.width}px` : 'auto',
+    height: data.height ? `${data.height}px` : 'auto',
+    minWidth: data.width ? `${data.width}px` : '200px',
+    minHeight: data.height ? `${data.height}px` : 'auto'
+  };
+  
   return (
-    <div className={`ui-flow-node ${selected ? 'selected' : ''}`}>
+    <div className={`ui-flow-node ${selected ? 'selected' : ''}`} style={nodeStyle}>
       <div className="ui-flow-header">
         <span className="ui-flow-title">{data.name}</span>
         <div className="ui-flow-actions">
@@ -36,18 +43,18 @@ const UIComponentNode = ({ data, selected }) => {
       </div>
       
       <div className="ui-flow-content">
-        {data.type === 'html' ? (
+        {data.content ? (
           <div 
             dangerouslySetInnerHTML={{ __html: data.content }}
             style={{
               width: '100%',
-              height: '100%',
+              height: data.height ? `${data.height - 80}px` : 'auto',
               overflow: 'hidden',
               fontSize: '12px'
             }}
           />
         ) : (
-          <div className="ui-flow-text">{data.content}</div>
+          <div className="ui-flow-text">{data.name || 'Пустой элемент'}</div>
         )}
       </div>
       
@@ -57,11 +64,7 @@ const UIComponentNode = ({ data, selected }) => {
         </div>
       )}
       
-      {data.createdAt && (
-        <div className="ui-flow-timestamp">
-          {new Date(data.createdAt).toLocaleTimeString()}
-        </div>
-      )}
+
     </div>
   );
 };
@@ -256,7 +259,6 @@ const CanvasFlow = ({
         {/* Панель управления */}
         <Panel position="top-left">
           <div className="flow-panel">
-            <h3>🚀 React Flow Canvas</h3>
             <div className="flow-panel-controls">
               <button 
                 onClick={handleToggleProcessFlow}
@@ -274,17 +276,7 @@ const CanvasFlow = ({
           </div>
         </Panel>
 
-        {/* Помощь */}
-        <Panel position="bottom-left">
-          <div className="flow-help">
-            <div><strong>React Flow возможности:</strong></div>
-            <div>• Перетаскивание узлов</div>
-            <div>• Соединение элементов</div>
-            <div>• Масштабирование к курсору</div>
-            <div>• Мини-карта навигации</div>
-            <div>• Множественное выделение</div>
-          </div>
-        </Panel>
+
       </ReactFlow>
     </div>
   );
