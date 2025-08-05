@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "AI Designer",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "files.defaultLanguage": "javascript",
+    "python.defaultInterpreterPath": "./venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "workbench.startupEditor": "none",
+    "files.autoSave": "afterDelay"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode"
+    ]
+  }
+}
