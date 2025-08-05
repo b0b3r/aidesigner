@@ -159,6 +159,9 @@ const CanvasFlow = ({
     }
   ], []);
 
+  // Инициализируем состояние ПЕРЕД использованием в useMemo
+  const [showProcessFlow, setShowProcessFlow] = useState(false);
+
   // Комбинируем узлы
   const initialNodes = useMemo(() => {
     const uiNodes = convertToFlowNodes(elements);
@@ -187,7 +190,6 @@ const CanvasFlow = ({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [showProcessFlow, setShowProcessFlow] = useState(false);
 
   // Обновляем узлы при изменении элементов
   React.useEffect(() => {
