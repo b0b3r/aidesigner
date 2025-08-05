@@ -101,12 +101,12 @@ const CanvasFlow = ({
 }) => {
   // Конвертируем существующие элементы в React Flow узлы
   const convertToFlowNodes = useCallback((elements) => {
-    return elements.map((element, index) => ({
+    return elements.map((element) => ({
       id: element.id,
       type: 'uiComponent',
       position: { 
-        x: element.x || 100 + (index * 30), 
-        y: element.y || 100 + (index * 30) 
+        x: element.x || 100, 
+        y: element.y || 100 
       },
       data: {
         id: element.id,

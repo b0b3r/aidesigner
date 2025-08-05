@@ -160,9 +160,16 @@ function AppWithReactFlow() {
 
   // Удаление элемента
   const handleElementDelete = useCallback((elementId) => {
-    setCanvasElements(prev => prev.filter(el => el.id !== elementId));
+    console.log('🗑️ Удаляем элемент с ID:', elementId);
+    console.log('📊 Элементы ДО удаления:', canvasElements.map(el => ({ id: el.id, name: el.name, x: el.x, y: el.y })));
+    
+    setCanvasElements(prev => {
+      const filtered = prev.filter(el => el.id !== elementId);
+      console.log('📊 Элементы ПОСЛЕ удаления:', filtered.map(el => ({ id: el.id, name: el.name, x: el.x, y: el.y })));
+      return filtered;
+    });
     setSelectedElement(null);
-  }, []);
+  }, [canvasElements]);
 
   const handleElementEdit = useCallback((elementId) => {
     const element = canvasElements.find(el => el.id === elementId);
@@ -238,11 +245,13 @@ function AppWithReactFlow() {
           
           console.log(`📏 Размеры артефакта: ${artifactWidth}px x ${artifactHeight}`);
           
+          // Генерируем случайную позицию, чтобы не зависеть от количества элементов
+          const randomOffset = Math.floor(Math.random() * 200);
           const newArtifact = {
             id: 'artifact-' + Date.now(),
             type: 'artifact',
-            x: 200 + (canvasElements.length * 30),
-            y: 150 + (canvasElements.length * 30),
+            x: 250 + randomOffset,
+            y: 200 + randomOffset,
             width: artifactWidth,
             height: artifactHeight,
             isAutoHeight: artifactHeight === "auto",
