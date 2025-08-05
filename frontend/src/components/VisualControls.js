@@ -26,27 +26,121 @@ const ColorPicker = ({ label, value, onChange, defaultValue = '#000000' }) => {
   );
 };
 
-// Компонент слайдера
-const Slider = ({ label, value, onChange, min = 0, max = 100, step = 1, unit = 'px' }) => {
-  const numericValue = parseInt(value) || min;
+// Компонент размера с выпадающим списком
+const SizeControl = ({ label, value, onChange, unit = 'px', presets = [] }) => {
+  const [inputMode, setInputMode] = React.useState(false);
+  const [localValue, setLocalValue] = React.useState('');
+  
+  // Извлекаем числовое значение из CSS значения
+  const numericValue = parseInt(value) || 0;
+  
+  // Предустановленные размеры
+  const defaultPresets = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64];
+  const availablePresets = presets.length > 0 ? presets : defaultPresets;
+  
+  const handlePresetChange = (newValue) => {
+    if (newValue === 'custom') {
+      setInputMode(true);
+      setLocalValue(numericValue.toString());
+    } else {
+      setInputMode(false);
+      onChange(`${newValue}${unit}`);
+    }
+  };
+  
+  const handleCustomSubmit = (e) => {
+    if (e.key === 'Enter' || e.type === 'blur') {
+      const newValue = parseInt(localValue) || 0;
+      onChange(`${newValue}${unit}`);
+      setInputMode(false);
+    }
+  };
   
   return (
     <div className="visual-control">
       <label className="control-label">{label}</label>
-      <div className="slider-container">
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={numericValue}
-          onChange={(e) => onChange(`${e.target.value}${unit}`)}
-          className="slider-input"
-        />
+      <div className="size-control-container">
+        {!inputMode ? (
+          <select
+            value={availablePresets.includes(numericValue) ? numericValue : 'custom'}
+            onChange={(e) => handlePresetChange(e.target.value)}
+            className="select-input"
+          >
+            {availablePresets.map(size => (
+              <option key={size} value={size}>{size}{unit}</option>
+            ))}
+            <option value="custom">Свое значение: {numericValue}{unit}</option>
+          </select>
+        ) : (
+          <div className="custom-input-container">
+            <input
+              type="number"
+              value={localValue}
+              onChange={(e) => setLocalValue(e.target.value)}
+              onKeyDown={handleCustomSubmit}
+              onBlur={handleCustomSubmit}
+              className="number-input"
+              placeholder={numericValue.toString()}
+              autoFocus
+            />
+            <span className="unit-label">{unit}</span>
+            <button 
+              onClick={() => setInputMode(false)}
+              className="cancel-btn"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Простой числовой инпут (для отступов)
+const NumberInput = ({ label, value, onChange, min = 0, max = 200, unit = 'px' }) => {
+  const [localValue, setLocalValue] = React.useState('');
+  const [isFocused, setIsFocused] = React.useState(false);
+  
+  const numericValue = parseInt(value) || 0;
+  
+  React.useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(numericValue.toString());
+    }
+  }, [numericValue, isFocused]);
+  
+  const handleChange = (e) => {
+    setLocalValue(e.target.value);
+  };
+  
+  const handleSubmit = () => {
+    const newValue = parseInt(localValue) || 0;
+    onChange(`${Math.max(min, Math.min(max, newValue))}${unit}`);
+    setIsFocused(false);
+  };
+  
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+  
+  return (
+    <div className="visual-control">
+      <label className="control-label">{label}</label>
+      <div className="number-input-container">
         <input
           type="number"
-          value={numericValue}
-          onChange={(e) => onChange(`${e.target.value}${unit}`)}
+          value={isFocused ? localValue : numericValue}
+          onChange={handleChange}
+          onFocus={() => {
+            setIsFocused(true);
+            setLocalValue(numericValue.toString());
+          }}
+          onBlur={handleSubmit}
+          onKeyDown={handleKeyDown}
           className="number-input"
           min={min}
           max={max}
@@ -77,8 +171,10 @@ const Select = ({ label, value, onChange, options = [] }) => {
   );
 };
 
-// Компонент управления отступами
+// Компонент управления отступами  
 const SpacingControl = ({ label, value, onChange }) => {
+  const [isAllSides, setIsAllSides] = React.useState(true);
+  
   // Парсим значение padding/margin (например: "10px 20px 10px 20px")
   const parseSpacing = (spacingValue) => {
     if (!spacingValue) return { top: 0, right: 0, bottom: 0, left: 0 };
@@ -97,61 +193,92 @@ const SpacingControl = ({ label, value, onChange }) => {
   };
 
   const spacing = parseSpacing(value);
+  const allSidesEqual = spacing.top === spacing.right && spacing.right === spacing.bottom && spacing.bottom === spacing.left;
 
   const updateSpacing = (side, newValue) => {
-    const updated = { ...spacing, [side]: parseInt(newValue) || 0 };
+    const newVal = parseInt(newValue) || 0;
+    let updated;
+    
+    if (isAllSides && allSidesEqual) {
+      // Если редактируем все стороны одинаково
+      updated = { top: newVal, right: newVal, bottom: newVal, left: newVal };
+    } else {
+      // Если редактируем отдельную сторону
+      updated = { ...spacing, [side]: newVal };
+    }
+    
     const spacingString = `${updated.top}px ${updated.right}px ${updated.bottom}px ${updated.left}px`;
     onChange(spacingString);
   };
 
   return (
     <div className="visual-control">
-      <label className="control-label">{label}</label>
-      <div className="spacing-control">
-        <div className="spacing-inputs">
-          <div className="spacing-row">
-            <input
-              type="number"
-              value={spacing.top}
-              onChange={(e) => updateSpacing('top', e.target.value)}
-              className="spacing-input"
-              placeholder="T"
-              title="Top"
-            />
-          </div>
-          <div className="spacing-row">
-            <input
-              type="number"
-              value={spacing.left}
-              onChange={(e) => updateSpacing('left', e.target.value)}
-              className="spacing-input"
-              placeholder="L"
-              title="Left"
-            />
-            <div className="spacing-center">
-              {label}
+      <label className="control-label">
+        {label}
+        <button
+          type="button"
+          onClick={() => setIsAllSides(!isAllSides)}
+          className="spacing-mode-btn"
+          title={isAllSides ? "Отдельные стороны" : "Все стороны одинаково"}
+        >
+          {isAllSides ? "⚏" : "⚉"}
+        </button>
+      </label>
+      
+      {isAllSides && allSidesEqual ? (
+        <NumberInput
+          label=""
+          value={`${spacing.top}px`}
+          onChange={(val) => updateSpacing('top', val)}
+          min={0}
+          max={100}
+          unit="px"
+        />
+      ) : (
+        <div className="spacing-control">
+          <div className="spacing-inputs">
+            <div className="spacing-row">
+              <NumberInput
+                label="T"
+                value={`${spacing.top}px`}
+                onChange={(val) => updateSpacing('top', val)}
+                min={0}
+                max={100}
+                unit="px"
+              />
             </div>
-            <input
-              type="number"
-              value={spacing.right}
-              onChange={(e) => updateSpacing('right', e.target.value)}
-              className="spacing-input"
-              placeholder="R"
-              title="Right"
-            />
-          </div>
-          <div className="spacing-row">
-            <input
-              type="number"
-              value={spacing.bottom}
-              onChange={(e) => updateSpacing('bottom', e.target.value)}
-              className="spacing-input"
-              placeholder="B"
-              title="Bottom"
-            />
+            <div className="spacing-row">
+              <NumberInput
+                label="L"
+                value={`${spacing.left}px`}
+                onChange={(val) => updateSpacing('left', val)}
+                min={0}
+                max={100}
+                unit="px"
+              />
+              <div className="spacing-center">{label}</div>
+              <NumberInput
+                label="R"
+                value={`${spacing.right}px`}
+                onChange={(val) => updateSpacing('right', val)}
+                min={0}
+                max={100}
+                unit="px"
+              />
+            </div>
+            <div className="spacing-row">
+              <NumberInput
+                label="B"
+                value={`${spacing.bottom}px`}
+                onChange={(val) => updateSpacing('bottom', val)}
+                min={0}
+                max={100}
+                unit="px"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -180,14 +307,12 @@ const PropertyGroup = ({ title, children, isCollapsed = false }) => {
 
 // Основной компонент Visual Controls
 const VisualControls = ({ selectedElement, onPropertyChange }) => {
-  console.log('🔍 DEBUG VisualControls: selectedElement:', selectedElement);
-  
   if (!selectedElement) {
     return (
       <div className="visual-controls no-selection">
         <p>Выберите элемент для редактирования</p>
         <p style={{ fontSize: '11px', color: '#999', marginTop: '5px' }}>
-          DEBUG: selectedElement = {String(selectedElement)}
+          Кликните на элемент в артефакте на канвасе
         </p>
       </div>
     );
@@ -204,12 +329,10 @@ const VisualControls = ({ selectedElement, onPropertyChange }) => {
           value={properties.color}
           onChange={(color) => onPropertyChange('color', color)}
         />
-        <Slider
+        <SizeControl
           label="Размер шрифта"
           value={properties.fontSize}
-          min={8}
-          max={72}
-          unit="px"
+          presets={[8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 64]}
           onChange={(size) => onPropertyChange('fontSize', size)}
         />
         <Select
@@ -253,12 +376,10 @@ const VisualControls = ({ selectedElement, onPropertyChange }) => {
           value={properties.margin}
           onChange={(margin) => onPropertyChange('margin', margin)}
         />
-        <Slider
+        <SizeControl
           label="Ширина"
           value={properties.width}
-          min={0}
-          max={800}
-          unit="px"
+          presets={[50, 100, 150, 200, 250, 300, 400, 500, 600, 800]}
           onChange={(width) => onPropertyChange('width', width)}
         />
       </PropertyGroup>
@@ -271,22 +392,19 @@ const VisualControls = ({ selectedElement, onPropertyChange }) => {
           defaultValue="#ffffff"
           onChange={(bg) => onPropertyChange('backgroundColor', bg)}
         />
-        <Slider
+        <SizeControl
           label="Скругление углов"
           value={properties.borderRadius}
-          min={0}
-          max={50}
-          unit="px"
+          presets={[0, 2, 4, 6, 8, 10, 12, 16, 20, 24, 50]}
           onChange={(radius) => onPropertyChange('borderRadius', radius)}
         />
-        <Slider
+        <NumberInput
           label="Прозрачность"
-          value={properties.opacity}
+          value={properties.opacity ? (parseFloat(properties.opacity) * 100).toString() : '100'}
+          onChange={(val) => onPropertyChange('opacity', (parseInt(val) / 100).toString())}
           min={0}
-          max={1}
-          step={0.1}
-          unit=""
-          onChange={(opacity) => onPropertyChange('opacity', opacity)}
+          max={100}
+          unit="%"
         />
       </PropertyGroup>
     </div>
@@ -294,4 +412,4 @@ const VisualControls = ({ selectedElement, onPropertyChange }) => {
 };
 
 export default VisualControls;
-export { ColorPicker, Slider, Select, SpacingControl, PropertyGroup };
+export { ColorPicker, SizeControl, NumberInput, Select, SpacingControl, PropertyGroup };

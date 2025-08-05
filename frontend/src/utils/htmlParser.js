@@ -11,7 +11,6 @@ export const makeElementsSelectable = (htmlString) => {
   
   // Получаем все элементы в body
   const elements = doc.body.querySelectorAll('*');
-  console.log('🔍 Обрабатываем элементов для выбора:', elements.length);
   
   elements.forEach((element, index) => {
     // Добавляем уникальный ID для выбора

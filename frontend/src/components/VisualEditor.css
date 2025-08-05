@@ -275,6 +275,80 @@
   background: white;
 }
 
+/* Size Control Styles */
+.size-control-container {
+  width: 100%;
+}
+
+.custom-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cancel-btn {
+  padding: 2px 6px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: #c82333;
+}
+
+/* Number Input Styles */
+.number-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.number-input-container .number-input {
+  flex: 1;
+  min-width: 60px;
+}
+
+/* Spacing Control Improvements */
+.spacing-mode-btn {
+  background: none;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin-left: 8px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.spacing-mode-btn:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.spacing-control .visual-control {
+  margin-bottom: 8px;
+}
+
+.spacing-control .visual-control .control-label {
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.spacing-control .number-input-container {
+  justify-content: center;
+}
+
+.spacing-control .number-input {
+  width: 50px;
+  text-align: center;
+  font-size: 11px;
+  padding: 2px 4px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .visual-editor-content {
@@ -295,5 +369,9 @@
   .spacing-center {
     min-width: auto;
     padding: 4px 8px;
+  }
+  
+  .custom-input-container {
+    flex-wrap: wrap;
   }
 }
