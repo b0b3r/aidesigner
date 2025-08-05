@@ -7,6 +7,7 @@ import PropertiesPanel from './components/PropertiesPanel';
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
   const [selectedElement, setSelectedElement] = useState(null);
+  const [editingElement, setEditingElement] = useState(null);
   const [canvasElements, setCanvasElements] = useState([
     // Демо wireframe элементы как в оригинале
     { 
@@ -75,7 +76,12 @@ function AppWithReactFlow() {
   // Обработчики для React Flow компонента
   const handleElementSelect = useCallback((element) => {
     setSelectedElement(element);
-  }, []);
+    // Сбрасываем режим редактирования при выборе другого элемента
+    if (editingElement && editingElement.id !== element.id) {
+      setEditingElement(null);
+      console.log('🔄 Режим редактирования сброшен - выбран другой элемент');
+    }
+  }, [editingElement]);
 
   const handleElementRegenerate = useCallback(async (elementId) => {
     const element = canvasElements.find(el => el.id === elementId);
@@ -176,12 +182,13 @@ function AppWithReactFlow() {
     if (!element) return;
 
     setSelectedElement(element);
+    setEditingElement(element); // Устанавливаем элемент в режим редактирования
     setChatMessages(prev => [
       ...prev,
       {
         id: Date.now() + '-edit',
         type: 'ai',
-        content: `📝 Выбран элемент "${element.name}" для редактирования. Опишите, какие изменения вы хотите внести.`,
+        content: `📝 Выбран элемент "${element.name}" для редактирования.\n\n**Текущий контент:**\n\`\`\`html\n${element.content?.slice(0, 200)}${element.content?.length > 200 ? '...' : ''}\n\`\`\`\n\n**Исходный промпт:** ${element.prompt}\n\nОпишите, какие изменения вы хотите внести.`,
         timestamp: new Date()
       }
     ]);
@@ -202,13 +209,31 @@ function AppWithReactFlow() {
     try {
       console.log('🚀 Отправляю запрос к LLM:', message);
       
+      // Формируем контекст для редактирования или создания нового элемента
+      let requestMessage = message;
+      
+      if (editingElement) {
+        console.log('✏️ Режим редактирования элемента:', editingElement.id);
+        requestMessage = `РЕДАКТИРОВАНИЕ СУЩЕСТВУЮЩЕГО ЭЛЕМЕНТА:
+
+Название: ${editingElement.name}
+Тип: ${editingElement.type}
+Исходный промпт: ${editingElement.prompt}
+
+ТЕКУЩИЙ HTML/CSS КОД:
+${editingElement.content}
+
+ЗАПРОС НА ИЗМЕНЕНИЕ: ${message}
+
+ИНСТРУКЦИИ: Отредактируй существующий код выше согласно запросу. Верни только обновленный HTML/CSS код, сохранив общую структуру и стиль.`;
+      }
+      
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [
-            // ОТПРАВЛЯЕМ ТОЛЬКО НОВОЕ СООБЩЕНИЕ БЕЗ ИСТОРИИ
-            { role: 'user', content: message }
+            { role: 'user', content: requestMessage }
           ]
         })
       });
@@ -235,46 +260,89 @@ function AppWithReactFlow() {
           }
         ]);
 
-        // Если есть визуальный контент - создаем артефакт на канвасе
+        // Если есть визуальный контент - создаем или обновляем артефакт
         if (data.visual_content) {
-          console.log('🎨 Создаю артефакт на канвасе');
-          
-          // Обрабатываем размеры: ширина из LLM, высота автоматическая
-          const artifactWidth = data.width || 400;
-          const artifactHeight = data.height === "auto" ? "auto" : (data.height || 300);
-          
-          console.log(`📏 Размеры артефакта: ${artifactWidth}px x ${artifactHeight}`);
-          
-          // Генерируем случайную позицию, чтобы не зависеть от количества элементов
-          const randomOffset = Math.floor(Math.random() * 200);
-          const newArtifact = {
-            id: 'artifact-' + Date.now(),
-            type: 'artifact',
-            x: 250 + randomOffset,
-            y: 200 + randomOffset,
-            width: artifactWidth,
-            height: artifactHeight,
-            isAutoHeight: artifactHeight === "auto",
-            name: 'Generated Artifact',
-            content: data.visual_content,
-            code: data.visual_content,
-            prompt: message,
-            createdAt: new Date().toISOString()
-          };
-          
-          setCanvasElements(prev => [...prev, newArtifact]);
-          console.log('✅ Артефакт добавлен на канвас');
-          
-          // Добавляем сообщение в чат о создании артефакта
-          setChatMessages(prev => [
-            ...prev,
-            { 
-              id: Date.now() + '-artifact', 
-              type: 'ai', 
-              content: `🎨 **Артефакт создан!**\n\nДобавил новый элемент "${newArtifact.name}" на канвас.\n\n📐 Размеры: ${artifactWidth}px × ${artifactHeight === "auto" ? "авто" : artifactHeight + "px"}\n🎯 Позиция: (${newArtifact.x}, ${newArtifact.y})\n\nТеперь вы можете:\n• Перетащить элемент в нужное место\n• Выбрать для редактирования свойств\n• Соединить с другими элементами`,
-              timestamp: new Date() 
+          if (editingElement) {
+            // РЕЖИМ РЕДАКТИРОВАНИЯ: Обновляем существующий элемент
+            console.log('✏️ Обновляю существующий элемент:', editingElement.id);
+            
+            const updatedElement = {
+              ...editingElement,
+              content: data.visual_content,
+              code: data.visual_content,
+              width: data.width || editingElement.width,
+              height: data.height === "auto" ? "auto" : (data.height || editingElement.height),
+              // Обновляем промпт с новым сообщением
+              prompt: `${editingElement.prompt} | ИЗМЕНЕНИЕ: ${message}`,
+              updatedAt: new Date().toISOString()
+            };
+            
+            setCanvasElements(prev => prev.map(el => 
+              el.id === editingElement.id ? updatedElement : el
+            ));
+            
+            // Обновляем selectedElement если он был выбран
+            if (selectedElement?.id === editingElement.id) {
+              setSelectedElement(updatedElement);
             }
-          ]);
+            
+            // Очищаем режим редактирования
+            setEditingElement(null);
+            
+            console.log('✅ Элемент успешно обновлен');
+            
+            // Добавляем сообщение в чат об успешном редактировании
+            setChatMessages(prev => [
+              ...prev,
+              { 
+                id: Date.now() + '-edited', 
+                type: 'ai', 
+                content: `✏️ **Элемент обновлен!**\n\nУспешно изменил "${updatedElement.name}".\n\n🔄 Изменения применены к существующему элементу на канвасе.\n\nТеперь вы можете:\n• Внести дополнительные изменения\n• Переместить элемент\n• Продолжить редактирование других элементов`,
+                timestamp: new Date() 
+              }
+            ]);
+            
+          } else {
+            // РЕЖИМ СОЗДАНИЯ: Создаем новый артефакт
+            console.log('🎨 Создаю новый артефакт на канвасе');
+            
+            // Обрабатываем размеры: ширина из LLM, высота автоматическая
+            const artifactWidth = data.width || 400;
+            const artifactHeight = data.height === "auto" ? "auto" : (data.height || 300);
+            
+            console.log(`📏 Размеры артефакта: ${artifactWidth}px x ${artifactHeight}`);
+            
+            // Генерируем случайную позицию, чтобы не зависеть от количества элементов
+            const randomOffset = Math.floor(Math.random() * 200);
+            const newArtifact = {
+              id: 'artifact-' + Date.now(),
+              type: 'artifact',
+              x: 250 + randomOffset,
+              y: 200 + randomOffset,
+              width: artifactWidth,
+              height: artifactHeight,
+              isAutoHeight: artifactHeight === "auto",
+              name: 'Generated Artifact',
+              content: data.visual_content,
+              code: data.visual_content,
+              prompt: message,
+              createdAt: new Date().toISOString()
+            };
+            
+            setCanvasElements(prev => [...prev, newArtifact]);
+            console.log('✅ Артефакт добавлен на канвас');
+            
+            // Добавляем сообщение в чат о создании артефакта
+            setChatMessages(prev => [
+              ...prev,
+              { 
+                id: Date.now() + '-artifact', 
+                type: 'ai', 
+                content: `🎨 **Артефакт создан!**\n\nДобавил новый элемент "${newArtifact.name}" на канвас.\n\n📐 Размеры: ${artifactWidth}px × ${artifactHeight === "auto" ? "авто" : artifactHeight + "px"}\n🎯 Позиция: (${newArtifact.x}, ${newArtifact.y})\n\nТеперь вы можете:\n• Перетащить элемент в нужное место\n• Выбрать для редактирования свойств\n• Соединить с другими элементами`,
+                timestamp: new Date() 
+              }
+            ]);
+          }
         }
       } else {
         throw new Error(data.error || 'Unknown error from API');
@@ -295,7 +363,7 @@ function AppWithReactFlow() {
       setIsLoading(false);
       setLoadingStatus('');
     }
-  }, [canvasElements]);
+  }, [canvasElements, editingElement, selectedElement]);
 
   return (
     <div className="app">
@@ -303,6 +371,19 @@ function AppWithReactFlow() {
       <div className="chat-panel">
         <div className="panel-header">
           🚀 AI Designer с React Flow
+          {editingElement && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: '#28a745', 
+              marginTop: '4px',
+              padding: '2px 6px',
+              background: '#d4edda',
+              borderRadius: '4px',
+              border: '1px solid #c3e6cb'
+            }}>
+              ✏️ Редактирование: {editingElement.name}
+            </div>
+          )}
         </div>
         
         <div className="chat-messages">
@@ -331,10 +412,40 @@ function AppWithReactFlow() {
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={isLoading ? "Обрабатываю запрос..." : "Попробуйте: 'добавить элемент' или 'расскажи про flow'"}
+            placeholder={isLoading ? "Обрабатываю запрос..." : editingElement ? `Редактирование "${editingElement.name}" - опишите изменения...` : "Попробуйте: 'добавить элемент' или 'расскажи про flow'"}
             rows={2}
             disabled={isLoading}
           />
+          {editingElement && (
+            <button 
+              onClick={() => {
+                setEditingElement(null);
+                console.log('🔄 Режим редактирования отменен пользователем');
+                setChatMessages(prev => [
+                  ...prev,
+                  {
+                    id: Date.now() + '-cancel',
+                    type: 'ai',
+                    content: `🔄 Режим редактирования отменен. Теперь вы можете создавать новые элементы или выбрать другой элемент для редактирования.`,
+                    timestamp: new Date()
+                  }
+                ]);
+              }}
+              className="btn btn-secondary"
+              style={{ 
+                marginRight: '8px',
+                background: '#6c757d',
+                color: 'white',
+                border: 'none',
+                padding: '8px 12px',
+                borderRadius: '4px'
+              }}
+              title="Отменить редактирование"
+              disabled={isLoading}
+            >
+              ✕ Отменить
+            </button>
+          )}
           <button 
             onClick={() => {
               handleSendMessage(inputValue);
