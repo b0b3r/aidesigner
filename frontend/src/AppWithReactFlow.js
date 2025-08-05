@@ -8,6 +8,7 @@ function AppWithReactFlow() {
   // Используем существующие данные из App.js
   const [selectedElement, setSelectedElement] = useState(null);
   const [editingElement, setEditingElement] = useState(null);
+  const [selectedInternalElement, setSelectedInternalElement] = useState(null);
   const [canvasElements, setCanvasElements] = useState([
     // Демо wireframe элементы как в оригинале
     { 
@@ -81,7 +82,32 @@ function AppWithReactFlow() {
       setEditingElement(null);
       console.log('🔄 Режим редактирования сброшен - выбран другой элемент');
     }
+    // Сбрасываем выбор внутреннего элемента при смене артефакта
+    setSelectedInternalElement(null);
   }, [editingElement]);
+
+  // Обработчики для выбора внутренних элементов в артефактах
+  const handleInternalElementSelect = useCallback((artifactId, elementId, domElement) => {
+    console.log('🎯 Выбран внутренний элемент:', elementId, 'в артефакте:', artifactId);
+    console.log('🔍 DEBUG: domElement:', domElement);
+    
+    // Устанавливаем выбранный внутренний элемент
+    const newSelection = {
+      artifactId,
+      elementId,
+      domElement
+    };
+    console.log('🔍 DEBUG: setSelectedInternalElement:', newSelection);
+    setSelectedInternalElement(newSelection);
+    
+    // Убеждаемся что артефакт выбран
+    const artifact = canvasElements.find(el => el.id === artifactId);
+    console.log('🔍 DEBUG: artifact найден:', !!artifact);
+    if (artifact && (!selectedElement || selectedElement.id !== artifactId)) {
+      console.log('🔍 DEBUG: устанавливаем selectedElement:', artifact.name);
+      setSelectedElement(artifact);
+    }
+  }, [canvasElements, selectedElement]);
 
   const handleElementRegenerate = useCallback(async (elementId) => {
     const element = canvasElements.find(el => el.id === elementId);
@@ -463,18 +489,21 @@ ${editingElement.content}
         <CanvasFlow
           elements={canvasElements}
           selectedElement={selectedElement}
+          selectedInternalElement={selectedInternalElement}
           onElementSelect={handleElementSelect}
           onElementRegenerate={handleElementRegenerate}
           onElementEdit={handleElementEdit}
           onElementUpdate={handleElementUpdate}
+          onInternalElementSelect={handleInternalElementSelect}
         />
       </div>
 
       {/* Правая панель - Свойства */}
       {selectedElement && (
         <PropertiesPanel
-          key={selectedElement.id}
+          key={`${selectedElement.id}-${selectedInternalElement?.elementId || 'none'}`}
           element={selectedElement}
+          selectedInternalElement={selectedInternalElement}
           onElementUpdate={handleElementUpdate}
           onElementDelete={handleElementDelete}
           onClose={() => setSelectedElement(null)}

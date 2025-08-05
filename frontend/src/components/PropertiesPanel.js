@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import VisualEditor from './VisualEditor';
 
-const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose }) => {
+const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, onElementDelete, onClose }) => {
   const [activeTab, setActiveTab] = useState('visual');
   const [editedPrompt, setEditedPrompt] = useState(element.prompt || '');
   const [editedCode, setEditedCode] = useState(element.content || '');
@@ -113,6 +113,7 @@ const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose })
             <div className="h-full">
               <VisualEditor
                 element={element}
+                selectedInternalElement={selectedInternalElement?.artifactId === element.id ? selectedInternalElement.elementId : null}
                 onContentChange={(newContent) => {
                   setEditedCode(newContent);
                   onElementUpdate(element.id, { content: newContent });

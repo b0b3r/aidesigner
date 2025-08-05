@@ -1,18 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import ElementSelector from './ElementSelector';
 import VisualControls from './VisualControls';
 import { extractElementProperties, applyElementProperties, getElementInfo } from '../utils/htmlParser';
 import './VisualEditor.css';
 
 const VisualEditor = ({ 
   element, 
+  selectedInternalElement,
   onContentChange, 
   onElementUpdate,
   className = '' 
 }) => {
-  const [selectedElementId, setSelectedElementId] = useState(null);
   const [selectedElementData, setSelectedElementData] = useState(null);
-  const [hoveredElementId, setHoveredElementId] = useState(null);
   const [currentContent, setCurrentContent] = useState(element?.content || '');
 
   // Обновляем контент при изменении element
@@ -20,47 +18,68 @@ const VisualEditor = ({
     if (element?.content !== currentContent) {
       setCurrentContent(element.content || '');
       // Сбрасываем выбор при изменении контента
-      setSelectedElementId(null);
       setSelectedElementData(null);
     }
   }, [element?.content]);
 
-  // Обработчик выбора элемента
-  const handleElementSelect = useCallback((elementId, domElement) => {
-    console.log('📌 Выбираем элемент для редактирования:', elementId);
+  // Обновляем selectedElementData при изменении selectedInternalElement
+  useEffect(() => {
+    console.log('🔍 DEBUG: selectedInternalElement изменился:', selectedInternalElement);
+    console.log('🔍 DEBUG: element:', element?.name);
+    console.log('🔍 DEBUG: currentContent length:', currentContent?.length);
     
-    setSelectedElementId(elementId);
-    
-    if (domElement) {
-      // Извлекаем свойства из DOM элемента
-      const properties = extractElementProperties(domElement);
-      const elementInfo = getElementInfo(currentContent, elementId);
+    if (selectedInternalElement && element) {
+      console.log('📌 Обновляем данные выбранного внутреннего элемента:', selectedInternalElement);
       
-      const elementData = {
-        id: elementId,
-        domElement,
-        properties,
-        info: elementInfo
-      };
+      // Получаем информацию об элементе из HTML
+      const elementInfo = getElementInfo(currentContent, selectedInternalElement);
+      console.log('🔍 DEBUG: elementInfo:', elementInfo);
       
-      console.log('🎨 Свойства элемента:', properties);
-      setSelectedElementData(elementData);
+      if (elementInfo) {
+        // Создаем временный DOM элемент для извлечения стилей
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = currentContent;
+        const domElement = tempDiv.querySelector(`[data-element-id="${selectedInternalElement}"]`);
+        console.log('🔍 DEBUG: domElement найден:', !!domElement);
+        
+        if (domElement) {
+          // Добавляем в DOM для вычисления стилей
+          document.body.appendChild(tempDiv);
+          const properties = extractElementProperties(domElement);
+          document.body.removeChild(tempDiv);
+          
+          const elementData = {
+            id: selectedInternalElement,
+            domElement,
+            properties,
+            info: elementInfo
+          };
+          
+          console.log('🎨 Свойства выбранного элемента:', properties);
+          console.log('✅ Устанавливаем selectedElementData:', elementData);
+          setSelectedElementData(elementData);
+        } else {
+          console.log('❌ domElement не найден для:', selectedInternalElement);
+          setSelectedElementData(null);
+        }
+      } else {
+        console.log('❌ elementInfo не найден для:', selectedInternalElement);
+        setSelectedElementData(null);
+      }
+    } else {
+      console.log('🔄 Сбрасываем selectedElementData');
+      setSelectedElementData(null);
     }
-  }, [currentContent]);
-
-  // Обработчик hover элемента  
-  const handleElementHover = useCallback((elementId, domElement) => {
-    setHoveredElementId(elementId);
-  }, []);
+  }, [selectedInternalElement, currentContent, element]);
 
   // Обработчик изменения свойства
   const handlePropertyChange = useCallback((property, value) => {
-    if (!selectedElementId || !selectedElementData) return;
+    if (!selectedInternalElement || !selectedElementData) return;
 
     console.log('🔧 Изменяем свойство:', property, '→', value);
 
     // Обновляем HTML с новым свойством
-    const updatedContent = applyElementProperties(currentContent, selectedElementId, {
+    const updatedContent = applyElementProperties(currentContent, selectedInternalElement, {
       [property]: value
     });
 
@@ -85,13 +104,7 @@ const VisualEditor = ({
     if (onElementUpdate && element) {
       onElementUpdate(element.id, { content: updatedContent });
     }
-  }, [selectedElementId, selectedElementData, currentContent, onContentChange, onElementUpdate, element]);
-
-  // Сброс выбора
-  const handleClearSelection = useCallback(() => {
-    setSelectedElementId(null);
-    setSelectedElementData(null);
-  }, []);
+  }, [selectedInternalElement, selectedElementData, currentContent, onContentChange, onElementUpdate, element]);
 
   if (!element) {
     return (
@@ -105,58 +118,30 @@ const VisualEditor = ({
 
   return (
     <div className={`visual-editor ${className}`}>
-      {/* Toolbar */}
+      {/* Простая панель управления */}
       <div className="visual-editor-toolbar">
-        <span className="toolbar-title">📝 Визуальный редактор</span>
-        {selectedElementId && (
-          <>
-            <span className="selected-info">
-              Выбран: <code>{selectedElementId}</code>
-            </span>
-            <button
-              onClick={handleClearSelection}
-              className="clear-selection-btn"
-              style={{
-                marginLeft: 'auto',
-                padding: '4px 8px',
-                background: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '3px',
-                fontSize: '11px',
-                cursor: 'pointer'
-              }}
-            >
-              ✕ Сбросить
-            </button>
-          </>
+        <span className="toolbar-title">🎨 Визуальный редактор</span>
+        {selectedInternalElement ? (
+          <span className="selected-info">
+            Выбран: <code>{selectedInternalElement}</code>
+          </span>
+        ) : (
+          <span className="no-selection-info">
+            Кликните на элемент в артефакте на канвасе
+          </span>
         )}
       </div>
 
-      {/* Main Content */}
+      {/* Только панель контролов */}
       <div className="visual-editor-content">
-        {/* Canvas - Element Selector */}
-        <div className="visual-editor-canvas">
-          <ElementSelector
-            htmlContent={currentContent}
-            selectedElementId={selectedElementId}
-            onElementSelect={handleElementSelect}
-            onElementHover={handleElementHover}
-            showOutlines={true}
-          />
-        </div>
-
-        {/* Properties Panel */}
-        <div className="visual-editor-properties">
-          <VisualControls
-            selectedElement={selectedElementData}
-            onPropertyChange={handlePropertyChange}
-          />
-        </div>
+        <VisualControls
+          selectedElement={selectedElementData}
+          onPropertyChange={handlePropertyChange}
+        />
       </div>
 
       {/* Debug Info (только в development) */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env.NODE_ENV === 'development' && selectedElementData && (
         <div className="debug-info" style={{
           position: 'absolute',
           bottom: '10px',
@@ -168,11 +153,9 @@ const VisualEditor = ({
           fontSize: '10px',
           maxWidth: '200px'
         }}>
-          <div>Selected: {selectedElementId || 'none'}</div>
-          <div>Hovered: {hoveredElementId || 'none'}</div>
-          {selectedElementData && (
-            <div>Type: {selectedElementData.info?.tagName}</div>
-          )}
+          <div>Selected: {selectedInternalElement || 'none'}</div>
+          <div>Type: {selectedElementData.info?.tagName}</div>
+          <div>Props: {Object.keys(selectedElementData.properties || {}).length}</div>
         </div>
       )}
     </div>

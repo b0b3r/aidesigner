@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -10,15 +10,107 @@ import {
   Panel,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { makeElementsSelectable } from '../utils/htmlParser';
 
 // Кастомный узел для UI компонента
 const UIComponentNode = ({ data, selected }) => {
+  const contentRef = useRef(null);
+  const [hoveredElementId, setHoveredElementId] = useState(null);
+  
   const nodeStyle = {
     width: data.width ? `${data.width}px` : 'auto',
     height: data.height ? `${data.height}px` : 'auto',
     minWidth: data.width ? `${data.width}px` : '200px',
     minHeight: data.height ? `${data.height}px` : 'auto'
   };
+  
+  // Подготавливаем HTML с data-element-id для интерактивности
+  const selectableContent = useMemo(() => {
+    if (!data.content) return '';
+    return makeElementsSelectable(data.content);
+  }, [data.content]);
+  
+  // Обработчик клика на внутренние элементы
+  const handleElementClick = useCallback((event) => {
+    const elementId = event.target.getAttribute('data-element-id');
+    if (elementId && data.onElementSelect) {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🎯 Выбираем элемент в артефакте:', elementId, 'в артефакте:', data.id);
+      data.onElementSelect(data.id, elementId, event.target);
+    }
+  }, [data.id, data.onElementSelect]);
+  
+  // Обработчик hover на элементы
+  const handleElementHover = useCallback((event) => {
+    const elementId = event.target.getAttribute('data-element-id');
+    if (elementId !== hoveredElementId) {
+      setHoveredElementId(elementId);
+    }
+  }, [hoveredElementId]);
+  
+  // Обработчик выхода из hover
+  const handleElementLeave = useCallback(() => {
+    setHoveredElementId(null);
+  }, []);
+  
+  // Добавляем event listeners после рендера
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container) return;
+
+    const elements = container.querySelectorAll('[data-element-id]');
+    
+    elements.forEach(element => {
+      element.addEventListener('click', handleElementClick);
+      element.addEventListener('mouseenter', handleElementHover);
+      element.addEventListener('mouseleave', handleElementLeave);
+      
+      // Добавляем стили для интерактивности
+      element.style.cursor = 'pointer';
+      element.style.transition = 'all 0.2s ease';
+    });
+
+    return () => {
+      elements.forEach(element => {
+        element.removeEventListener('click', handleElementClick);
+        element.removeEventListener('mouseenter', handleElementHover);
+        element.removeEventListener('mouseleave', handleElementLeave);
+      });
+    };
+  }, [selectableContent, handleElementClick, handleElementHover, handleElementLeave]);
+  
+  // Применяем стили outline для выбранного и hovered элементов
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container) return;
+
+    // Убираем все предыдущие outline
+    const allElements = container.querySelectorAll('[data-element-id]');
+    allElements.forEach(el => {
+      el.style.outline = 'none';
+      el.style.backgroundColor = el.getAttribute('data-original-bg') || el.style.backgroundColor;
+    });
+
+    // Добавляем outline для выбранного элемента
+    if (data.selectedInternalElement) {
+      const selectedEl = container.querySelector(`[data-element-id="${data.selectedInternalElement}"]`);
+      if (selectedEl) {
+        selectedEl.style.outline = '2px solid #007bff';
+        selectedEl.style.outlineOffset = '2px';
+      }
+    }
+
+    // Добавляем hover эффект
+    if (hoveredElementId && hoveredElementId !== data.selectedInternalElement) {
+      const hoveredEl = container.querySelector(`[data-element-id="${hoveredElementId}"]`);
+      if (hoveredEl) {
+        hoveredEl.style.outline = '1px dashed #007bff';
+        hoveredEl.style.outlineOffset = '1px';
+        hoveredEl.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+      }
+    }
+  }, [data.selectedInternalElement, hoveredElementId, selectableContent]);
   
   return (
     <div className={`ui-flow-node ${selected ? 'selected' : ''}`} style={nodeStyle}>
@@ -45,12 +137,14 @@ const UIComponentNode = ({ data, selected }) => {
       <div className="ui-flow-content">
         {data.content ? (
           <div 
-            dangerouslySetInnerHTML={{ __html: data.content }}
+            ref={contentRef}
+            dangerouslySetInnerHTML={{ __html: selectableContent }}
             style={{
               width: '100%',
               height: '100%',
               overflow: 'hidden',
-              fontSize: '12px'
+              fontSize: '12px',
+              position: 'relative'
             }}
           />
         ) : (
@@ -64,6 +158,12 @@ const UIComponentNode = ({ data, selected }) => {
         </div>
       )}
       
+      {/* Показываем информацию о выбранном внутреннем элементе */}
+      {data.selectedInternalElement && (
+        <div className="selected-element-indicator">
+          🎯 {data.selectedInternalElement}
+        </div>
+      )}
 
     </div>
   );
@@ -98,7 +198,9 @@ const CanvasFlow = ({
   onElementSelect, 
   onElementRegenerate,
   onElementEdit,
-  onElementUpdate
+  onElementUpdate,
+  selectedInternalElement,
+  onInternalElementSelect
 }) => {
   // Конвертируем существующие элементы в React Flow узлы
   const convertToFlowNodes = useCallback((elements) => {
@@ -118,13 +220,15 @@ const CanvasFlow = ({
         createdAt: element.createdAt,
         onRegenerate: onElementRegenerate,
         onEdit: onElementEdit,
+        onElementSelect: onInternalElementSelect,
+        selectedInternalElement: selectedInternalElement?.artifactId === element.id ? selectedInternalElement.elementId : null,
       },
       style: {
         width: element.width || 200,
         height: element.height === 'auto' ? undefined : (element.height || 150),
       }
     }));
-  }, [onElementRegenerate, onElementEdit]);
+  }, [onElementRegenerate, onElementEdit, onInternalElementSelect, selectedInternalElement]);
 
   // Создаем процессные узлы для демонстрации workflow
   const processNodes = useMemo(() => [

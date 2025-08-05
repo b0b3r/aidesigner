@@ -6,11 +6,14 @@
 export const makeElementsSelectable = (htmlString) => {
   if (!htmlString) return '';
   
+  console.log('🔍 DEBUG makeElementsSelectable input:', htmlString.slice(0, 100));
+  
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlString, 'text/html');
   
   // Получаем все элементы в body
   const elements = doc.body.querySelectorAll('*');
+  console.log('🔍 DEBUG найдено элементов:', elements.length);
   
   elements.forEach((element, index) => {
     // Добавляем уникальный ID для выбора
@@ -20,9 +23,13 @@ export const makeElementsSelectable = (htmlString) => {
     // Добавляем стили для hover эффекта
     const currentStyle = element.getAttribute('style') || '';
     element.setAttribute('data-original-style', currentStyle);
+    
+    console.log(`🔍 DEBUG element-${index}:`, element.tagName, element.textContent?.slice(0, 20));
   });
   
-  return doc.body.innerHTML;
+  const result = doc.body.innerHTML;
+  console.log('🔍 DEBUG makeElementsSelectable output:', result.slice(0, 100));
+  return result;
 };
 
 /**
