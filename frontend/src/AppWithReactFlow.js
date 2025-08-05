@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import './App.css';
 import './components/CanvasFlow.css';
 import CanvasFlow from './components/CanvasFlow';
+import PropertiesPanel from './components/PropertiesPanel';
 
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
@@ -147,6 +148,21 @@ function AppWithReactFlow() {
       setLoadingStatus('');
     }
   }, [canvasElements]);
+
+  // Обновление элемента из панели свойств
+  const handleElementUpdate = useCallback((elementId, updates) => {
+    setCanvasElements(prev => prev.map(el => 
+      el.id === elementId 
+        ? { ...el, ...updates }
+        : el
+    ));
+  }, []);
+
+  // Удаление элемента
+  const handleElementDelete = useCallback((elementId) => {
+    setCanvasElements(prev => prev.filter(el => el.id !== elementId));
+    setSelectedElement(null);
+  }, []);
 
   const handleElementEdit = useCallback((elementId) => {
     const element = canvasElements.find(el => el.id === elementId);
@@ -324,102 +340,12 @@ function AppWithReactFlow() {
 
       {/* Правая панель - Свойства */}
       {selectedElement && (
-        <div className="properties-panel">
-          <div className="panel-header">
-            <span>📦 {selectedElement.name}</span>
-            <button onClick={() => setSelectedElement(null)}>✕</button>
-          </div>
-          
-          <div className="properties-tabs">
-            <div className="tab active">🎨 Свойства</div>
-            <div className="tab">💭 Промпт</div>
-          </div>
-          
-          <div className="properties-content">
-            <div className="property-group">
-              <label>Название элемента</label>
-              <input 
-                type="text" 
-                value={selectedElement.name || ''} 
-                readOnly
-                style={{ 
-                  width: '100%', 
-                  padding: '8px', 
-                  border: '1px solid #ddd', 
-                  borderRadius: '4px',
-                  marginBottom: '12px'
-                }}
-              />
-            </div>
-            
-            <div className="property-group">
-              <label>Позиция</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  type="number" 
-                  value={selectedElement.x || 0} 
-                  readOnly
-                  placeholder="X"
-                  style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-                <input 
-                  type="number" 
-                  value={selectedElement.y || 0} 
-                  readOnly
-                  placeholder="Y"
-                  style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-              </div>
-            </div>
-            
-            <div className="property-group">
-              <label>Размеры</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  type="number" 
-                  value={selectedElement.width || 0} 
-                  readOnly
-                  placeholder="Ширина"
-                  style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-                <input 
-                  type="number" 
-                  value={selectedElement.height || 0} 
-                  readOnly
-                  placeholder="Высота"
-                  style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-                />
-              </div>
-            </div>
-
-            <div className="prompt-section" style={{ marginTop: '20px' }}>
-              <label>Промпт для генерации</label>
-              <textarea
-                value={selectedElement.prompt || 'Промпт не задан'}
-                readOnly
-                rows={4}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  resize: 'vertical',
-                  fontFamily: 'inherit',
-                  fontSize: '14px',
-                  lineHeight: '1.4',
-                  marginBottom: '12px'
-                }}
-              />
-              <button 
-                className="generate-btn"
-                onClick={() => handleElementRegenerate(selectedElement.id)}
-                disabled={isLoading}
-              >
-                {isLoading ? '🔄 Регенерирую...' : '🎨 Регенерировать'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <PropertiesPanel
+          element={selectedElement}
+          onElementUpdate={handleElementUpdate}
+          onElementDelete={handleElementDelete}
+          onClose={() => setSelectedElement(null)}
+        />
       )}
     </div>
   );

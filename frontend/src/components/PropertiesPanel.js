@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 
-const PropertiesPanel = ({ element, onElementUpdate, onClose }) => {
+const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose }) => {
   const [activeTab, setActiveTab] = useState('prompt');
   const [editedPrompt, setEditedPrompt] = useState(element.prompt || '');
   const [editedCode, setEditedCode] = useState(element.content || '');
@@ -45,9 +45,19 @@ const PropertiesPanel = ({ element, onElementUpdate, onClose }) => {
     <div className="panel properties-panel">
       <div className="panel-header">
         <span>⚙️ Свойства элемента</span>
-        <button onClick={onClose} className="btn btn-ghost" style={{ marginLeft: 'auto', padding: '4px 8px' }}>
-          ✕
-        </button>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+          <button 
+            onClick={() => onElementDelete?.(element.id)}
+            className="btn btn-danger" 
+            style={{ padding: '4px 8px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
+            title="Удалить элемент"
+          >
+            🗑️
+          </button>
+          <button onClick={onClose} className="btn btn-ghost" style={{ padding: '4px 8px' }}>
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="panel-content">

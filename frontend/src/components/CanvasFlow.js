@@ -48,7 +48,7 @@ const UIComponentNode = ({ data, selected }) => {
             dangerouslySetInnerHTML={{ __html: data.content }}
             style={{
               width: '100%',
-              height: data.height ? `${data.height - 80}px` : 'auto',
+              height: '100%',
               overflow: 'hidden',
               fontSize: '12px'
             }}

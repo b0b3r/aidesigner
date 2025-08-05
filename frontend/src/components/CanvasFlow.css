@@ -20,6 +20,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .ui-flow-node:hover {
@@ -69,9 +71,8 @@
 .ui-flow-content {
   padding: 12px;
   background: white;
-  min-height: 80px;
-  max-height: 200px;
-  overflow: auto;
+  flex: 1;
+  overflow: hidden;
 }
 
 .ui-flow-text {
