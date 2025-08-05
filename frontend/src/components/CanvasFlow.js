@@ -97,7 +97,8 @@ const CanvasFlow = ({
   selectedElement, 
   onElementSelect, 
   onElementRegenerate,
-  onElementEdit 
+  onElementEdit,
+  onElementUpdate
 }) => {
   // Конвертируем существующие элементы в React Flow узлы
   const convertToFlowNodes = useCallback((elements) => {
@@ -188,14 +189,51 @@ const CanvasFlow = ({
     }
   ], []);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, originalOnNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Обновляем узлы при изменении элементов
+  // Кастомный обработчик изменения узлов, который сохраняет позиции в canvasElements
+  const onNodesChange = useCallback((changes) => {
+    // Применяем изменения к React Flow состоянию
+    originalOnNodesChange(changes);
+    
+    // Обновляем позиции в исходных данных canvasElements
+    changes.forEach((change) => {
+      if (change.type === 'position' && change.position && change.id) {
+        // Обновляем позицию элемента в родительском состоянии
+        const elementIndex = elements.findIndex(el => el.id === change.id);
+        if (elementIndex !== -1) {
+          const updatedElement = {
+            ...elements[elementIndex],
+            x: Math.round(change.position.x),
+            y: Math.round(change.position.y)
+          };
+          console.log('📍 Обновляем позицию элемента:', change.id, 'на', change.position);
+          // Используем колбэк для обновления родительского состояния
+          if (typeof onElementUpdate === 'function') {
+            onElementUpdate(change.id, { x: Math.round(change.position.x), y: Math.round(change.position.y) });
+          }
+        }
+      }
+    });
+  }, [originalOnNodesChange, elements, onElementUpdate]);
+
+  // Обновляем узлы при изменении элементов (но сохраняем позиции)
   React.useEffect(() => {
     const uiNodes = convertToFlowNodes(elements);
     const newNodes = showProcessFlow ? [...processNodes, ...uiNodes] : uiNodes;
-    setNodes(newNodes);
+    
+    // Сохраняем текущие позиции узлов, если они были изменены пользователем
+    setNodes(currentNodes => {
+      return newNodes.map(newNode => {
+        const existingNode = currentNodes.find(n => n.id === newNode.id);
+        if (existingNode && (existingNode.position.x !== newNode.position.x || existingNode.position.y !== newNode.position.y)) {
+          // Если узел уже существует и был перемещен, сохраняем его текущую позицию
+          return { ...newNode, position: existingNode.position };
+        }
+        return newNode;
+      });
+    });
   }, [elements, showProcessFlow, processNodes, convertToFlowNodes, setNodes]);
 
   const onConnect = useCallback(
@@ -230,10 +268,8 @@ const CanvasFlow = ({
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{
-          padding: 0.2,
-        }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        fitView={false}
       >
         {/* Сетка из точек */}
         <Background 

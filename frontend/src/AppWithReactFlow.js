@@ -355,6 +355,7 @@ function AppWithReactFlow() {
           onElementSelect={handleElementSelect}
           onElementRegenerate={handleElementRegenerate}
           onElementEdit={handleElementEdit}
+          onElementUpdate={handleElementUpdate}
         />
       </div>
 
