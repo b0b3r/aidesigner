@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
+import VisualEditor from './VisualEditor';
 
 const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose }) => {
-  const [activeTab, setActiveTab] = useState('prompt');
+  const [activeTab, setActiveTab] = useState('visual');
   const [editedPrompt, setEditedPrompt] = useState(element.prompt || '');
   const [editedCode, setEditedCode] = useState(element.content || '');
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -10,7 +11,7 @@ const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose })
   React.useEffect(() => {
     setEditedPrompt(element.prompt || '');
     setEditedCode(element.content || '');
-    setActiveTab('prompt');
+    setActiveTab('visual');
   }, [element.id, element.prompt, element.content]);
 
   const handleCodeChange = useCallback((newCode) => {
@@ -81,6 +82,14 @@ const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose })
         {/* Вкладки */}
         <div className="flex border-b border-gray-200">
           <button
+            onClick={() => setActiveTab('visual')}
+            className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 ${
+              activeTab === 'visual' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'
+            }`}
+          >
+            🎨 Visual
+          </button>
+          <button
             onClick={() => setActiveTab('prompt')}
             className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 ${
               activeTab === 'prompt' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'
@@ -100,6 +109,20 @@ const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose })
 
         {/* Содержимое */}
         <div className="flex-1 overflow-hidden">
+          {activeTab === 'visual' && (
+            <div className="h-full">
+              <VisualEditor
+                element={element}
+                onContentChange={(newContent) => {
+                  setEditedCode(newContent);
+                  onElementUpdate(element.id, { content: newContent });
+                }}
+                onElementUpdate={onElementUpdate}
+                className="h-full"
+              />
+            </div>
+          )}
+
           {activeTab === 'prompt' && (
             <div className="p-3">
               <label className="block text-sm font-medium text-gray-700 mb-2">
