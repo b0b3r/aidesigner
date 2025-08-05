@@ -84,31 +84,55 @@ function AppWithReactFlow() {
     setLoadingStatus(`🔄 Регенерирую ${element.name}...`);
 
     try {
-      // Симуляция API запроса
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('🔄 Регенерирую элемент через API:', element.prompt);
       
-      // Обновляем элемент
-      setCanvasElements(prev => prev.map(el => 
-        el.id === elementId 
-          ? { 
-              ...el, 
-              content: el.content.replace(/🌐|🚀|🎨|🤖/g, '✨'),
-              createdAt: new Date().toISOString()
-            }
-          : el
-      ));
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'user', content: element.prompt || `Регенерируй элемент "${element.name}"` }
+          ]
+        })
+      });
 
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: Date.now() + '-regenerate',
-          type: 'ai',
-          content: `✅ Элемент "${element.name}" успешно регенерирован с новыми стилями!`,
-          timestamp: new Date()
-        }
-      ]);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('📦 Данные регенерации:', data);
+
+      if (data.success && data.visual_content) {
+        // Обновляем элемент с новым контентом от API
+        setCanvasElements(prev => prev.map(el => 
+          el.id === elementId 
+            ? { 
+                ...el, 
+                content: data.visual_content,
+                code: data.visual_content,
+                width: data.width || el.width,
+                height: data.height === "auto" ? "auto" : (data.height || el.height),
+                createdAt: new Date().toISOString()
+              }
+            : el
+        ));
+
+        setChatMessages(prev => [
+          ...prev,
+          {
+            id: Date.now() + '-regenerate',
+            type: 'ai',
+            content: data.text_content || `✅ Элемент "${element.name}" успешно регенерирован!`,
+            timestamp: new Date()
+          }
+        ]);
+      } else {
+        throw new Error(data.error || 'Не удалось получить новый контент');
+      }
 
     } catch (error) {
+      console.error('❌ Ошибка регенерации:', error);
       setChatMessages(prev => [
         ...prev,
         {
@@ -150,55 +174,85 @@ function AppWithReactFlow() {
     ]);
 
     setIsLoading(true);
-    setLoadingStatus('🤖 Обрабатываю запрос...');
+    setLoadingStatus('📤 Отправляю запрос к LLM...');
 
     try {
-      // Симуляция различных ответов
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('🚀 Отправляю запрос к LLM:', message);
       
-      let response = '';
-      
-      if (message.toLowerCase().includes('элемент') || message.toLowerCase().includes('добавить')) {
-        // Добавляем новый элемент
-        const newElement = {
-          id: 'element-' + Date.now(),
-          type: 'artifact',
-          x: 300 + (canvasElements.length * 40),
-          y: 200 + (canvasElements.length * 40),
-          width: 300,
-          height: 200,
-          name: 'Новый элемент',
-          content: '<div style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); height: 100%; display: flex; align-items: center; justify-content: center; color: white; border-radius: 8px; font-weight: bold;">🎉 Новый UI элемент</div>',
-          prompt: message,
-          createdAt: new Date().toISOString()
-        };
-        
-        setCanvasElements(prev => [...prev, newElement]);
-        response = '✅ Добавил новый UI элемент на канвас! Попробуйте соединить его с другими элементами с помощью React Flow.';
-      } else if (message.toLowerCase().includes('flow') || message.toLowerCase().includes('связи')) {
-        response = '🔗 **React Flow возможности:**\n\n• Перетащите от одного элемента к другому для создания связи\n• Используйте Ctrl+клик для множественного выделения\n• Колесо мыши для масштабирования к курсору\n• Мини-карта показывает общую структуру\n• Кнопка "Fit View" показывает все элементы';
-      } else {
-        response = '🤖 Понял ваш запрос! В React Flow режиме вы можете:\n\n• **Перетаскивать** элементы мышью\n• **Соединять** элементы линиями связи\n• **Масштабировать** канвас колесом\n• **Группировать** элементы выделением\n• Использовать **мини-карту** для навигации\n\nЧто именно вы хотите сделать?';
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            // ОТПРАВЛЯЕМ ТОЛЬКО НОВОЕ СООБЩЕНИЕ БЕЗ ИСТОРИИ
+            { role: 'user', content: message }
+          ]
+        })
+      });
+
+      setLoadingStatus('⏳ Ожидаю ответ от DeepSeek API...');
+      console.log('📡 Получен ответ:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: Date.now() + '-ai',
-          type: 'ai',
-          content: response,
-          timestamp: new Date()
+      setLoadingStatus('🔄 Обрабатываю ответ...');
+      const data = await response.json();
+      console.log('📦 Данные ответа:', data);
+
+      if (data.success) {
+        setChatMessages(prev => [
+          ...prev,
+          { 
+            id: Date.now() + '-ai', 
+            type: 'ai', 
+            content: data.text_content,
+            timestamp: new Date() 
+          }
+        ]);
+
+        // Если есть визуальный контент - создаем артефакт на канвасе
+        if (data.visual_content) {
+          console.log('🎨 Создаю артефакт на канвасе');
+          
+          // Обрабатываем размеры: ширина из LLM, высота автоматическая
+          const artifactWidth = data.width || 400;
+          const artifactHeight = data.height === "auto" ? "auto" : (data.height || 300);
+          
+          console.log(`📏 Размеры артефакта: ${artifactWidth}px x ${artifactHeight}`);
+          
+          const newArtifact = {
+            id: 'artifact-' + Date.now(),
+            type: 'artifact',
+            x: 200 + (canvasElements.length * 30),
+            y: 150 + (canvasElements.length * 30),
+            width: artifactWidth,
+            height: artifactHeight,
+            isAutoHeight: artifactHeight === "auto",
+            name: 'Generated Artifact',
+            content: data.visual_content,
+            code: data.visual_content,
+            prompt: message,
+            createdAt: new Date().toISOString()
+          };
+          
+          setCanvasElements(prev => [...prev, newArtifact]);
+          console.log('✅ Артефакт добавлен на канвас');
         }
-      ]);
+      } else {
+        throw new Error(data.error || 'Unknown error from API');
+      }
 
     } catch (error) {
+      console.error('❌ Ошибка при отправке сообщения:', error);
       setChatMessages(prev => [
         ...prev,
-        {
-          id: Date.now() + '-error',
-          type: 'ai',
+        { 
+          id: Date.now() + '-error', 
+          type: 'ai', 
           content: `❌ Ошибка: ${error.message}`,
-          timestamp: new Date()
+          timestamp: new Date() 
         }
       ]);
     } finally {
