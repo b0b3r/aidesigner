@@ -1,0 +1,20 @@
+{
+  "name": "ai-designer",
+  "version": "1.0.0",
+  "description": "AI Designer - Генератор дизайна веб-страниц",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "install-deps": "cd frontend && npm install",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "python backend/main.py",
+    "frontend": "cd frontend && npm start"
+  },
+  "keywords": ["ai", "design", "react", "fastapi"],
+  "author": "AI Designer Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 

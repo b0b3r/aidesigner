@@ -1,0 +1,315 @@
+/* React Flow Canvas Styles */
+.canvas-flow-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* UI Component Node Styles */
+.ui-flow-node {
+  background: white;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 200px;
+  max-width: 400px;
+  transition: all 0.2s ease;
+}
+
+.ui-flow-node:hover {
+  border-color: #007bff;
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.15);
+}
+
+.ui-flow-node.selected {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.ui-flow-header {
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e1e5e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ui-flow-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.ui-flow-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.ui-flow-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.ui-flow-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.ui-flow-content {
+  padding: 12px;
+  background: white;
+  min-height: 80px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.ui-flow-text {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.ui-flow-footer {
+  background: #f1f3f4;
+  padding: 6px 12px;
+  border-top: 1px solid #e1e5e9;
+  font-size: 11px;
+  color: #666;
+}
+
+.ui-flow-timestamp {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  background: #333;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+/* Process Node Styles */
+.process-flow-node {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  min-width: 120px;
+  position: relative;
+}
+
+.process-flow-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.process-flow-title {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.process-flow-status {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 2px solid white;
+}
+
+.process-flow-status.completed {
+  background: #22c55e;
+}
+
+.process-flow-status.processing {
+  background: #f59e0b;
+  animation: pulse 2s infinite;
+}
+
+.process-flow-status.pending {
+  background: #6b7280;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Flow Panel Styles */
+.flow-panel {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+}
+
+.flow-panel h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.flow-panel-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.flow-panel-btn {
+  padding: 6px 12px;
+  border: 1px solid #e1e5e9;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.flow-panel-btn:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.flow-panel-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.flow-panel-stats {
+  color: #666;
+  font-size: 11px;
+}
+
+/* Flow Help Styles */
+.flow-help {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #666;
+  backdrop-filter: blur(4px);
+  max-width: 200px;
+}
+
+.flow-help > div {
+  margin-bottom: 4px;
+}
+
+.flow-help > div:first-child {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* React Flow Override Styles */
+.react-flow__background {
+  background: #f8f9fa;
+}
+
+.react-flow__controls {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__controls-button {
+  background: white;
+  border-bottom: 1px solid #e1e5e9;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.react-flow__controls-button:hover {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.react-flow__minimap {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__edge-path {
+  stroke: #007bff;
+  stroke-width: 2;
+}
+
+.react-flow__edge.animated path {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+.react-flow__edge-textbg {
+  fill: white;
+  stroke: #e1e5e9;
+  stroke-width: 1;
+}
+
+.react-flow__edge-text {
+  font-size: 11px;
+  fill: #666;
+}
+
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* Connection Line */
+.react-flow__connection-line {
+  stroke: #007bff;
+  stroke-width: 2;
+  stroke-dasharray: 5;
+}
+
+/* Selection */
+.react-flow__nodesselection-rect,
+.react-flow__selection {
+  background: rgba(0, 123, 255, 0.1);
+  border: 1px solid #007bff;
+}
+
+/* Node Drag */
+.react-flow__node.dragging {
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ui-flow-node {
+    min-width: 150px;
+    max-width: 300px;
+  }
+  
+  .flow-panel {
+    min-width: 150px;
+  }
+  
+  .flow-help {
+    max-width: 150px;
+  }
+}
