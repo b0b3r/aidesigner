@@ -6,6 +6,13 @@ const PropertiesPanel = ({ element, onElementUpdate, onElementDelete, onClose })
   const [editedCode, setEditedCode] = useState(element.content || '');
   const [isRegenerating, setIsRegenerating] = useState(false);
 
+  // Обновляем состояние при изменении выбранного элемента
+  React.useEffect(() => {
+    setEditedPrompt(element.prompt || '');
+    setEditedCode(element.content || '');
+    setActiveTab('prompt');
+  }, [element.id, element.prompt, element.content]);
+
   const handleCodeChange = useCallback((newCode) => {
     setEditedCode(newCode);
     onElementUpdate(element.id, { content: newCode });

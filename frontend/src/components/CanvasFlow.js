@@ -162,8 +162,9 @@ const CanvasFlow = ({
   // Комбинируем узлы
   const initialNodes = useMemo(() => {
     const uiNodes = convertToFlowNodes(elements);
-    return [...processNodes, ...uiNodes];
-  }, [elements, processNodes, convertToFlowNodes]);
+    // Убираем процессные узлы по просьбе пользователя
+    return showProcessFlow ? [...processNodes, ...uiNodes] : [...uiNodes];
+  }, [elements, processNodes, convertToFlowNodes, showProcessFlow]);
 
   // Создаем связи между процессными узлами
   const processEdges = useMemo(() => [
@@ -185,8 +186,8 @@ const CanvasFlow = ({
   ], []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(processEdges);
-  const [showProcessFlow, setShowProcessFlow] = useState(true);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [showProcessFlow, setShowProcessFlow] = useState(false);
 
   // Обновляем узлы при изменении элементов
   React.useEffect(() => {
@@ -203,7 +204,9 @@ const CanvasFlow = ({
   const onNodeClick = useCallback((event, node) => {
     if (node.type === 'uiComponent') {
       const element = elements.find(el => el.id === node.id);
-      onElementSelect?.(element);
+      if (element) {
+        onElementSelect?.(element);
+      }
     }
   }, [elements, onElementSelect]);
 

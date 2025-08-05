@@ -255,6 +255,17 @@ function AppWithReactFlow() {
           
           setCanvasElements(prev => [...prev, newArtifact]);
           console.log('✅ Артефакт добавлен на канвас');
+          
+          // Добавляем сообщение в чат о создании артефакта
+          setChatMessages(prev => [
+            ...prev,
+            { 
+              id: Date.now() + '-artifact', 
+              type: 'ai', 
+              content: `🎨 **Артефакт создан!**\n\nДобавил новый элемент "${newArtifact.name}" на канвас.\n\n📐 Размеры: ${artifactWidth}px × ${artifactHeight === "auto" ? "авто" : artifactHeight + "px"}\n🎯 Позиция: (${newArtifact.x}, ${newArtifact.y})\n\nТеперь вы можете:\n• Перетащить элемент в нужное место\n• Выбрать для редактирования свойств\n• Соединить с другими элементами`,
+              timestamp: new Date() 
+            }
+          ]);
         }
       } else {
         throw new Error(data.error || 'Unknown error from API');
@@ -341,6 +352,7 @@ function AppWithReactFlow() {
       {/* Правая панель - Свойства */}
       {selectedElement && (
         <PropertiesPanel
+          key={selectedElement.id}
           element={selectedElement}
           onElementUpdate={handleElementUpdate}
           onElementDelete={handleElementDelete}
