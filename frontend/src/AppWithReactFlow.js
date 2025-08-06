@@ -3,12 +3,23 @@ import './App.css';
 import './components/CanvasFlow.css';
 import CanvasFlow from './components/CanvasFlow';
 import PropertiesPanel from './components/PropertiesPanel';
+import MessageRouter from './services/MessageRouter';
+import PlannerService from './services/PlannerService';
 
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
   const [selectedElement, setSelectedElement] = useState(null);
   const [editingElement, setEditingElement] = useState(null);
   const [selectedInternalElement, setSelectedInternalElement] = useState(null);
+  
+  // Инициализируем сервисы
+  const messageRouter = new MessageRouter();
+  const plannerService = new PlannerService();
+  
+  // Состояние для планов
+  const [activePlan, setActivePlan] = useState(null);
+  const [isExecutingPlan, setIsExecutingPlan] = useState(false);
+  
   const [canvasElements, setCanvasElements] = useState([
     // Демо wireframe элементы как в оригинале
     { 
@@ -65,14 +76,36 @@ function AppWithReactFlow() {
     {
       id: '1',
       type: 'ai',
-      content: '🚀 **React Flow Canvas активирован!**\n\nТеперь у вас есть доступ к продвинутым возможностям:\n\n• **Интерактивные связи** между элементами\n• **Процесс-карта** генерации дизайна\n• **Мини-карта** для навигации\n• **Масштабирование к курсору**\n• **Групповое выделение** элементов\n\nПопробуйте перетащить элементы или соединить их между собой!',
-      timestamp: new Date()
+      content: '🚀 **AI Designer готов к работе!**\n\nТеперь доступны новые возможности:\n\n• **💬 Умный чат** - задавайте вопросы, получайте ответы\n• **🎨 Создание артефактов** - генерация UI элементов\n• **📋 Пошаговые планы** - создание флоу по этапам\n\nВыберите что хотите сделать:',
+      timestamp: new Date(),
+      suggestions: [
+        {
+          id: 'example-1',
+          text: '🎨 Создать кнопку',
+          action: 'send_message',
+          data: 'Создай красивую кнопку'
+        },
+        {
+          id: 'example-2', 
+          text: '📋 Флоу регистрации',
+          action: 'send_message',
+          data: 'Нарисуй флоу регистрации пользователя'
+        },
+        {
+          id: 'example-3',
+          text: '💬 Что такое UX?',
+          action: 'send_message', 
+          data: 'Что такое UX дизайн?'
+        }
+      ]
     }
   ]);
 
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState('');
+  
+
 
   // Обработчики для React Flow компонента
   const handleElementSelect = useCallback((element) => {
@@ -230,10 +263,100 @@ function AppWithReactFlow() {
     ]);
 
     setIsLoading(true);
-    setLoadingStatus('📤 Отправляю запрос к LLM...');
+    setLoadingStatus('🧠 Анализирую запрос...');
 
     try {
-      console.log('🚀 Отправляю запрос к LLM:', message);
+      console.log('🚀 Анализирую сообщение:', message);
+      
+      // Классифицируем сообщение пользователя
+      const classification = messageRouter.classifyMessage(message, { 
+        editingElement,
+        selectedElement 
+      });
+      
+      console.log('🎯 Классификация сообщения:', classification);
+      
+      // Создаем промпт на основе классификации
+      const promptData = messageRouter.createPrompt(message, classification, {
+        editingElement,
+        selectedElement
+      });
+      
+      console.log('📝 Промпт данные:', promptData);
+
+      // Обработка обычных чат-ответов
+      if (classification.type === 'chat_response') {
+        setLoadingStatus('💬 Отвечаю на вопрос...');
+        
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: 'Ты опытный помощник по разработке UI/UX. Отвечай кратко и по делу. НЕ создавай код или артефакты, только текстовые ответы.' },
+              { role: 'user', content: promptData.prompt }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          setChatMessages(prev => [
+            ...prev,
+            { 
+              id: Date.now() + '-ai', 
+              type: 'ai', 
+              content: data.text_content,
+              timestamp: new Date() 
+            }
+          ]);
+        }
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // Обработка пошагового планирования
+      if (classification.type === 'step_by_step_plan') {
+        setLoadingStatus('📋 Создаю план выполнения...');
+        
+        const plan = await plannerService.createExecutionPlan(message);
+        console.log('📋 Создан план:', plan);
+        
+        setActivePlan(plan);
+        
+        // Создаем текстовое представление плана
+        let planText = `📋 **${plan.plan_title}**\n\n${plan.description}\n\n**План выполнения:**\n`;
+        plan.steps?.forEach((step, index) => {
+          planText += `\n${index + 1}. **${step.title}**\n   ${step.description}\n   ⏱️ ${step.estimated_time}`;
+        });
+        planText += '\n\n🚀 Нажмите кнопку ниже, чтобы выполнить все шаги последовательно:';
+        
+        setChatMessages(prev => [
+          ...prev,
+          { 
+            id: Date.now() + '-ai', 
+            type: 'ai', 
+            content: planText,
+            timestamp: new Date(),
+            suggestions: [
+              {
+                id: 'execute-plan',
+                text: '🚀 Выполнить план',
+                action: 'execute_plan',
+                data: plan
+              }
+            ]
+          }
+        ]);
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // Обработка создания/редактирования артефактов
+      setLoadingStatus('📤 Отправляю запрос к LLM...');
       
       // Формируем контекст для редактирования или создания нового элемента
       let requestMessage = message;
@@ -391,6 +514,280 @@ ${editingElement.content}
     }
   }, [canvasElements, editingElement, selectedElement]);
 
+  // Обработчик выполнения шага плана
+  const handleExecuteStep = useCallback(async (step) => {
+    if (!activePlan || isExecutingPlan) return;
+
+    setIsExecutingPlan(true);
+    setLoadingStatus(`🚀 Выполняю шаг: ${step.title}...`);
+
+    try {
+      console.log('🚀 Выполняю шаг плана:', step);
+      
+      const result = await plannerService.executeStep(step);
+      console.log('✅ Результат выполнения шага:', result);
+
+      // Обновляем план с результатом
+      setActivePlan(prevPlan => {
+        const updatedCompletedSteps = [...(prevPlan.completedSteps || []), result];
+        const nextStep = prevPlan.steps.findIndex(s => s.id === step.id + 1);
+        
+        return {
+          ...prevPlan,
+          completedSteps: updatedCompletedSteps,
+          currentStep: nextStep >= 0 ? nextStep : prevPlan.steps.length,
+          status: nextStep >= 0 ? 'executing' : 'completed'
+        };
+      });
+
+      // Добавляем сообщение в чат
+      setChatMessages(prev => [
+        ...prev,
+        { 
+          id: Date.now() + '-step-result', 
+          type: 'ai', 
+          content: `✅ **Шаг "${step.title}" выполнен!**\n\n${result.textContent || 'Шаг успешно завершен.'}`,
+          timestamp: new Date() 
+        }
+      ]);
+
+      // Если есть визуальный контент - создаем артефакт
+      if (result.success && result.visualContent) {
+        const newElement = {
+          id: `step-${step.id}-${Date.now()}`,
+          type: plannerService.getElementTypeFromStep(step),
+          x: 100 + (step.id - 1) * 50, // Смещение для каждого шага
+          y: 100 + (step.id - 1) * 50,
+          width: result.width || 400,
+          height: result.height === "auto" ? "auto" : (result.height || 300),
+          name: step.title,
+          content: result.visualContent,
+          code: result.visualContent,
+          prompt: step.prompt,
+          createdAt: new Date().toISOString(),
+          stepId: step.id,
+          planId: activePlan.id
+        };
+
+        setCanvasElements(prev => [...prev, newElement]);
+        
+        setChatMessages(prev => [
+          ...prev,
+          { 
+            id: Date.now() + '-artifact-created', 
+            type: 'ai', 
+            content: `🎨 **Артефакт создан:** "${step.title}"\n\nЭлемент добавлен на канвас и готов к использованию.`,
+            timestamp: new Date() 
+          }
+        ]);
+      }
+
+    } catch (error) {
+      console.error('❌ Ошибка выполнения шага:', error);
+      
+      // Обновляем план с ошибкой
+      setActivePlan(prevPlan => ({
+        ...prevPlan,
+        completedSteps: [
+          ...(prevPlan.completedSteps || []),
+          {
+            stepId: step.id,
+            success: false,
+            error: error.message,
+            executedAt: new Date().toISOString()
+          }
+        ]
+      }));
+
+      setChatMessages(prev => [
+        ...prev,
+        { 
+          id: Date.now() + '-step-error', 
+          type: 'ai', 
+          content: `❌ **Ошибка выполнения шага "${step.title}"**\n\n${error.message}`,
+          timestamp: new Date() 
+        }
+      ]);
+    } finally {
+      setIsExecutingPlan(false);
+      setIsLoading(false);
+    }
+  }, [activePlan, isExecutingPlan, plannerService]);
+
+  // Обработчик отмены плана
+  const handleCancelPlan = useCallback((planId) => {
+    setActivePlan(null);
+    setChatMessages(prev => [
+      ...prev,
+      { 
+        id: Date.now() + '-plan-cancelled', 
+        type: 'ai', 
+        content: '❌ **План отменен**\n\nВы можете создать новый план или продолжить работу с отдельными элементами.',
+        timestamp: new Date() 
+      }
+    ]);
+  }, []);
+
+  // Обработчик выполнения всего плана последовательно
+  const handleExecutePlan = useCallback(async (plan) => {
+    if (!plan || !plan.steps || isExecutingPlan) return;
+
+    console.log('🚀 Начинаю выполнение плана:', plan.plan_title);
+    
+    setIsExecutingPlan(true);
+    setActivePlan(plan);
+
+    // Добавляем сообщение о начале выполнения
+    setChatMessages(prev => [
+      ...prev,
+      { 
+        id: Date.now() + '-plan-start', 
+        type: 'ai', 
+        content: `🚀 **Начинаю выполнение плана "${plan.plan_title}"**\n\nВыполню ${plan.steps.length} шагов последовательно...`,
+        timestamp: new Date() 
+      }
+    ]);
+
+    try {
+      // Выполняем шаги последовательно
+      for (let i = 0; i < plan.steps.length; i++) {
+        const step = plan.steps[i];
+        
+        setLoadingStatus(`🔄 Шаг ${i + 1}/${plan.steps.length}: ${step.title}...`);
+        setIsLoading(true);
+
+        // Создаем контекстный промпт для шага
+        const contextPrompt = `ВЫПОЛНЕНИЕ ПЛАНА: "${plan.plan_title}"
+
+КОНТЕКСТ ВСЕГО ПЛАНА: ${plan.description}
+
+ТЕКУЩИЙ ШАГ ${i + 1} из ${plan.steps.length}: ${step.title}
+ОПИСАНИЕ ШАГА: ${step.description}
+
+ИСХОДНЫЙ ЗАПРОС ПОЛЬЗОВАТЕЛЯ: ${plan.originalRequest}
+
+ЗАДАЧА: ${step.prompt}
+
+ВАЖНО: Создай UI элемент согласно этому шагу, учитывая общий контекст плана. Элемент должен быть частью единого флоу "${plan.plan_title}".`;
+
+        console.log(`🔄 Выполняю шаг ${i + 1}: ${step.title}`);
+
+        try {
+          const result = await plannerService.executeStep({
+            ...step,
+            prompt: contextPrompt
+          });
+
+          if (result.success && result.visualContent) {
+            // Создаем артефакт для шага
+            const newElement = {
+              id: `plan-${plan.id}-step-${step.id}-${Date.now()}`,
+              type: plannerService.getElementTypeFromStep(step),
+              x: 150 + i * 80, // Размещаем элементы по горизонтали
+              y: 150 + i * 60,
+              width: result.width || 400,
+              height: result.height === "auto" ? "auto" : (result.height || 300),
+              name: step.title,
+              content: result.visualContent,
+              code: result.visualContent,
+              prompt: step.prompt,
+              createdAt: new Date().toISOString(),
+              stepId: step.id,
+              planId: plan.id,
+              stepNumber: i + 1
+            };
+
+            setCanvasElements(prev => [...prev, newElement]);
+
+            // Добавляем сообщение об успешном выполнении шага
+            setChatMessages(prev => [
+              ...prev,
+              { 
+                id: Date.now() + `-step-${i + 1}-completed`, 
+                type: 'ai', 
+                content: `✅ **Шаг ${i + 1} завершен: "${step.title}"**\n\n${result.textContent || 'Элемент создан и добавлен на канвас.'}`,
+                timestamp: new Date() 
+              }
+            ]);
+
+            // Обновляем план с результатом
+            setActivePlan(prevPlan => ({
+              ...prevPlan,
+              completedSteps: [...(prevPlan.completedSteps || []), result],
+              currentStep: i + 1
+            }));
+
+            // Небольшая пауза между шагами
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+          } else {
+            throw new Error(result.error || 'Не удалось создать элемент');
+          }
+
+        } catch (stepError) {
+          console.error(`❌ Ошибка на шаге ${i + 1}:`, stepError);
+          
+          setChatMessages(prev => [
+            ...prev,
+            { 
+              id: Date.now() + `-step-${i + 1}-error`, 
+              type: 'ai', 
+              content: `❌ **Ошибка на шаге ${i + 1}: "${step.title}"**\n\n${stepError.message}\n\nПродолжаю выполнение следующих шагов...`,
+              timestamp: new Date() 
+            }
+          ]);
+        }
+      }
+
+      // План выполнен
+      setChatMessages(prev => [
+        ...prev,
+        { 
+          id: Date.now() + '-plan-completed', 
+          type: 'ai', 
+          content: `🎉 **План "${plan.plan_title}" успешно выполнен!**\n\nВсе элементы созданы и добавлены на канвас. Теперь вы можете их редактировать или создать новый план.`,
+          timestamp: new Date() 
+        }
+      ]);
+
+      setActivePlan(prevPlan => ({
+        ...prevPlan,
+        status: 'completed'
+      }));
+
+    } catch (error) {
+      console.error('❌ Ошибка выполнения плана:', error);
+      
+      setChatMessages(prev => [
+        ...prev,
+        { 
+          id: Date.now() + '-plan-error', 
+          type: 'ai', 
+          content: `❌ **Ошибка выполнения плана**\n\n${error.message}`,
+          timestamp: new Date() 
+        }
+      ]);
+    } finally {
+      setIsExecutingPlan(false);
+      setIsLoading(false);
+      setLoadingStatus('');
+    }
+  }, [plannerService, isExecutingPlan]);
+
+  // Обработчик кликов по саджестам
+  const handleSuggestionClick = useCallback(async (suggestion) => {
+    console.log('🎯 Клик по саджесту:', suggestion);
+    
+    if (suggestion.action === 'execute_plan') {
+      await handleExecutePlan(suggestion.data);
+    } else if (suggestion.action === 'execute_step') {
+      await handleExecuteStep(suggestion.data);
+    } else if (suggestion.action === 'send_message') {
+      const message = suggestion.data || suggestion.text;
+      await handleSendMessage(message);
+    }
+  }, [handleExecutePlan, handleExecuteStep, handleSendMessage]);
+
   return (
     <div className="app">
       {/* Левая панель - Чат */}
@@ -410,6 +807,57 @@ ${editingElement.content}
               ✏️ Редактирование: {editingElement.name}
             </div>
           )}
+          
+          {/* Тестовые кнопки для отладки */}
+          <div style={{ marginTop: '8px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => handleSendMessage('Нарисуй флоу регистрации пользователя')}
+              style={{
+                fontSize: '10px',
+                padding: '2px 6px',
+                background: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+              disabled={isLoading}
+            >
+              🧪 Тест План
+            </button>
+            <button
+              onClick={() => handleSendMessage('Что такое React?')}
+              style={{
+                fontSize: '10px',
+                padding: '2px 6px',
+                background: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+              disabled={isLoading}
+            >
+              🧪 Тест Чат
+            </button>
+            <button
+              onClick={() => handleSendMessage('Создай кнопку')}
+              style={{
+                fontSize: '10px',
+                padding: '2px 6px',
+                background: '#ffc107',
+                color: 'black',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+              disabled={isLoading}
+            >
+              🧪 Тест Артефакт
+            </button>
+          </div>
+          
+
         </div>
         
         <div className="chat-messages">
@@ -420,6 +868,22 @@ ${editingElement.content}
                   <div key={i}>{line}</div>
                 ))}
               </div>
+              
+              {/* Кнопки-саджесты */}
+              {message.suggestions && message.suggestions.length > 0 && (
+                <div className="message-suggestions">
+                  {message.suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.id}
+                      className="suggestion-btn"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      disabled={isLoading}
+                    >
+                      {suggestion.text}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
           

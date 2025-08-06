@@ -12,6 +12,39 @@
   border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Саджесты в сообщениях */
+.message-suggestions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.suggestion-btn {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.suggestion-btn:hover:not(:disabled) {
+  background: #2196f3;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.suggestion-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Центральная область - Канвас */
