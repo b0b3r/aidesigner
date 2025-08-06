@@ -1,0 +1,333 @@
+/* Стили для PlanViewer */
+
+.plan-viewer {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Заголовок плана */
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.plan-title-section {
+  flex: 1;
+}
+
+.plan-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.plan-description {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.plan-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.plan-cancel-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.plan-cancel-btn:hover {
+  background: #fef2f2;
+}
+
+/* Прогресс-бар */
+.plan-progress {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Шаги плана */
+.plan-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-step {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.plan-step--completed {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.plan-step--current {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.plan-step--ready {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.plan-step--pending {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+/* Заголовок шага */
+.plan-step-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.plan-step-header:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.step-status-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  min-width: 24px;
+}
+
+.step-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.step-time {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.step-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-execute-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step-execute-btn:hover {
+  background: #2563eb;
+}
+
+.step-expand-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Детали шага */
+.plan-step-details {
+  padding: 0 16px 16px 52px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.step-description {
+  margin: 12px 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.step-dependencies {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: #fef3c7;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #92400e;
+}
+
+.step-result {
+  margin: 12px 0;
+  padding: 12px;
+  background: #f0fdf4;
+  border-radius: 6px;
+  border: 1px solid #bbf7d0;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.result-time {
+  color: #6b7280;
+}
+
+.result-text {
+  font-size: 13px;
+  color: #166534;
+  line-height: 1.4;
+}
+
+.step-error {
+  margin: 12px 0;
+  padding: 12px;
+  background: #fef2f2;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 12px;
+}
+
+.retry-step-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.retry-step-btn:hover {
+  background: #dc2626;
+}
+
+/* Подвал плана */
+.plan-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+  font-size: 12px;
+}
+
+.plan-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-executing {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.plan-created {
+  color: #6b7280;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .plan-viewer {
+    padding: 16px;
+    margin: 12px 0;
+  }
+  
+  .plan-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .plan-footer {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .plan-step-details {
+    padding-left: 16px;
+  }
+}
