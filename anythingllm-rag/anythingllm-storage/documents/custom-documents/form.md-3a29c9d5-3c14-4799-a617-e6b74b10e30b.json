@@ -1,0 +1,13 @@
+{
+    "id": "3a29c9d5-3c14-4799-a617-e6b74b10e30b",
+    "url": "file:///app/collector/hotdir/form.md",
+    "title": "form.md",
+    "docAuthor": "Unknown",
+    "description": "Unknown",
+    "docSource": "a text file uploaded by the user.",
+    "chunkSource": "",
+    "published": "8/6/2025, 9:03:41 PM",
+    "wordCount": 30,
+    "pageContent": "# Ant Design Form\r\n\r\n**Дизайн-система:** Ant Design\r\n**Дата создания:** 2025-08-06 23:57:58\r\n\r\n## Описание\r\n\r\nВысокопроизводительные компоненты подписки для сбора, проверки и отправки данных.\r\n\r\n## Компоненты\r\n\r\n- Form\r\n- Form.Item\r\n- Input\r\n- Select\r\n- Button\r\n\r\n## Использование\r\n\r\nИспользуйте Form.Item для каждого поля ввода\r\n\r\n",
+    "token_count_estimate": 116
+}

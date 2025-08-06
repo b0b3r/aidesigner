@@ -1,0 +1,13 @@
+{
+    "id": "12c5619b-1ae7-41ff-ad34-af9ff1eae708",
+    "url": "file:///app/collector/hotdir/cards.md",
+    "title": "cards.md",
+    "docAuthor": "Unknown",
+    "description": "Unknown",
+    "docSource": "a text file uploaded by the user.",
+    "chunkSource": "",
+    "published": "8/6/2025, 9:04:14 PM",
+    "wordCount": 37,
+    "pageContent": "# Material Design Cards\r\n\r\n**Дизайн-система:** Material Design 3\r\n**Дата создания:** 2025-08-06 23:57:58\r\n\r\n## Описание\r\n\r\nКарточки содержат контент и действия по одной теме.\r\n\r\n## Варианты\r\n\r\n- Elevated\r\n- Filled\r\n- Outlined\r\n\r\n## Компоненты\r\n\r\n- Header\r\n- Content\r\n- Actions\r\n- Media\r\n\r\n## Использование\r\n\r\nИспользуйте карточки для группировки связанной информации\r\n\r\n## Доступность\r\n\r\nОбеспечьте логическую структуру заголовков\r\n\r\n",
+    "token_count_estimate": 154
+}

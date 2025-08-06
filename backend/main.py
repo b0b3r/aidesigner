@@ -13,10 +13,37 @@ import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from config import SERVER_CONFIG, DEEPSEEK_CONFIG, LLM_PROMPTS, validate_config
+    from config import SERVER_CONFIG, DEEPSEEK_CONFIG, ANYTHINGLLM_CONFIG, LLM_PROMPTS, validate_config
+    
+    # Импорт AnythingLLM адаптера с обработкой ошибок
+    anythingllm_adapter = None
+    AnythingLLMAdapter = None
+    convert_deepseek_to_anythingllm_format = None
+    
+    try:
+        # Добавляем корневую папку проекта в путь
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        sys.path.insert(0, project_root)
+        from anythingllm_adapter import AnythingLLMAdapter, convert_deepseek_to_anythingllm_format
+        print("✅ AnythingLLM адаптер загружен")
+    except ImportError as e:
+        print(f"⚠️ AnythingLLM адаптер недоступен: {e}")
+        print("📝 Будет использоваться только DeepSeek API")
     print("✅ Config imported successfully")
     print(f"🔧 Backend will run on: {SERVER_CONFIG['backend']['host']}:{SERVER_CONFIG['backend']['port']}")
     print(f"🔑 DeepSeek API configured: {'Yes' if DEEPSEEK_CONFIG['api_key'] else 'No'}")
+    print(f"🤖 AnythingLLM enabled: {'Yes' if ANYTHINGLLM_CONFIG['enabled'] else 'No'}")
+    
+    # Инициализация AnythingLLM адаптера
+    if ANYTHINGLLM_CONFIG['enabled'] and AnythingLLMAdapter:
+        anythingllm_adapter = AnythingLLMAdapter(
+            base_url=ANYTHINGLLM_CONFIG['base_url'],
+            api_key=ANYTHINGLLM_CONFIG['api_key']
+        )
+        health_check = anythingllm_adapter.health_check()
+        print(f"🔗 AnythingLLM connection: {'✅ OK' if health_check['success'] else '❌ FAILED'}")
+    else:
+        print("📝 Using direct DeepSeek API")
 except ImportError as e:
     print(f"❌ Error importing config: {e}")
     print(f"📁 Current directory: {os.getcwd()}")
@@ -64,10 +91,32 @@ DEEPSEEK_API_URL = DEEPSEEK_CONFIG["api_url"]
 # Хранилище данных (в реальном проекте использовать базу данных)
 design_plans: Dict[str, DesignPlan] = {}
 
-def call_deepseek_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -> str:
-    """Вызов DeepSeek API"""
+def call_llm_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -> str:
+    """Вызов LLM API (AnythingLLM или DeepSeek)"""
+    
+    # Если AnythingLLM включен, используем его
+    if ANYTHINGLLM_CONFIG['enabled'] and anythingllm_adapter and convert_deepseek_to_anythingllm_format:
+        print("🤖 Используем AnythingLLM с RAG")
+        try:
+            result = convert_deepseek_to_anythingllm_format(messages, anythingllm_adapter)
+            
+            if result["success"]:
+                print(f"✅ Получен ответ от AnythingLLM")
+                if result.get("sources"):
+                    print(f"📚 Использованы источники: {len(result['sources'])}")
+                return result["response"]
+            else:
+                print(f"❌ Ошибка AnythingLLM: {result.get('error', 'Unknown error')}")
+                # Fallback на DeepSeek
+                print("🔄 Переключаемся на DeepSeek API")
+        except Exception as e:
+            print(f"❌ Исключение AnythingLLM: {e}")
+            print("🔄 Переключаемся на DeepSeek API")
+    
+    # Используем DeepSeek API (по умолчанию или fallback)
+    print("🌐 Используем DeepSeek API")
     if not DEEPSEEK_API_KEY:
-        raise HTTPException(status_code=500, detail="DeepSeek API key not configured")
+        raise HTTPException(status_code=500, detail="LLM API not configured")
     
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
@@ -77,21 +126,21 @@ def call_deepseek_api(messages: List[Dict[str, str]], model: str = "deepseek-cha
     data = {
         "model": "deepseek-chat", 
         "messages": messages,
-        "temperature": 0.7,  # Возвращаю нормальную температуру
-        "max_tokens": 2000   # Разумное количество без timeout'ов
+        "temperature": 0.7,
+        "max_tokens": 2000
     }
     
     print(f"🌐 Отправляем запрос к {DEEPSEEK_API_URL}")
     
     try:
-        response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data, timeout=60)  # Увеличил timeout из-за нагрузки на API
+        response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data, timeout=60)
         print(f"📡 Ответ DeepSeek API: {response.status_code}")
         response.raise_for_status()
         result = response.json()
         return result["choices"][0]["message"]["content"]
     except requests.exceptions.RequestException as e:
         print(f"💥 Ошибка API: {e}")
-        raise HTTPException(status_code=500, detail=f"DeepSeek API error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"LLM API error: {str(e)}")
 
 def parse_llm_response(response: str) -> Dict[str, Any]:
     """Парсинг ответа LLM для разделения текста и визуального контента"""
@@ -193,8 +242,8 @@ async def chat_with_llm(request: ChatRequest):
         print(f"🤖 Отправляю запрос к DeepSeek API...")
         print(f"🔑 API Key: {DEEPSEEK_CONFIG['api_key'][:10]}...")
         
-        # Вызываем DeepSeek API
-        response = call_deepseek_api(api_messages, request.model)
+        # Вызываем LLM API (AnythingLLM или DeepSeek)
+        response = call_llm_api(api_messages, request.model)
         print(f"✅ Получен ответ от DeepSeek")
         print(f"📄 Контент от LLM: {response[:200]}...")
         
@@ -253,7 +302,7 @@ async def create_design_plan(request: ChatRequest):
         messages = [{"role": "system", "content": plan_prompt}]
         messages.extend([{"role": msg.role, "content": msg.content} for msg in request.messages])
         
-        response = call_deepseek_api(messages, request.model)
+        response = call_llm_api(messages, request.model)
         
         # Пытаемся парсить JSON из ответа
         try:
@@ -350,7 +399,7 @@ async def generate_step_content(plan_id: str, step_id: str, request: ChatRequest
         
         messages.insert(0, {"role": "system", "content": step_prompt})
         
-        response = call_deepseek_api(messages)
+        response = call_llm_api(messages)
         parsed_response = parse_llm_response(response)
         
         # Обновляем этап

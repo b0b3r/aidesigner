@@ -1,0 +1,13 @@
+{
+    "id": "d85ede93-0055-47b7-b8e9-2cea907819ac",
+    "url": "file:///app/collector/hotdir/button.md",
+    "title": "button.md",
+    "docAuthor": "Unknown",
+    "description": "Unknown",
+    "docSource": "a text file uploaded by the user.",
+    "chunkSource": "",
+    "published": "8/6/2025, 9:03:41 PM",
+    "wordCount": 39,
+    "pageContent": "# Ant Design Button\r\n\r\n**Дизайн-система:** Ant Design\r\n**Дата создания:** 2025-08-06 23:57:58\r\n\r\n## Описание\r\n\r\nКнопка используется для запуска действия.\r\n\r\n## Типы\r\n\r\n- Primary\r\n- Default\r\n- Dashed\r\n- Text\r\n- Link\r\n\r\n## Размеры\r\n\r\n- Large\r\n- Middle\r\n- Small\r\n\r\n## Состояния\r\n\r\n- Loading\r\n- Disabled\r\n\r\n## Свойства (Props)\r\n\r\n- `type`\r\n- `size`\r\n- `loading`\r\n- `disabled`\r\n- `onClick`\r\n\r\n## Использование\r\n\r\nИспользуйте type='primary' для основных действий\r\n\r\n",
+    "token_count_estimate": 156
+}

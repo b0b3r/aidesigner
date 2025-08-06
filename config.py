@@ -29,6 +29,14 @@ DEEPSEEK_CONFIG = {
     "timeout": 60
 }
 
+# AnythingLLM Configuration
+ANYTHINGLLM_CONFIG = {
+    "api_key": os.getenv("ANYTHINGLLM_API_KEY", "M9RBFZM-MQR4B6A-G8YRM00-BH5RNP4"),
+    "base_url": "http://localhost:3001",
+    "workspace_slug": "myworkspace",
+    "enabled": os.getenv("USE_ANYTHINGLLM", "true").lower() == "true"
+}
+
 # LLM System Prompts
 LLM_PROMPTS = {
     "chat": """Ты эксперт по веб-дизайну и UX. Твоя задача - помочь создать современный дизайн веб-страниц и интерфейсов.

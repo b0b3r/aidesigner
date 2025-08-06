@@ -1,0 +1,13 @@
+{
+    "id": "d980f7ff-9cfd-403a-9987-c8e0f0980d42",
+    "url": "file:///app/collector/hotdir/cards.md",
+    "title": "cards.md",
+    "docAuthor": "Unknown",
+    "description": "Unknown",
+    "docSource": "a text file uploaded by the user.",
+    "chunkSource": "",
+    "published": "8/6/2025, 9:04:35 PM",
+    "wordCount": 34,
+    "pageContent": "# Bootstrap Cards\r\n\r\n**Дизайн-система:** Bootstrap 5\r\n**Дата создания:** 2025-08-06 23:57:58\r\n\r\n## Описание\r\n\r\nГибкий и расширяемый контейнер контента.\r\n\r\n## Компоненты\r\n\r\n- Card header\r\n- Card body\r\n- Card footer\r\n- Card image\r\n\r\n## CSS классы\r\n\r\n- `.card`\r\n- `.card-header`\r\n- `.card-body`\r\n- `.card-footer`\r\n\r\n## Использование\r\n\r\nИспользуйте карточки для группировки связанного контента\r\n\r\n",
+    "token_count_estimate": 136
+}

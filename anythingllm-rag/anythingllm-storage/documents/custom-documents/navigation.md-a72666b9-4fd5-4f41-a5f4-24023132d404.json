@@ -1,0 +1,13 @@
+{
+    "id": "a72666b9-4fd5-4f41-a5f4-24023132d404",
+    "url": "file:///app/collector/hotdir/navigation.md",
+    "title": "navigation.md",
+    "docAuthor": "Unknown",
+    "description": "Unknown",
+    "docSource": "a text file uploaded by the user.",
+    "chunkSource": "",
+    "published": "8/6/2025, 9:04:14 PM",
+    "wordCount": 36,
+    "pageContent": "# Material Design Navigation\r\n\r\n**Дизайн-система:** Material Design 3\r\n**Дата создания:** 2025-08-06 23:57:58\r\n\r\n## Описание\r\n\r\nКомпоненты навигации помогают пользователям перемещаться по приложению.\r\n\r\n## Типы\r\n\r\n- Bottom navigation\r\n- Navigation drawer\r\n- Tabs\r\n- Top app bar\r\n\r\n## Использование\r\n\r\nBottom navigation для 3-5 основных разделов\r\n\r\n## Доступность\r\n\r\nИспользуйте role='navigation' и aria-labels\r\n\r\n",
+    "token_count_estimate": 129
+}
