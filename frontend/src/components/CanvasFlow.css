@@ -322,11 +322,18 @@
 /* Interactive Elements in Artifacts */
 .ui-flow-content [data-element-id] {
   position: relative;
-  transition: all 0.2s ease;
+  transition: outline 0.2s ease, background-color 0.2s ease;
 }
 
 .ui-flow-content [data-element-id]:hover {
   background-color: rgba(0, 123, 255, 0.05) !important;
+}
+
+/* Стили для правильной очистки overlay-слоев */
+.ui-flow-content [data-element-id].overlay-cleared {
+  outline: none !important;
+  outline-offset: 0 !important;
+  background-color: transparent !important;
 }
 
 /* Responsive */

@@ -85,17 +85,28 @@ const UIComponentNode = ({ data, selected }) => {
     const container = contentRef.current;
     if (!container) return;
 
-    // Убираем все предыдущие outline
+    // Убираем все предыдущие outline и фоны
     const allElements = container.querySelectorAll('[data-element-id]');
     allElements.forEach(el => {
       el.style.outline = 'none';
-      el.style.backgroundColor = el.getAttribute('data-original-bg') || el.style.backgroundColor;
+      el.style.outlineOffset = '';
+      // Восстанавливаем оригинальный фон или убираем его
+      const originalBg = el.getAttribute('data-original-bg');
+      if (originalBg) {
+        el.style.backgroundColor = originalBg;
+      } else {
+        el.style.backgroundColor = '';
+      }
     });
 
     // Добавляем outline для выбранного элемента
     if (data.selectedInternalElement) {
       const selectedEl = container.querySelector(`[data-element-id="${data.selectedInternalElement}"]`);
       if (selectedEl) {
+        // Сохраняем оригинальный фон если не сохранен
+        if (!selectedEl.getAttribute('data-original-bg')) {
+          selectedEl.setAttribute('data-original-bg', selectedEl.style.backgroundColor || '');
+        }
         selectedEl.style.outline = '2px solid #007bff';
         selectedEl.style.outlineOffset = '2px';
       }
@@ -105,12 +116,32 @@ const UIComponentNode = ({ data, selected }) => {
     if (hoveredElementId && hoveredElementId !== data.selectedInternalElement) {
       const hoveredEl = container.querySelector(`[data-element-id="${hoveredElementId}"]`);
       if (hoveredEl) {
+        // Сохраняем оригинальный фон если не сохранен
+        if (!hoveredEl.getAttribute('data-original-bg')) {
+          hoveredEl.setAttribute('data-original-bg', hoveredEl.style.backgroundColor || '');
+        }
         hoveredEl.style.outline = '1px dashed #007bff';
         hoveredEl.style.outlineOffset = '1px';
         hoveredEl.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
       }
     }
   }, [data.selectedInternalElement, hoveredElementId, selectableContent]);
+
+  // Cleanup эффект для очистки всех overlay при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      const container = contentRef.current;
+      if (container) {
+        const allElements = container.querySelectorAll('[data-element-id]');
+        allElements.forEach(el => {
+          el.style.outline = 'none';
+          el.style.outlineOffset = '';
+          el.style.backgroundColor = '';
+          el.removeAttribute('data-original-bg');
+        });
+      }
+    };
+  }, []);
   
   return (
     <div className={`ui-flow-node ${selected ? 'selected' : ''}`} style={nodeStyle}>

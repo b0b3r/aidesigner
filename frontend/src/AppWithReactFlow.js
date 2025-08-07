@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import './App.css';
 import './components/CanvasFlow.css';
 import CanvasFlow from './components/CanvasFlow';
 import PropertiesPanel from './components/PropertiesPanel';
 import MessageRouter from './services/MessageRouter';
 import PlannerService from './services/PlannerService';
+import cssInjector from './utils/cssInjector';
 
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
@@ -107,6 +108,21 @@ function AppWithReactFlow() {
   
 
 
+  // Функция глобальной очистки всех overlay-слоев
+  const clearAllOverlays = useCallback(() => {
+    console.log('🧹 Очищаем все overlay-слои');
+    const allContainers = document.querySelectorAll('.ui-flow-content');
+    allContainers.forEach(container => {
+      const allElements = container.querySelectorAll('[data-element-id]');
+      allElements.forEach(el => {
+        el.style.outline = 'none';
+        el.style.outlineOffset = '';
+        el.style.backgroundColor = '';
+        el.removeAttribute('data-original-bg');
+      });
+    });
+  }, []);
+
   // Обработчики для React Flow компонента
   const handleElementSelect = useCallback((element) => {
     setSelectedElement(element);
@@ -117,12 +133,23 @@ function AppWithReactFlow() {
     }
     // Сбрасываем выбор внутреннего элемента при смене артефакта
     setSelectedInternalElement(null);
-  }, [editingElement]);
+    // Очищаем все overlay-слои при смене элемента
+    clearAllOverlays();
+  }, [editingElement, clearAllOverlays]);
 
   // Обработчики для выбора внутренних элементов в артефактах
+
   const handleInternalElementSelect = useCallback((artifactId, elementId, domElement) => {
     console.log('🎯 Выбран внутренний элемент:', elementId, 'в артефакте:', artifactId);
     console.log('🔍 DEBUG: domElement:', domElement);
+    
+    // Если elementId пустой, очищаем все overlay
+    if (!elementId) {
+      console.log('🧹 Очищаем выделение - вызываем clearAllOverlays');
+      clearAllOverlays();
+      setSelectedInternalElement(null);
+      return;
+    }
     
     // Устанавливаем выбранный внутренний элемент
     const newSelection = {
@@ -140,7 +167,29 @@ function AppWithReactFlow() {
       console.log('🔍 DEBUG: устанавливаем selectedElement:', artifact.name);
       setSelectedElement(artifact);
     }
-  }, [canvasElements, selectedElement]);
+  }, [canvasElements, selectedElement, clearAllOverlays]);
+
+  // Загружаем CSS дизайн-систем при инициализации
+  useEffect(() => {
+    cssInjector.loadDesignSystemsCSS();
+  }, []);
+
+  // Обработчик клавиши Escape для очистки overlay-слоев
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        console.log('🔑 Нажата клавиша Escape - очищаем overlay-слои');
+        clearAllOverlays();
+        setSelectedInternalElement(null);
+        setSelectedElement(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [clearAllOverlays]);
 
   const handleElementRegenerate = useCallback(async (elementId) => {
     const element = canvasElements.find(el => el.id === elementId);

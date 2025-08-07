@@ -1,0 +1,169 @@
+{
+  "material-design": {
+    "name": "Material Design 3",
+    "classes": {
+      "button": {
+        "primary": "mdc-button mdc-button--filled",
+        "secondary": "mdc-button mdc-button--outlined",
+        "text": "mdc-button mdc-button--text"
+      },
+      "card": {
+        "default": "mdc-card",
+        "elevated": "mdc-card mdc-card--elevated"
+      },
+      "text-field": {
+        "outlined": "mdc-text-field mdc-text-field--outlined",
+        "filled": "mdc-text-field mdc-text-field--filled"
+      }
+    },
+    "usage_examples": {
+      "button": {
+        "primary": {
+          "classes": "mdc-button mdc-button--filled",
+          "example": "<button class=\"mdc-button mdc-button--filled\">Текст</button>"
+        },
+        "secondary": {
+          "classes": "mdc-button mdc-button--outlined",
+          "example": "<button class=\"mdc-button mdc-button--outlined\">Текст</button>"
+        },
+        "text": {
+          "classes": "mdc-button mdc-button--text",
+          "example": "<button class=\"mdc-button mdc-button--text\">Текст</button>"
+        }
+      },
+      "card": {
+        "default": {
+          "classes": "mdc-card",
+          "example": "<card class=\"mdc-card\">Текст</card>"
+        },
+        "elevated": {
+          "classes": "mdc-card mdc-card--elevated",
+          "example": "<card class=\"mdc-card mdc-card--elevated\">Текст</card>"
+        }
+      },
+      "text-field": {
+        "outlined": {
+          "classes": "mdc-text-field mdc-text-field--outlined",
+          "example": "<text-field class=\"mdc-text-field mdc-text-field--outlined\">Текст</text-field>"
+        },
+        "filled": {
+          "classes": "mdc-text-field mdc-text-field--filled",
+          "example": "<text-field class=\"mdc-text-field mdc-text-field--filled\">Текст</text-field>"
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "name": "Bootstrap 5",
+    "classes": {
+      "button": {
+        "primary": "btn btn-primary",
+        "secondary": "btn btn-secondary",
+        "success": "btn btn-success",
+        "danger": "btn btn-danger"
+      },
+      "card": {
+        "default": "card",
+        "border": "card border-primary"
+      },
+      "form": {
+        "control": "form-control",
+        "select": "form-select"
+      }
+    },
+    "usage_examples": {
+      "button": {
+        "primary": {
+          "classes": "btn btn-primary",
+          "example": "<button class=\"btn btn-primary\">Текст</button>"
+        },
+        "secondary": {
+          "classes": "btn btn-secondary",
+          "example": "<button class=\"btn btn-secondary\">Текст</button>"
+        },
+        "success": {
+          "classes": "btn btn-success",
+          "example": "<button class=\"btn btn-success\">Текст</button>"
+        },
+        "danger": {
+          "classes": "btn btn-danger",
+          "example": "<button class=\"btn btn-danger\">Текст</button>"
+        }
+      },
+      "card": {
+        "default": {
+          "classes": "card",
+          "example": "<card class=\"card\">Текст</card>"
+        },
+        "border": {
+          "classes": "card border-primary",
+          "example": "<card class=\"card border-primary\">Текст</card>"
+        }
+      },
+      "form": {
+        "control": {
+          "classes": "form-control",
+          "example": "<form class=\"form-control\">Текст</form>"
+        },
+        "select": {
+          "classes": "form-select",
+          "example": "<form class=\"form-select\">Текст</form>"
+        }
+      }
+    }
+  },
+  "ant-design": {
+    "name": "Ant Design",
+    "classes": {
+      "button": {
+        "primary": "ant-btn ant-btn-primary",
+        "default": "ant-btn",
+        "dashed": "ant-btn ant-btn-dashed"
+      },
+      "card": {
+        "default": "ant-card",
+        "bordered": "ant-card ant-card-bordered"
+      },
+      "input": {
+        "default": "ant-input",
+        "search": "ant-input ant-input-search"
+      }
+    },
+    "usage_examples": {
+      "button": {
+        "primary": {
+          "classes": "ant-btn ant-btn-primary",
+          "example": "<button class=\"ant-btn ant-btn-primary\">Текст</button>"
+        },
+        "default": {
+          "classes": "ant-btn",
+          "example": "<button class=\"ant-btn\">Текст</button>"
+        },
+        "dashed": {
+          "classes": "ant-btn ant-btn-dashed",
+          "example": "<button class=\"ant-btn ant-btn-dashed\">Текст</button>"
+        }
+      },
+      "card": {
+        "default": {
+          "classes": "ant-card",
+          "example": "<card class=\"ant-card\">Текст</card>"
+        },
+        "bordered": {
+          "classes": "ant-card ant-card-bordered",
+          "example": "<card class=\"ant-card ant-card-bordered\">Текст</card>"
+        }
+      },
+      "input": {
+        "default": {
+          "classes": "ant-input",
+          "example": "<input class=\"ant-input\">Текст</input>"
+        },
+        "search": {
+          "classes": "ant-input ant-input-search",
+          "example": "<input class=\"ant-input ant-input-search\">Текст</input>"
+        }
+      }
+    }
+  }
+}
