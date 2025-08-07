@@ -94,6 +94,13 @@ design_plans: Dict[str, DesignPlan] = {}
 def call_llm_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -> str:
     """Вызов LLM API (AnythingLLM или DeepSeek)"""
     
+    print(f"🔧 Конфигурация AnythingLLM:")
+    print(f"   - enabled: {ANYTHINGLLM_CONFIG['enabled']}")
+    print(f"   - adapter: {'✅' if anythingllm_adapter else '❌'}")
+    print(f"   - converter: {'✅' if convert_deepseek_to_anythingllm_format else '❌'}")
+    print(f"   - base_url: {ANYTHINGLLM_CONFIG['base_url']}")
+    print(f"   - workspace: {ANYTHINGLLM_CONFIG['workspace_slug']}")
+    
     # Если AnythingLLM включен, используем его
     if ANYTHINGLLM_CONFIG['enabled'] and anythingllm_adapter and convert_deepseek_to_anythingllm_format:
         print("🤖 Используем AnythingLLM с RAG")

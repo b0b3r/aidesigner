@@ -21,7 +21,7 @@ class AnythingLLMAdapter:
         """
         self.base_url = base_url.rstrip('/')
         self.api_key = api_key
-        self.workspace_slug = "myworkspace"  # Slug рабочего пространства
+        self.workspace_slug = "MyWorkspace"  # Slug рабочего пространства
         
         # Заголовки для запросов
         self.headers = {

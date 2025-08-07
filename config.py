@@ -33,7 +33,7 @@ DEEPSEEK_CONFIG = {
 ANYTHINGLLM_CONFIG = {
     "api_key": os.getenv("ANYTHINGLLM_API_KEY", "M9RBFZM-MQR4B6A-G8YRM00-BH5RNP4"),
     "base_url": "http://localhost:3001",
-    "workspace_slug": "myworkspace",
+    "workspace_slug": "MyWorkspace",
     "enabled": os.getenv("USE_ANYTHINGLLM", "true").lower() == "true"
 }
 

@@ -1,0 +1,10 @@
+[33m10f8ea75[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/smart-chat-routing[m[33m, [m[1;31morigin/feature/smart-chat-routing[m[33m)[m 🗑️ Удаление адаптера AnythingLLM
+[33m6925612b[m ✨ Добавлена поддержка AnythingLLM для улучшения взаимодействия с пользователем
+[33m436880f4[m 🔧 Обновление кэша ESLint и бинарных файлов пакетов
+[33m83ccfa14[m ✨ Добавлены саджесты в чат для улучшения взаимодействия с пользователем
+[33mbac430fa[m[33m ([m[1;31morigin/feature/visual-editor[m[33m, [m[1;32mfeature/visual-editor[m[33m)[m 🔧 Исправление проблемы с обновлением состояния визуального редактора
+[33md4273336[m ✨ Completely redesign visual controls for better UX
+[33mde144e3a[m 🔧 Fix visual editor selectedElementData issue
+[33m9f448afa[m 🐛 Add debug logs to troubleshoot visual editor
+[33me24dbfc7[m 📚 Add Visual Editor documentation and usage guide
+[33m1e704dd3[m 🎨 Add Visual Editor MVP for artifact editing
