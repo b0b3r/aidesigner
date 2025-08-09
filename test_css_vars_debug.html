@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐛 Отладка CSS переменных</title>
+    
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        
+        /* Имитируем стили из CanvasFlow.js */
+        .canvas-flow-styles {
+            --mdc-theme-primary: #6200ee;
+            --mdc-theme-on-primary: #ffffff;
+            --mdc-theme-secondary: #018786;
+            --mdc-theme-on-secondary: #ffffff;
+            --mdc-theme-surface: #ffffff;
+            --mdc-theme-on-surface: #000000;
+            --mdc-theme-background: #e8f5e8;
+            --mdc-theme-on-background: #000000;
+            --mdc-theme-text-primary-on-background: rgba(0, 0, 0, 0.87);
+            --mdc-theme-text-secondary-on-background: rgba(0, 0, 0, 0.54);
+            --mdc-theme-shadow: rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-box {
+            width: 200px;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .debug-info {
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐛 Отладка CSS переменных</h1>
+    
+    <div class="test-container">
+        <h2>1. Прямая проверка CSS переменных</h2>
+        
+        <div class="canvas-flow-styles">
+            <div class="test-box" style="background-color: var(--mdc-theme-background);">
+                var(--mdc-theme-background)
+            </div>
+            
+            <div class="test-box" style="background-color: #e8f5e8;">
+                Прямой цвет #e8f5e8
+            </div>
+            
+            <div class="test-box" style="background-color: var(--mdc-theme-primary);">
+                var(--mdc-theme-primary)
+            </div>
+            
+            <div class="test-box" style="background-color: var(--mdc-theme-surface);">
+                var(--mdc-theme-surface)
+            </div>
+        </div>
+        
+        <div class="debug-info" id="css-debug">
+            Загружаем отладочную информацию...
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>2. Проверка вашей карточки</h2>
+        
+        <div class="canvas-flow-styles">
+            <!-- Копируем точно вашу карточку -->
+            <div class="mdc-card" style="width: 100%; max-width: 360px;">
+                <div class="mdc-card__media" style="height: 200px; background-color: var(--mdc-theme-background); display: flex; justify-content: center; align-items: center; border: 3px solid red;">
+                    <span style="font-size: 48px; color: var(--mdc-theme-text-secondary-on-background);">📷</span>
+                </div>
+                <div class="mdc-card__primary-action" tabindex="0">
+                    <div style="padding: 16px; background-color: var(--mdc-theme-surface); border: 3px solid blue;">
+                        <h3 style="margin: 0 0 8px 0; color: var(--mdc-theme-text-primary-on-background);">Название товара</h3>
+                        <p style="margin: 0 0 16px 0; color: var(--mdc-theme-text-secondary-on-background);">Краткое описание товара</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug-info" id="card-debug">
+            Проверяем цвета карточки...
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>3. Альтернативное решение - прямые цвета</h2>
+        
+        <div class="canvas-flow-styles">
+            <div class="mdc-card" style="width: 100%; max-width: 360px;">
+                <div class="mdc-card__media" style="height: 200px; background-color: #e8f5e8; display: flex; justify-content: center; align-items: center; border: 3px solid red;">
+                    <span style="font-size: 48px; color: rgba(0, 0, 0, 0.54);">📷</span>
+                </div>
+                <div class="mdc-card__primary-action" tabindex="0">
+                    <div style="padding: 16px; background-color: #ffffff; border: 3px solid blue;">
+                        <h3 style="margin: 0 0 8px 0; color: rgba(0, 0, 0, 0.87);">Название товара (прямые цвета)</h3>
+                        <p style="margin: 0 0 16px 0; color: rgba(0, 0, 0, 0.54);">Краткое описание товара</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function debugCSSVariables() {
+            const container = document.querySelector('.canvas-flow-styles');
+            const computedStyle = getComputedStyle(container);
+            
+            const vars = [
+                '--mdc-theme-primary',
+                '--mdc-theme-background', 
+                '--mdc-theme-surface',
+                '--mdc-theme-text-primary-on-background',
+                '--mdc-theme-text-secondary-on-background'
+            ];
+            
+            let debugText = 'CSS переменные в контейнере:\n';
+            vars.forEach(varName => {
+                const value = computedStyle.getPropertyValue(varName).trim();
+                debugText += `${varName}: "${value}" ${value ? '✅' : '❌'}\n`;
+            });
+            
+            document.getElementById('css-debug').textContent = debugText;
+            console.log('🔍 CSS Variables:', debugText);
+        }
+        
+        function debugCardColors() {
+            const mediaElement = document.querySelector('.canvas-flow-styles .mdc-card__media');
+            const surfaceElement = document.querySelector('.canvas-flow-styles [style*="background-color: var(--mdc-theme-surface)"]');
+            
+            let debugText = 'Реальные цвета элементов карточки:\n';
+            
+            if (mediaElement) {
+                const bgColor = getComputedStyle(mediaElement).backgroundColor;
+                debugText += `Media background: ${bgColor}\n`;
+            }
+            
+            if (surfaceElement) {
+                const bgColor = getComputedStyle(surfaceElement).backgroundColor;
+                debugText += `Surface background: ${bgColor}\n`;
+            }
+            
+            // Проверяем все элементы с var()
+            const varElements = document.querySelectorAll('[style*="var(--mdc-theme"]');
+            debugText += `\nЭлементов с var(): ${varElements.length}\n`;
+            
+            varElements.forEach((el, i) => {
+                const style = el.getAttribute('style');
+                const computedBg = getComputedStyle(el).backgroundColor;
+                debugText += `Элемент ${i + 1}: ${computedBg}\n`;
+            });
+            
+            document.getElementById('card-debug').textContent = debugText;
+            console.log('🎨 Card Colors:', debugText);
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                debugCSSVariables();
+                debugCardColors();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

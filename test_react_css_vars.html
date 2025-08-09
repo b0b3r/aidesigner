@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Тест React CSS переменных</title>
+    
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        
+        .test-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .debug-info {
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .test-box {
+            width: 300px;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест React CSS переменных</h1>
+    
+    <div class="test-container">
+        <h2>1. Проверка CSS переменных в обычном HTML</h2>
+        
+        <div style="--mdc-theme-background: #e8f5e8; --mdc-theme-primary: #6200ee;">
+            <div class="test-box" style="background-color: var(--mdc-theme-background);">
+                var(--mdc-theme-background) в HTML
+            </div>
+            
+            <div class="test-box" style="background-color: var(--mdc-theme-primary); color: white;">
+                var(--mdc-theme-primary) в HTML
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>2. Имитация React style объекта (как у нас было)</h2>
+        
+        <div id="react-style-test">
+            Загружаем...
+        </div>
+        
+        <div class="debug-info" id="react-debug">
+            Проверяем React стили...
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>3. Тест вашей проблемной карточки</h2>
+        
+        <div id="card-test">
+            Загружаем карточку...
+        </div>
+        
+        <div class="debug-info" id="card-debug">
+            Проверяем карточку...
+        </div>
+    </div>
+    
+    <script>
+        // Имитируем React style объект (старый способ)
+        function testOldReactStyle() {
+            const container = document.getElementById('react-style-test');
+            const div = document.createElement('div');
+            
+            // Пытаемся установить CSS переменные как в React
+            const reactStyle = {
+                '--mdc-theme-background': '#e8f5e8',
+                '--mdc-theme-primary': '#6200ee',
+                width: '300px',
+                height: '100px',
+                border: '2px solid red'
+            };
+            
+            // Применяем стили
+            Object.assign(div.style, reactStyle);
+            div.innerHTML = '<div style="background-color: var(--mdc-theme-background); padding: 20px;">React style test</div>';
+            
+            container.appendChild(div);
+            
+            // Проверяем результат
+            const computedStyle = getComputedStyle(div);
+            const bgVar = computedStyle.getPropertyValue('--mdc-theme-background');
+            
+            document.getElementById('react-debug').textContent = 
+                `CSS переменная --mdc-theme-background: "${bgVar}"\n` +
+                `Установлена: ${bgVar ? '✅' : '❌'}`;
+        }
+        
+        // Имитируем React style объект (новый способ со spread)
+        function testNewReactStyle() {
+            const container = document.getElementById('card-test');
+            const div = document.createElement('div');
+            
+            // Новый способ с spread operator
+            const baseStyle = {
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+                fontSize: '12px',
+                position: 'relative'
+            };
+            
+            const cssVars = {
+                '--mdc-theme-primary': '#6200ee',
+                '--mdc-theme-on-primary': '#ffffff',
+                '--mdc-theme-secondary': '#018786',
+                '--mdc-theme-on-secondary': '#ffffff',
+                '--mdc-theme-surface': '#ffffff',
+                '--mdc-theme-on-surface': '#000000',
+                '--mdc-theme-background': '#e8f5e8',
+                '--mdc-theme-on-background': '#000000',
+                '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
+                '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
+                '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)'
+            };
+            
+            const finalStyle = { ...baseStyle, ...cssVars };
+            
+            // Применяем стили
+            Object.assign(div.style, finalStyle);
+            
+            // Добавляем тестовую карточку
+            div.innerHTML = `
+                <div style="width: 100%; max-width: 360px;">
+                    <div style="height: 200px; background-color: var(--mdc-theme-background); display: flex; justify-content: center; align-items: center; border: 3px solid red;">
+                        <span style="font-size: 48px; color: var(--mdc-theme-text-secondary-on-background);">📷</span>
+                    </div>
+                    <div style="padding: 16px; background-color: var(--mdc-theme-surface); border: 3px solid blue;">
+                        <h3 style="margin: 0 0 8px 0; color: var(--mdc-theme-text-primary-on-background);">Название товара</h3>
+                        <p style="margin: 0 0 16px 0; color: var(--mdc-theme-text-secondary-on-background);">Краткое описание товара</p>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(div);
+            
+            // Проверяем результат
+            const mediaElement = div.querySelector('[style*="background-color: var(--mdc-theme-background)"]');
+            const surfaceElement = div.querySelector('[style*="background-color: var(--mdc-theme-surface)"]');
+            
+            let debugText = 'Результат нового способа:\n';
+            
+            if (mediaElement) {
+                const bgColor = getComputedStyle(mediaElement).backgroundColor;
+                debugText += `Media background: ${bgColor}\n`;
+                debugText += `Ожидалось: rgb(232, 245, 232) или #e8f5e8\n`;
+                debugText += `Работает: ${bgColor.includes('232, 245, 232') || bgColor.includes('e8f5e8') ? '✅' : '❌'}\n`;
+            }
+            
+            if (surfaceElement) {
+                const bgColor = getComputedStyle(surfaceElement).backgroundColor;
+                debugText += `Surface background: ${bgColor}\n`;
+            }
+            
+            // Проверяем CSS переменные
+            const computedStyle = getComputedStyle(div);
+            const bgVar = computedStyle.getPropertyValue('--mdc-theme-background');
+            debugText += `\nCSS переменная: "${bgVar}"\n`;
+            debugText += `Установлена: ${bgVar ? '✅' : '❌'}`;
+            
+            document.getElementById('card-debug').textContent = debugText;
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testOldReactStyle();
+                testNewReactStyle();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

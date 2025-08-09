@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест стилей артефакта</title>
+    <style>
+        /* Имитируем стили артефакта ДО исправления */
+        .old-artifact-content {
+            flex: 1;
+            padding: 12px;
+            overflow: auto;
+            background: white; /* ← ПРОБЛЕМА */
+        }
+        
+        /* Стили артефакта ПОСЛЕ исправления */
+        .new-artifact-content {
+            flex: 1;
+            padding: 12px;
+            overflow: auto;
+            /* Убираем принудительный белый фон */
+        }
+        
+        .test-container {
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f0f0f0;
+            padding: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест переопределения стилей в артефактах</h1>
+    
+    <div class="test-container">
+        <div class="test-header">❌ ДО исправления (с принудительным белым фоном)</div>
+        <div class="old-artifact-content">
+            <!-- Имитируем наш HTML с токенами -->
+            <style>
+                :root, *, *::before, *::after {
+                    --mdc-theme-primary: #6200ee !important;
+                    --mdc-theme-on-primary: #ffffff !important;
+                }
+            </style>
+            <button style="background-color: #6200ee; color: #ffffff; padding: 12px 24px; border: none; border-radius: 4px;">
+                Primary Button (должна быть фиолетовой, но фон белый)
+            </button>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-header">✅ ПОСЛЕ исправления (без принудительного фона)</div>
+        <div class="new-artifact-content">
+            <!-- Тот же HTML -->
+            <style>
+                :root, *, *::before, *::after {
+                    --mdc-theme-primary: #6200ee !important;
+                    --mdc-theme-on-primary: #ffffff !important;
+                }
+            </style>
+            <button style="background-color: #6200ee; color: #ffffff; padding: 12px 24px; border: none; border-radius: 4px;">
+                Primary Button (должна быть фиолетовой)
+            </button>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-header">🎯 Тест с фоном контейнера</div>
+        <div class="new-artifact-content" style="background-color: #f5f5f5;">
+            <div style="background-color: #ffffff; padding: 16px; border-radius: 8px; margin: 8px 0;">
+                <button style="background-color: #6200ee; color: #ffffff; padding: 12px 24px; border: none; border-radius: 4px;">
+                    Primary Button на карточке
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('🧪 Тест стилей артефакта загружен');
+        console.log('Проверьте, что кнопки во втором и третьем блоке фиолетовые!');
+    </script>
+</body>
+</html>

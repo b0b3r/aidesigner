@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест замены токенов</title>
+</head>
+<body>
+    <h1>🧪 Тест замены CSS переменных на реальные значения</h1>
+    
+    <div id="before">
+        <h2>❌ ДО замены (с переменными):</h2>
+        <div style="background-color: var(--mdc-theme-primary); color: var(--mdc-theme-on-primary); padding: 16px; border-radius: 8px;">
+            Кнопка с переменными (может не работать)
+        </div>
+    </div>
+    
+    <div id="after">
+        <h2>✅ ПОСЛЕ замены (с реальными значениями):</h2>
+        <div style="background-color: #6200ee; color: #ffffff; padding: 16px; border-radius: 8px;">
+            Кнопка с реальными значениями (должна работать)
+        </div>
+    </div>
+    
+    <script>
+        // Имитируем функцию замены из cssInjector
+        function replaceTokens(htmlContent) {
+            const tokens = {
+                '--mdc-theme-primary': '#6200ee',
+                '--mdc-theme-on-primary': '#ffffff',
+                '--mdc-theme-surface': '#ffffff',
+                '--mdc-theme-background': '#f5f5f5',
+                '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
+                '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
+                '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)'
+            };
+            
+            let processedHTML = htmlContent;
+            
+            Object.entries(tokens).forEach(([variable, value]) => {
+                const varPattern = new RegExp(`var\\(${variable.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}\\)`, 'g');
+                processedHTML = processedHTML.replace(varPattern, value);
+            });
+            
+            return processedHTML;
+        }
+        
+        // Тестируем замену
+        const originalHTML = `<div style="background-color: var(--mdc-theme-primary); color: var(--mdc-theme-on-primary);">Тест</div>`;
+        const replacedHTML = replaceTokens(originalHTML);
+        
+        console.log('🔍 ТЕСТ ЗАМЕНЫ ТОКЕНОВ:');
+        console.log('Оригинал:', originalHTML);
+        console.log('После замены:', replacedHTML);
+        console.log('Замена работает:', !replacedHTML.includes('var(--mdc-theme'));
+        
+        // Добавляем результат на страницу
+        const testDiv = document.createElement('div');
+        testDiv.innerHTML = `
+            <h2>🧪 Результат функции замены:</h2>
+            <div style="background: #f0f0f0; padding: 16px; border-radius: 8px; font-family: monospace;">
+                <strong>Оригинал:</strong><br>
+                <code>${originalHTML}</code><br><br>
+                <strong>После замены:</strong><br>
+                <code>${replacedHTML}</code>
+            </div>
+            <br>
+            <div>Результат замены:</div>
+            ${replacedHTML}
+        `;
+        document.body.appendChild(testDiv);
+    </script>
+</body>
+</html>

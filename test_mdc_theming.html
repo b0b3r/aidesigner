@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест правильной MDC темизации</title>
+    
+    <!-- Подключаем в том же порядке, что и в проекте -->
+    <link href="frontend/public/mdc-theme-custom.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/button@latest/dist/mdc.button.min.css" rel="stylesheet">
+</head>
+<body>
+    <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+        <h1>🎨 Тест правильной MDC темизации</h1>
+        
+        <div style="margin: 20px 0; padding: 16px; border: 2px solid #ddd; border-radius: 8px;">
+            <h2>1. Отладочные цвета темы</h2>
+            <div class="debug-theme-colors">
+                <div class="debug-color-sample debug-primary">P</div>
+                <div class="debug-color-sample debug-secondary">S</div>
+                <div class="debug-color-sample debug-surface">Sur</div>
+            </div>
+            <p>P = Primary (#6200ee), S = Secondary (#018786), Sur = Surface (#ffffff)</p>
+        </div>
+        
+        <div style="margin: 20px 0; padding: 16px; border: 2px solid #ddd; border-radius: 8px;">
+            <h2>2. Чистые MDC кнопки (должны использовать тему автоматически)</h2>
+            <button class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label">Raised Button</span>
+            </button>
+            
+            <button class="mdc-button mdc-button--outlined">
+                <span class="mdc-button__label">Outlined Button</span>
+            </button>
+            
+            <button class="mdc-button">
+                <span class="mdc-button__label">Text Button</span>
+            </button>
+        </div>
+        
+        <div style="margin: 20px 0; padding: 16px; border: 2px solid #ddd; border-radius: 8px;">
+            <h2>3. Кастомные элементы с CSS переменными</h2>
+            <div style="background-color: var(--mdc-theme-surface); padding: 16px; border-radius: 8px; margin: 8px 0; box-shadow: 0 2px 4px var(--mdc-theme-shadow);">
+                <h3 style="color: var(--mdc-theme-text-primary-on-background); margin: 0 0 8px;">Surface карточка</h3>
+                <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 0;">Текст на поверхности с правильными цветами</p>
+            </div>
+            
+            <button style="
+                background-color: var(--mdc-theme-secondary);
+                color: var(--mdc-theme-on-secondary);
+                border: none;
+                padding: 12px 24px;
+                border-radius: 4px;
+                font-family: 'Roboto', sans-serif;
+                font-weight: 500;
+                cursor: pointer;
+            ">
+                Кастомная кнопка с Secondary цветом
+            </button>
+        </div>
+        
+        <div style="margin: 20px 0; padding: 16px; border: 2px solid #ddd; border-radius: 8px;">
+            <h2>4. Проверка CSS переменных</h2>
+            <div id="css-vars-check"></div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+        // Инициализируем MDC
+        if (typeof mdc !== 'undefined') {
+            mdc.autoInit();
+            console.log('✅ MDC инициализирован');
+        }
+        
+        // Проверяем CSS переменные
+        function checkCSSVariables() {
+            const root = getComputedStyle(document.documentElement);
+            const vars = [
+                '--mdc-theme-primary',
+                '--mdc-theme-secondary', 
+                '--mdc-theme-surface',
+                '--mdc-theme-background',
+                '--mdc-theme-on-primary',
+                '--mdc-theme-text-primary-on-background'
+            ];
+            
+            console.log('🔍 Проверяем CSS переменные:');
+            const results = [];
+            
+            vars.forEach(varName => {
+                const value = root.getPropertyValue(varName).trim();
+                console.log(`${varName}: ${value || 'НЕ НАЙДЕНА'}`);
+                results.push(`<div><strong>${varName}:</strong> <span style="color: ${value || 'red'}">${value || 'НЕ НАЙДЕНА'}</span></div>`);
+            });
+            
+            document.getElementById('css-vars-check').innerHTML = results.join('');
+        }
+        
+        // Проверяем цвета кнопок
+        function checkButtonColors() {
+            const buttons = document.querySelectorAll('button');
+            console.log('🔍 Проверяем цвета кнопок:');
+            
+            buttons.forEach((btn, index) => {
+                const style = getComputedStyle(btn);
+                const bgColor = style.backgroundColor;
+                const textColor = style.color;
+                
+                console.log(`Кнопка ${index + 1}: "${btn.textContent.trim()}"`);
+                console.log(`  Background: ${bgColor}`);
+                console.log(`  Color: ${textColor}`);
+                console.log(`  Фиолетовая: ${bgColor === 'rgb(98, 0, 238)' ? '✅' : '❌'}`);
+                console.log('---');
+            });
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkCSSVariables();
+                checkButtonColors();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

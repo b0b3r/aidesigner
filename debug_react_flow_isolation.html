@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Отладка изоляции React Flow</title>
+    
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        :root {
+            --mdc-theme-primary: #6200ee;
+            --mdc-theme-background: #e8f5e8;
+            --mdc-theme-surface: #ffffff;
+        }
+        
+        .global-test {
+            background: var(--mdc-theme-background);
+            padding: 20px;
+            border: 3px solid red;
+            margin: 10px 0;
+        }
+        
+        .react-flow-simulation {
+            /* Имитируем изоляцию React Flow узла */
+            position: relative;
+            border: 2px solid blue;
+            padding: 10px;
+            margin: 20px 0;
+        }
+        
+        .with-inline-vars {
+            --mdc-theme-primary: #6200ee;
+            --mdc-theme-background: #e8f5e8;
+            --mdc-theme-surface: #ffffff;
+            --mdc-theme-text-secondary-on-background: rgba(0, 0, 0, 0.54);
+        }
+        
+        .debug-info {
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Отладка изоляции React Flow</h1>
+    
+    <div>
+        <h2>1. Глобальные CSS переменные (работают)</h2>
+        <div class="global-test">
+            Фон из глобальной переменной var(--mdc-theme-background)
+        </div>
+    </div>
+    
+    <div>
+        <h2>2. Имитация React Flow узла БЕЗ inline переменных</h2>
+        <div class="react-flow-simulation">
+            <div style="background-color: var(--mdc-theme-background); padding: 20px; border: 3px solid red;">
+                ❌ Inline var() БЕЗ локальных переменных
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <h2>3. Имитация React Flow узла С inline переменными</h2>
+        <div class="react-flow-simulation with-inline-vars">
+            <div style="background-color: var(--mdc-theme-background); padding: 20px; border: 3px solid red;">
+                ✅ Inline var() С локальными переменными
+            </div>
+            
+            <div style="height: 100px; background-color: var(--mdc-theme-background); display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+                <span style="color: var(--mdc-theme-text-secondary-on-background);">📷 Тест карточки</span>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <h2>4. JavaScript установка CSS переменных</h2>
+        <div id="js-test" class="react-flow-simulation">
+            <div style="background-color: var(--mdc-theme-background); padding: 20px; border: 3px solid red;">
+                🔧 JavaScript setProperty
+            </div>
+        </div>
+        
+        <div class="debug-info" id="js-debug">
+            Проверяем JavaScript установку...
+        </div>
+    </div>
+    
+    <script>
+        // Тест JavaScript установки CSS переменных
+        function testJavaScriptSetProperty() {
+            const container = document.getElementById('js-test');
+            
+            // Устанавливаем CSS переменные через JavaScript
+            container.style.setProperty('--mdc-theme-primary', '#6200ee');
+            container.style.setProperty('--mdc-theme-background', '#e8f5e8');
+            container.style.setProperty('--mdc-theme-surface', '#ffffff');
+            container.style.setProperty('--mdc-theme-text-secondary-on-background', 'rgba(0, 0, 0, 0.54)');
+            
+            // Проверяем результат
+            const computedStyle = getComputedStyle(container);
+            const bgVar = computedStyle.getPropertyValue('--mdc-theme-background');
+            
+            // Проверяем фактический цвет элемента
+            const testElement = container.querySelector('[style*="background-color: var(--mdc-theme-background)"]');
+            const actualBg = testElement ? getComputedStyle(testElement).backgroundColor : 'не найден';
+            
+            document.getElementById('js-debug').textContent = 
+                `CSS переменная --mdc-theme-background: "${bgVar}"\n` +
+                `Установлена: ${bgVar ? '✅' : '❌'}\n` +
+                `Фактический background: ${actualBg}\n` +
+                `Ожидался: rgb(232, 245, 232)\n` +
+                `Работает: ${actualBg.includes('232, 245, 232') ? '✅' : '❌'}`;
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(testJavaScriptSetProperty, 500);
+        });
+    </script>
+</body>
+</html>

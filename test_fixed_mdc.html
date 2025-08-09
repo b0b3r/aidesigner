@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Тест исправленных MDC кнопок</title>
+    
+    <!-- Подключаем исправленную тему -->
+    <link href="frontend/public/mdc-theme-custom.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    
+    <style>
+        .test-section {
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .artifact-container {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            /* Имитируем CSS переменные из CanvasFlow.js */
+            --mdc-theme-primary: #6200ee;
+            --mdc-theme-on-primary: #ffffff;
+            --mdc-theme-secondary: #018786;
+            --mdc-theme-on-secondary: #ffffff;
+            --mdc-theme-surface: #ffffff;
+            --mdc-theme-on-surface: #000000;
+            --mdc-theme-background: #f5f5f5;
+            --mdc-theme-text-primary-on-background: rgba(0, 0, 0, 0.87);
+            --mdc-theme-shadow: rgba(0, 0, 0, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Тест исправленных MDC кнопок</h1>
+    
+    <div class="test-section">
+        <h2>❌ НЕПРАВИЛЬНО: mdc-button--filled (НЕ СУЩЕСТВУЕТ)</h2>
+        <div class="artifact-container">
+            <button class="mdc-button mdc-button--filled">
+                <span class="mdc-button__label">Неправильная кнопка</span>
+            </button>
+            <p style="color: var(--mdc-theme-text-secondary-on-background); font-size: 12px; margin-top: 8px;">
+                ⚠️ Этот класс не существует в MDC
+            </p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>✅ ПРАВИЛЬНО: Правильные MDC классы</h2>
+        <div class="artifact-container">
+            <div class="button-group">
+                <button class="mdc-button mdc-button--raised">
+                    <span class="mdc-button__label">Filled (Raised)</span>
+                </button>
+                
+                <button class="mdc-button mdc-button--outlined">
+                    <span class="mdc-button__label">Outlined</span>
+                </button>
+                
+                <button class="mdc-button">
+                    <span class="mdc-button__label">Text Button</span>
+                </button>
+                
+                <button class="mdc-button mdc-button--tonal">
+                    <span class="mdc-button__label">Tonal</span>
+                </button>
+            </div>
+            
+            <p style="color: var(--mdc-theme-text-secondary-on-background); font-size: 12px;">
+                ✅ Все эти классы правильные и должны работать
+            </p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 ТЕСТ: Surface карточка с улучшенной тенью</h2>
+        <div class="artifact-container">
+            <div style="background-color: var(--mdc-theme-surface); padding: 12px; border-radius: 8px; margin-top: 16px; box-shadow: 0 2px 4px var(--mdc-theme-shadow);">
+                <p style="color: var(--mdc-theme-text-primary-on-background); margin: 0; font-size: 14px;">
+                    Карточка с surface цветом и тенью
+                </p>
+                <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 8px 0 0; font-size: 12px;">
+                    Теперь должна быть видна благодаря тени
+                </p>
+            </div>
+            
+            <!-- Используем новый класс -->
+            <div class="surface-card" style="margin-top: 16px; padding: 12px;">
+                <p style="color: var(--mdc-theme-on-surface); margin: 0; font-size: 14px;">
+                    Карточка с классом .surface-card
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 СРАВНЕНИЕ: До и после исправлений</h2>
+        <div class="artifact-container">
+            <h4>Старый код (проблемный):</h4>
+            <button class="mdc-button mdc-button--filled" 
+                    style="background-color: var(--mdc-theme-primary); color: var(--mdc-theme-on-primary); padding: 0 24px; height: 40px; border: none; border-radius: 20px;">
+                <span class="mdc-button__label">Старая кнопка</span>
+            </button>
+            
+            <h4 style="margin-top: 24px;">Новый код (исправленный):</h4>
+            <button class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label">Новая кнопка</span>
+            </button>
+            
+            <p style="color: var(--mdc-theme-text-secondary-on-background); font-size: 12px; margin-top: 12px;">
+                📝 Новая кнопка использует правильный класс и минимум inline стилей
+            </p>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+        // Инициализируем MDC
+        if (typeof mdc !== 'undefined') {
+            mdc.autoInit();
+        }
+        
+        // Проверяем цвета кнопок
+        function checkButtonColors() {
+            const buttons = document.querySelectorAll('.mdc-button--raised, .mdc-button--outlined');
+            console.log('🔍 Проверяем исправленные кнопки:');
+            
+            buttons.forEach((btn, index) => {
+                const style = getComputedStyle(btn);
+                const bgColor = style.backgroundColor;
+                const textColor = style.color;
+                const isPurple = bgColor === 'rgb(98, 0, 238)' || bgColor.includes('98, 0, 238');
+                
+                console.log(`Кнопка ${index + 1}: "${btn.textContent.trim()}"`);
+                console.log(`  Background: ${bgColor}`);
+                console.log(`  Color: ${textColor}`);
+                console.log(`  Правильный цвет: ${isPurple ? '✅' : '❌'}`);
+                console.log('---');
+            });
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(checkButtonColors, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -58,8 +58,8 @@ body {
 ### Primary кнопка
 ```html
 <button class="mdc-button mdc-button--raised" style="
-  background-color: #6200ee;
-  color: #ffffff;
+  background-color: var(--mdc-theme-primary);
+  color: var(--mdc-theme-on-primary);
   padding: 10px 24px;
   border-radius: 4px;
   border: none;
@@ -71,20 +71,20 @@ body {
 ### Карточка
 ```html
 <div class="mdc-card" style="
-  background-color: #ffffff;
+  background-color: var(--mdc-theme-surface);
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12);
 ">
-  <h3 style="color: rgba(0, 0, 0, 0.87); margin: 0 0 8px;">Заголовок</h3>
-  <p style="color: rgba(0, 0, 0, 0.54); margin: 0;">Описание</p>
+  <h3 style="color: var(--mdc-theme-text-primary-on-background); margin: 0 0 8px;">Заголовок</h3>
+  <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 0;">Описание</p>
 </div>
 ```
 
 ### Контейнер с правильным фоном
 ```html
 <div style="
-  background-color: #f5f5f5;
+  background-color: var(--mdc-theme-background);
   font-family: 'Roboto', sans-serif;
   padding: 24px;
   display: flex;
