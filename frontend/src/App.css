@@ -226,7 +226,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   resize: vertical;
-  min-height: 60px;
+  min-height: 120px;
   font-family: inherit;
 }
 

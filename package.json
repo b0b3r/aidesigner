@@ -11,10 +11,19 @@
     "backend": "python backend/main.py",
     "frontend": "cd frontend && npm start"
   },
-  "keywords": ["ai", "design", "react", "fastapi"],
+  "keywords": [
+    "ai",
+    "design",
+    "react",
+    "fastapi"
+  ],
   "author": "AI Designer Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@material/theme": "^14.0.0",
+    "material-components-web": "^14.0.0"
   }
-} 
+}

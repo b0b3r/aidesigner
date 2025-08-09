@@ -15,6 +15,34 @@
 - Elevated
 - Tonal
 
+## MDC классы
+
+**ПРАВИЛЬНЫЕ КЛАССЫ:**
+- Базовый: `mdc-button`
+- Filled кнопка: `mdc-button mdc-button--raised` (НЕ --filled!)
+- Outlined кнопка: `mdc-button mdc-button--outlined`
+- Text кнопка: `mdc-button`
+- Tonal кнопка: `mdc-button mdc-button--tonal`
+- Unelevated кнопка: `mdc-button mdc-button--unelevated`
+- Внутренние: `mdc-button__label`, `mdc-button__icon`, `mdc-button__ripple`
+
+**❌ НЕПРАВИЛЬНЫЕ КЛАССЫ (НЕ ИСПОЛЬЗУЙ):**
+- `mdc-button--filled` - НЕ СУЩЕСТВУЕТ в MDC!
+
+### Пример (правильный filled/raised)
+```html
+<button class="mdc-button mdc-button--raised">
+  <span class="mdc-button__label">Filled Button</span>
+</button>
+```
+
+### Пример (outlined)
+```html
+<button class="mdc-button mdc-button--outlined">
+  <span class="mdc-button__label">Outlined Button</span>
+</button>
+```
+
 ## Размеры
 
 - Small

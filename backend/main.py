@@ -31,7 +31,6 @@ try:
         print("📝 Будет использоваться только DeepSeek API")
     print("✅ Config imported successfully")
     print(f"🔧 Backend will run on: {SERVER_CONFIG['backend']['host']}:{SERVER_CONFIG['backend']['port']}")
-    print(f"🔑 DeepSeek API configured: {'Yes' if DEEPSEEK_CONFIG['api_key'] else 'No'}")
     print(f"🤖 AnythingLLM enabled: {'Yes' if ANYTHINGLLM_CONFIG['enabled'] else 'No'}")
     
     # Инициализация AnythingLLM адаптера
@@ -43,7 +42,7 @@ try:
         health_check = anythingllm_adapter.health_check()
         print(f"🔗 AnythingLLM connection: {'✅ OK' if health_check['success'] else '❌ FAILED'}")
     else:
-        print("📝 Using direct DeepSeek API")
+        print("🛑 AnythingLLM отключен. Прямые вызовы DeepSeek будут заблокированы.")
 except ImportError as e:
     print(f"❌ Error importing config: {e}")
     print(f"📁 Current directory: {os.getcwd()}")
@@ -92,7 +91,7 @@ DEEPSEEK_API_URL = DEEPSEEK_CONFIG["api_url"]
 design_plans: Dict[str, DesignPlan] = {}
 
 def call_llm_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -> str:
-    """Вызов LLM API (AnythingLLM или DeepSeek)"""
+    """Вызов LLM API (только AnythingLLM)"""
     
     print(f"🔧 Конфигурация AnythingLLM:")
     print(f"   - enabled: {ANYTHINGLLM_CONFIG['enabled']}")
@@ -101,7 +100,7 @@ def call_llm_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -
     print(f"   - base_url: {ANYTHINGLLM_CONFIG['base_url']}")
     print(f"   - workspace: {ANYTHINGLLM_CONFIG['workspace_slug']}")
     
-    # Если AnythingLLM включен, используем его
+    # Используем только AnythingLLM
     if ANYTHINGLLM_CONFIG['enabled'] and anythingllm_adapter and convert_deepseek_to_anythingllm_format:
         print("🤖 Используем AnythingLLM с RAG")
         try:
@@ -114,44 +113,66 @@ def call_llm_api(messages: List[Dict[str, str]], model: str = "deepseek-chat") -
                 return result["response"]
             else:
                 print(f"❌ Ошибка AnythingLLM: {result.get('error', 'Unknown error')}")
-                # Fallback на DeepSeek
-                print("🔄 Переключаемся на DeepSeek API")
+                raise HTTPException(status_code=502, detail=f"AnythingLLM error: {result.get('error')}")
         except Exception as e:
             print(f"❌ Исключение AnythingLLM: {e}")
-            print("🔄 Переключаемся на DeepSeek API")
-    
-    # Используем DeepSeek API (по умолчанию или fallback)
-    print("🌐 Используем DeepSeek API")
-    if not DEEPSEEK_API_KEY:
-        raise HTTPException(status_code=500, detail="LLM API not configured")
-    
-    headers = {
-        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model": "deepseek-chat", 
-        "messages": messages,
-        "temperature": 0.7,
-        "max_tokens": 2000
-    }
-    
-    print(f"🌐 Отправляем запрос к {DEEPSEEK_API_URL}")
-    
-    try:
-        response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data, timeout=60)
-        print(f"📡 Ответ DeepSeek API: {response.status_code}")
-        response.raise_for_status()
-        result = response.json()
-        return result["choices"][0]["message"]["content"]
-    except requests.exceptions.RequestException as e:
-        print(f"💥 Ошибка API: {e}")
-        raise HTTPException(status_code=500, detail=f"LLM API error: {str(e)}")
+            raise HTTPException(status_code=502, detail=f"AnythingLLM exception: {str(e)}")
+    # Если AnythingLLM недоступен — сообщаем об ошибке (без DeepSeek fallback)
+    raise HTTPException(status_code=503, detail="AnythingLLM is not enabled or adapter is not available")
 
 def parse_llm_response(response: str) -> Dict[str, Any]:
     """Парсинг ответа LLM для разделения текста и визуального контента"""
     print(f"🔍 Парсим ответ LLM: {response[:100]}...")
+    
+    # Сначала пробуем парсить как JSON (новый формат от AnythingLLM)
+    try:
+        # Убираем markdown блоки ```json и ```
+        clean_response = response.strip()
+        if clean_response.startswith('```json'):
+            clean_response = clean_response[7:]  # убираем ```json
+        if clean_response.endswith('```'):
+            clean_response = clean_response[:-3]  # убираем ```
+        clean_response = clean_response.strip()
+        
+        json_data = json.loads(clean_response)
+        if isinstance(json_data, dict):
+            # Случай 1: JSON с визуальным контентом
+            if 'visual' in json_data:
+                print("📋 Найден JSON-формат с визуалом от AnythingLLM")
+                visual_content = json_data.get('visual', '').strip()
+                size_str = json_data.get('size', '400')
+                notes = json_data.get('notes', '')
+                
+                # Парсим размер
+                try:
+                    width = int(size_str)
+                except (ValueError, TypeError):
+                    width = 400
+                    
+                print(f"🎨 JSON: Найден визуальный контент: {len(visual_content)} символов")
+                print(f"📐 JSON: Размер: {width}px")
+                
+                return {
+                    "text_content": notes,
+                    "visual_content": visual_content,
+                    "width": width,
+                    "height": "auto"
+                }
+            
+            # Случай 2: JSON только с текстовым ответом (чат)
+            elif 'notes' in json_data:
+                print("💬 Найден JSON-формат только с текстом (чат-ответ)")
+                notes = json_data.get('notes', '').strip()
+                
+                return {
+                    "text_content": notes,
+                    "visual_content": None,
+                    "width": 400,
+                    "height": "auto"
+                }
+    except (json.JSONDecodeError, AttributeError):
+        print("📝 JSON не найден, парсим как текст с тегами")
+        pass
     
     # Ищем все блоки <VISUAL>...</VISUAL>
     visual_pattern = r'<VISUAL>(.*?)</VISUAL>'
@@ -220,29 +241,17 @@ async def chat_with_llm(request: ChatRequest):
         print(f"💬 Последнее сообщение ({len(last_message)} символов): {last_message[:200]}{'...' if len(last_message) > 200 else ''}")
         
         # ТОЛЬКО ПОСЛЕДНЕЕ СООБЩЕНИЕ - БЕЗ ИСТОРИИ
+        # Промпт теперь в anythingllm_adapter.py - убираем дублирование
         last_user_message = messages[-1]['content'] if messages else ""
         api_messages = [
-            {"role": "system", "content": """Создавай HTML код для веб-элементов.
-
-ВАЖНО: 
-1. HTML код оборачивай в <VISUAL>код</VISUAL>
-2. Указывай ширину в <SIZE>ширина</SIZE>
-3. Используй готовые CSS классы, НЕ inline стили
-
-Пример ответа:
-<VISUAL>
-<button>Текст кнопки</button>
-</VISUAL>
-<SIZE>200</SIZE>"""},
             {"role": "user", "content": last_user_message}
         ]
         
-        print(f"🤖 Отправляю запрос к DeepSeek API...")
-        print(f"🔑 API Key: {DEEPSEEK_CONFIG['api_key'][:10]}...")
+        print(f"🤖 Отправляю запрос к AnythingLLM...")
         
         # Вызываем LLM API (AnythingLLM или DeepSeek)
         response = call_llm_api(api_messages, request.model)
-        print(f"✅ Получен ответ от DeepSeek")
+        print(f"✅ Получен ответ от AnythingLLM")
         print(f"📄 Контент от LLM: {response[:200]}...")
         
         # Парсим ответ

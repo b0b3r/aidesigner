@@ -310,9 +310,9 @@ const VisualControls = ({ selectedElement, onPropertyChange }) => {
   if (!selectedElement) {
     return (
       <div className="visual-controls no-selection">
-        <p>Выберите элемент для редактирования</p>
-        <p style={{ fontSize: '11px', color: '#999', marginTop: '5px' }}>
-          Кликните на элемент в артефакте на канвасе
+        {/* <p>Выберите элемент для редактирования</p> */}
+        <p style={{ fontSize: '14px', color: '#999', marginTop: '5px' }}>
+        Выберите элемент для редактирования
         </p>
       </div>
     );

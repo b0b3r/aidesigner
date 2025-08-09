@@ -1,6 +1,6 @@
 ﻿import React, { useState, useCallback } from 'react';
 import './App.css';
-import { createTestElements, testCDNSources } from './utils/cssTest';
+// Старый интерфейс. Не используется в проде.
 
 function App() {
   const [selectedElement, setSelectedElement] = useState(null);
@@ -254,12 +254,7 @@ function App() {
             {showGrid ? "⊞" : "⊡"}
           </button>
           <button title="Настройки">⚙️</button>
-          <button onClick={createTestElements} title="Тест CSS классов" style={{ fontSize: '12px' }}>
-            🧪 CSS
-          </button>
-          <button onClick={testCDNSources} title="Тест CDN" style={{ fontSize: '12px' }}>
-            🌐 CDN
-          </button>
+          {/* DEV-кнопки тестирования CSS/CDN скрыты в прод-версии */}
           <span className="zoom-level">{zoom}%</span>
         </div>
 

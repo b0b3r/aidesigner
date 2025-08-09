@@ -33,9 +33,11 @@
 
 /* Visual Controls */
 .visual-controls {
-  padding: 16px;
+  /* padding: 16px; */
   height: 100%;
+  width: 100%;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .visual-controls.no-selection {
@@ -239,6 +241,7 @@
 .properties-panel-content {
   height: calc(100% - 50px);
   overflow-y: auto;
+  padding-top: 0px;
 }
 
 /* Visual Editor Layout */

@@ -1,0 +1,186 @@
+/* 
+ * ПРАВИЛЬНАЯ ТЕМИЗАЦИЯ MATERIAL DESIGN COMPONENTS
+ * Используем официальные CSS переменные MDC
+ */
+
+:root {
+  /* === ОСНОВНЫЕ ЦВЕТА ТЕМЫ === */
+  
+  /* Primary - основной цвет (фиолетовый) */
+  --mdc-theme-primary: #6200ee;
+  --mdc-theme-on-primary: #ffffff;
+  
+  /* Secondary - вторичный цвет (бирюзовый) */
+  --mdc-theme-secondary: #018786;
+  --mdc-theme-on-secondary: #ffffff;
+  
+  /* Background - фон страницы */
+  --mdc-theme-background: #f5f5f5;
+  --mdc-theme-on-background: #000000;
+  
+  /* Surface - поверхности (карточки, модальные окна) */
+  --mdc-theme-surface: #ffffff;
+  --mdc-theme-on-surface: #000000;
+  
+  /* Error - ошибки */
+  --mdc-theme-error: #b00020;
+  --mdc-theme-on-error: #ffffff;
+  
+  /* === ТЕКСТОВЫЕ ЦВЕТА === */
+  
+  /* Текст на фоне */
+  --mdc-theme-text-primary-on-background: rgba(0, 0, 0, 0.87);
+  --mdc-theme-text-secondary-on-background: rgba(0, 0, 0, 0.54);
+  --mdc-theme-text-hint-on-background: rgba(0, 0, 0, 0.38);
+  --mdc-theme-text-disabled-on-background: rgba(0, 0, 0, 0.38);
+  --mdc-theme-text-icon-on-background: rgba(0, 0, 0, 0.38);
+  
+  /* Текст на светлых поверхностях */
+  --mdc-theme-text-primary-on-light: rgba(0, 0, 0, 0.87);
+  --mdc-theme-text-secondary-on-light: rgba(0, 0, 0, 0.54);
+  --mdc-theme-text-hint-on-light: rgba(0, 0, 0, 0.38);
+  --mdc-theme-text-disabled-on-light: rgba(0, 0, 0, 0.38);
+  
+  /* Текст на тёмных поверхностях */
+  --mdc-theme-text-primary-on-dark: rgba(255, 255, 255, 1);
+  --mdc-theme-text-secondary-on-dark: rgba(255, 255, 255, 0.7);
+  --mdc-theme-text-hint-on-dark: rgba(255, 255, 255, 0.5);
+  --mdc-theme-text-disabled-on-dark: rgba(255, 255, 255, 0.5);
+  
+  /* === СПЕЦИФИЧНЫЕ ПЕРЕМЕННЫЕ ДЛЯ КОМПОНЕНТОВ === */
+  
+  /* Button - кнопки */
+  --mdc-button-filled-container-color: var(--mdc-theme-primary);
+  --mdc-button-filled-label-text-color: var(--mdc-theme-on-primary);
+  --mdc-button-outlined-outline-color: var(--mdc-theme-primary);
+  --mdc-button-outlined-label-text-color: var(--mdc-theme-primary);
+  
+  /* Card - карточки */
+  --mdc-card-container-color: var(--mdc-theme-surface);
+  
+  /* Text Field - поля ввода */
+  --mdc-text-field-filled-container-color: var(--mdc-theme-surface);
+  --mdc-text-field-label-text-color: var(--mdc-theme-text-secondary-on-background);
+  --mdc-text-field-input-text-color: var(--mdc-theme-text-primary-on-background);
+  
+  /* Chip - чипы */
+  --mdc-chip-container-color: var(--mdc-theme-surface);
+  --mdc-chip-label-text-color: var(--mdc-theme-text-primary-on-background);
+  
+  /* Top App Bar - верхняя панель */
+  --mdc-top-app-bar-container-color: var(--mdc-theme-primary);
+  --mdc-top-app-bar-title-color: var(--mdc-theme-on-primary);
+  
+  /* === ДОПОЛНИТЕЛЬНЫЕ ПЕРЕМЕННЫЕ === */
+  
+  /* Тени и границы */
+  --mdc-theme-shadow: rgba(0, 0, 0, 0.2);
+  --mdc-theme-border: rgba(0, 0, 0, 0.12);
+  
+  /* Состояния hover, focus, active */
+  --mdc-theme-hover-overlay: rgba(0, 0, 0, 0.04);
+  --mdc-theme-focus-overlay: rgba(0, 0, 0, 0.12);
+  --mdc-theme-pressed-overlay: rgba(0, 0, 0, 0.10);
+}
+
+/* === ПРИМЕНЕНИЕ К БАЗОВЫМ ЭЛЕМЕНТАМ === */
+
+body {
+  background-color: var(--mdc-theme-background);
+  color: var(--mdc-theme-text-primary-on-background);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* === КАСТОМНЫЕ КЛАССЫ ДЛЯ АРТЕФАКТОВ === */
+
+.artifact-container {
+  background-color: var(--mdc-theme-background);
+  color: var(--mdc-theme-text-primary-on-background);
+}
+
+.artifact-surface {
+  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+}
+
+/* === MDC КАРТОЧКИ С ПРАВИЛЬНЫМИ ЦВЕТАМИ === */
+
+.mdc-card {
+  background-color: var(--mdc-theme-surface) !important;
+  color: var(--mdc-theme-on-surface) !important;
+}
+
+.mdc-card__media {
+  background-color: var(--mdc-theme-background) !important;
+}
+
+.mdc-card__primary-action {
+  background-color: var(--mdc-theme-surface) !important;
+}
+
+/* === MDC ТИПОГРАФИКА === */
+
+.mdc-typography--headline6 {
+  color: var(--mdc-theme-text-primary-on-background) !important;
+}
+
+.mdc-typography--body2 {
+  color: var(--mdc-theme-text-secondary-on-background) !important;
+}
+
+.mdc-typography--subtitle1 {
+  color: var(--mdc-theme-text-primary-on-background) !important;
+}
+
+/* === ОТЛАДОЧНЫЕ СТИЛИ === */
+
+.debug-theme-colors {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.debug-color-sample {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.debug-primary {
+  background-color: var(--mdc-theme-primary);
+  color: var(--mdc-theme-on-primary);
+}
+
+.debug-secondary {
+  background-color: var(--mdc-theme-secondary);
+  color: var(--mdc-theme-on-secondary);
+}
+
+.debug-surface {
+  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+  border: 1px solid var(--mdc-theme-border);
+}
+
+/* === УЛУЧШЕННЫЕ СТИЛИ ДЛЯ КАРТОЧЕК === */
+
+/* Карточки должны иметь тень для видимости на светлом фоне */
+.mdc-card, 
+[style*="background-color: var(--mdc-theme-surface)"] {
+  box-shadow: 0 1px 3px 0 var(--mdc-theme-shadow), 
+              0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Дополнительные стили для surface элементов */
+.surface-card {
+  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+  box-shadow: 0 1px 3px 0 var(--mdc-theme-shadow), 
+              0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}

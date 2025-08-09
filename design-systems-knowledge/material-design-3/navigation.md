@@ -14,6 +14,22 @@
 - Tabs
 - Top app bar
 
+### Пример Top App Bar (MDC)
+
+Классы:
+- `mdc-top-app-bar`, `mdc-top-app-bar__row`, `mdc-top-app-bar__section`, `mdc-top-app-bar__title`
+
+Разметка:
+```html
+<header class="mdc-top-app-bar">
+  <div class="mdc-top-app-bar__row">
+    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+      <span class="mdc-top-app-bar__title">Заголовок</span>
+    </section>
+  </div>
+  </header>
+```
+
 ## Использование
 
 Bottom navigation для 3-5 основных разделов

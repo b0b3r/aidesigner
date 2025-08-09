@@ -56,10 +56,9 @@
 frontend/
 ├── src/
 │   ├── components/
-│   │   ├── ChatPanel.js          # Левая панель чата
-│   │   ├── DesignCanvas.js        # Центральный канвас
+│   │   ├── CanvasFlow.js          # Канвас на базе React Flow
 │   │   └── PropertiesPanel.js     # Правая панель свойств
-│   ├── App.js                     # Главный компонент
+│   ├── AppWithReactFlow.js        # Главный компонент
 │   ├── App.css                    # Стили интерфейса
 │   ├── index.js                   # Точка входа
 │   └── index.css                  # Глобальные стили
@@ -70,7 +69,7 @@ frontend/
 ## 🔧 **Технические особенности:**
 
 ### **Frontend (React):**
-- Состояние управляется в `App.js`
+- Состояние управляется в `AppWithReactFlow.js`
 - Компоненты полностью функциональные
 - Используются React hooks (useState, useCallback, useEffect)
 - CSS-in-JS для стилизации компонентов
@@ -92,8 +91,7 @@ frontend/
 | Требование ТЗ | Статус | Реализация |
 |---------------|---------|------------|
 | Единый экран вместо вкладок | ✅ | App.js с тремя панелями |
-| Левая панель чата | ✅ | ChatPanel.js |
-| Центральный канвас | ✅ | DesignCanvas.js с зумом |
+| Центральный канвас | ✅ | CanvasFlow (React Flow) |
 | Правая панель свойств | ✅ | PropertiesPanel.js |
 | Выбор элементов | ✅ | onClick handlers |
 | Редактирование промптов | ✅ | Вкладка "Промпт" |

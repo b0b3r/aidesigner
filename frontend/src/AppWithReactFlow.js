@@ -6,7 +6,6 @@ import PropertiesPanel from './components/PropertiesPanel';
 import MessageRouter from './services/MessageRouter';
 import PlannerService from './services/PlannerService';
 import cssInjector from './utils/cssInjector';
-import { testCSSClasses, createTestElements } from './utils/cssTest';
 
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
@@ -21,6 +20,7 @@ function AppWithReactFlow() {
   // Состояние для планов
   const [activePlan, setActivePlan] = useState(null);
   const [isExecutingPlan, setIsExecutingPlan] = useState(false);
+  const PLAN_STEP_DELAY_MS = process.env.NODE_ENV === 'development' ? 300 : 0;
   
   const [canvasElements, setCanvasElements] = useState([
     // Демо wireframe элементы как в оригинале
@@ -71,6 +71,104 @@ function AppWithReactFlow() {
       content: '<div style="background: #28a745; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; border-radius: 4px; padding: 24px;"><h3 style="margin: 0 0 12px 0;">Начните создавать сегодня!</h3><button style="background: white; color: #28a745; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer;">Попробовать бесплатно</button></div>',
       prompt: 'CTA секция с кнопкой регистрации',
       createdAt: new Date().toISOString()
+    },
+    // 🎨 ТЕСТОВЫЙ АРТЕФАКТ 1: С правильными MDC переменными
+    {
+      id: 'test-mdc-theming',
+      type: 'artifact',
+      x: 900,
+      y: 300,
+      width: 320,
+      height: 'auto',
+      isAutoHeight: true,
+      name: '🎨 MDC Темизация',
+      content: `
+        <div style="padding: 16px; background-color: var(--mdc-theme-background); font-family: 'Roboto', sans-serif;">
+          <h3 style="color: var(--mdc-theme-text-primary-on-background); margin: 0 0 16px; font-size: 18px;">MDC Темизация</h3>
+          
+          <!-- Отладочные цвета -->
+          <div class="debug-theme-colors">
+            <div class="debug-color-sample debug-primary">P</div>
+            <div class="debug-color-sample debug-secondary">S</div>
+            <div class="debug-color-sample debug-surface">Sur</div>
+          </div>
+          
+          <!-- Filled кнопка (должна использовать тему автоматически) -->
+          <button class="mdc-button mdc-button--raised">
+            <span class="mdc-button__label">Filled Button</span>
+          </button>
+          
+          <br><br>
+          
+          <!-- Outlined кнопка -->
+          <button class="mdc-button mdc-button--outlined">
+            <span class="mdc-button__label">Outlined Button</span>
+          </button>
+          
+          <br><br>
+          
+          <!-- Карточка с поверхностью -->
+          <div style="background-color: var(--mdc-theme-surface); padding: 12px; border-radius: 8px; margin-top: 16px; box-shadow: 0 2px 4px var(--mdc-theme-shadow);">
+            <p style="color: var(--mdc-theme-text-primary-on-background); margin: 0; font-size: 14px;">
+              Карточка с surface цветом
+            </p>
+          </div>
+        </div>
+      `,
+      prompt: 'Тестовый артефакт с правильной MDC темизацией',
+      createdAt: new Date().toISOString()
+    },
+    // 🧪 ТЕСТОВЫЙ АРТЕФАКТ 2: Смешанный подход (MDC + кастом)
+    {
+      id: 'test-mixed',
+      type: 'artifact',
+      x: 900,
+      y: 550,
+      width: 320,
+      height: 'auto',
+      isAutoHeight: true,
+      name: '🧪 Смешанный подход',
+      content: `
+        <div style="padding: 16px; background-color: var(--mdc-theme-background); font-family: 'Roboto', sans-serif;">
+          <h3 style="color: var(--mdc-theme-text-primary-on-background); margin: 0 0 16px; font-size: 18px;">Смешанный подход</h3>
+          
+          <!-- Чистый MDC (без inline стилей) -->
+          <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 0 0 8px; font-size: 12px;">Чистый MDC:</p>
+          <button class="mdc-button mdc-button--raised">
+            <span class="mdc-button__label">Pure MDC</span>
+          </button>
+          
+          <br><br>
+          
+          <!-- MDC + inline стили -->
+          <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 0 0 8px; font-size: 12px;">MDC + inline:</p>
+          <button class="mdc-button mdc-button--outlined" 
+                  style="border-color: var(--mdc-theme-secondary); color: var(--mdc-theme-secondary);">
+            <span class="mdc-button__label">MDC + Custom</span>
+          </button>
+          
+          <br><br>
+          
+          <!-- Кастомная кнопка с темными переменными -->
+          <p style="color: var(--mdc-theme-text-secondary-on-background); margin: 0 0 8px; font-size: 12px;">Кастомная:</p>
+          <button style="
+            background-color: var(--mdc-theme-secondary);
+            color: var(--mdc-theme-on-secondary);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.0892857143em;
+          ">
+            Custom Themed
+          </button>
+        </div>
+      `,
+      prompt: 'Тестовый артефакт со смешанным подходом MDC + кастом',
+      createdAt: new Date().toISOString()
     }
   ]);
 
@@ -78,24 +176,24 @@ function AppWithReactFlow() {
     {
       id: '1',
       type: 'ai',
-      content: '🚀 **AI Designer готов к работе!**\n\nТеперь доступны новые возможности:\n\n• **💬 Умный чат** - задавайте вопросы, получайте ответы\n• **🎨 Создание артефактов** - генерация UI элементов\n• **📋 Пошаговые планы** - создание флоу по этапам\n\nВыберите что хотите сделать:',
+      content: 'Готов к работе!\n\nДоступны новые возможности:\n\n• 💬 Умный чат - задавайте вопросы, получайте ответы\n• 🎨 Создание артефактов - генерация UI элементов\n• 📋 Пошаговые планы - создание флоу по этапам\n\n Пример задачи:',
       timestamp: new Date(),
       suggestions: [
         {
           id: 'example-1',
-          text: '🎨 Создать кнопку',
+          text: '🎨 Создай кнопку',
           action: 'send_message',
-          data: 'Создай красивую кнопку'
+          data: 'Создай красивую кнопку в стиле Material design'
         },
         {
           id: 'example-2', 
-          text: '📋 Флоу регистрации',
+          text: '📋 Сделай флоу регистрации',
           action: 'send_message',
-          data: 'Нарисуй флоу регистрации пользователя'
+          data: 'Нарисуй флоу регистрации пользователя на мобильном устройстве. Экран шириной 360px;'
         },
         {
           id: 'example-3',
-          text: '💬 Что такое UX?',
+          text: '💬 Объясни что такое UX?',
           action: 'send_message', 
           data: 'Что такое UX дизайн?'
         }
@@ -106,9 +204,41 @@ function AppWithReactFlow() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState('');
-  
+  const chatBottomRef = React.useRef(null);
+  const typingIntervalRef = React.useRef(null);
 
+  // Очистка интервала псевдо-стримминга при размонтировании
+  useEffect(() => {
+    return () => {
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current);
+      }
+    };
+  }, []);
 
+  const streamTextToChat = useCallback((fullText) => {
+    const tempId = Date.now() + '-ai-stream';
+    // Плейсхолдер
+    setChatMessages(prev => [
+      ...prev,
+      { id: tempId, type: 'ai', content: 'Печатает…', timestamp: new Date() }
+    ]);
+    // Псевдо-стримминг
+    let i = 0;
+    const step = 28;
+    const tickMs = 24;
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+    typingIntervalRef.current = setInterval(() => {
+      i = Math.min(i + step, fullText.length);
+      const chunk = fullText.slice(0, i) || '';
+      setChatMessages(prev => prev.map(m => m.id === tempId ? { ...m, content: chunk } : m));
+      chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      if (i >= fullText.length) {
+        clearInterval(typingIntervalRef.current);
+        typingIntervalRef.current = null;
+      }
+    }, tickMs);
+  }, []);
   // Функция глобальной очистки всех overlay-слоев
   const clearAllOverlays = useCallback(() => {
     console.log('🧹 Очищаем все overlay-слои');
@@ -170,50 +300,43 @@ function AppWithReactFlow() {
     }
   }, [canvasElements, selectedElement, clearAllOverlays]);
 
-  // Загружаем CSS дизайн-систем при инициализации
+  // CSS инъектор для дизайн-токенов в артефакты
   useEffect(() => {
-    console.log('🎨 Инициализация CSS дизайн-систем...');
+    console.log('🎨 Инициализация CSS инъектора...');
     
-    cssInjector.loadDesignSystemsCSS().then(() => {
-      console.log('✅ CSS дизайн-систем загружены');
-      
-      // Тестируем CSS классы после загрузки
-      setTimeout(() => {
-        console.log('🧪 Тестирую CSS классы...');
-        testCSSClasses();
-        
-        // Принудительно загружаем локальный CSS если нужно
-        forceLoadLocalCSS();
-      }, 2000);
-    }).catch(error => {
-      console.error('❌ Ошибка загрузки CSS:', error);
+    // Инжектируем дизайн-токены в существующие артефакты
+    setTimeout(() => {
+      cssInjector.injectDesignTokensToAllArtifacts();
+    }, 1000);
+    
+    // Следим за изменениями DOM для новых артефактов
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            // Проверяем, является ли добавленный элемент артефактом
+            if (node.classList?.contains('react-flow__node') || 
+                node.querySelector?.('.react-flow__node')) {
+              console.log('🎨 Обнаружен новый артефакт, инжектируем токены');
+              setTimeout(() => {
+                cssInjector.injectDesignTokensToAllArtifacts();
+              }, 100);
+            }
+          }
+        });
+      });
     });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    return () => observer.disconnect();
   }, []);
 
-  // Функция для принудительной загрузки локального CSS
-  const forceLoadLocalCSS = () => {
-    console.log('🔧 Принудительная загрузка локального CSS...');
-    
-    // Проверяем, есть ли уже загруженный CSS
-    const existingLink = document.querySelector('link[href*="antd-local.css"]');
-    if (existingLink) {
-      console.log('✅ Локальный CSS уже загружен в HTML');
-      return;
-    }
-    
-    // Создаем новый link элемент
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'antd-local.css';
-    link.onload = () => {
-      console.log('✅ Локальный CSS загружен принудительно');
-    };
-    link.onerror = (error) => {
-      console.error('❌ Ошибка загрузки локального CSS:', error);
-    };
-    
-    document.head.appendChild(link);
-  };
+  // Принудительная загрузка локального CSS отключена в проде (DEV-утилита)
+  const forceLoadLocalCSS = () => {};
 
   // Обработчик клавиши Escape для очистки overlay-слоев
   useEffect(() => {
@@ -383,7 +506,7 @@ function AppWithReactFlow() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             messages: [
-              { role: 'system', content: 'Ты опытный помощник по разработке UI/UX. Отвечай кратко и по делу. НЕ создавай код или артефакты, только текстовые ответы.' },
+              { role: 'system', content: 'Ты опытный помощник по разработке UI/UX. Отвечай кратко и по делу в JSON формате: {"notes": "твой ответ"}. НЕ создавай визуальные артефакты, только текстовые ответы.' },
               { role: 'user', content: promptData.prompt }
             ]
           })
@@ -391,19 +514,22 @@ function AppWithReactFlow() {
 
         const data = await response.json();
         
-        if (data.success) {
-          setChatMessages(prev => [
-            ...prev,
-            { 
-              id: Date.now() + '-ai', 
-              type: 'ai', 
-              content: data.text_content,
-              timestamp: new Date() 
+        if (data.success && data.text_content) {
+          // Пробуем извлечь notes из JSON для чат-ответов
+          let chatText = data.text_content;
+          try {
+            const parsed = JSON.parse(data.text_content);
+            if (parsed.notes) {
+              chatText = parsed.notes;
             }
-          ]);
+          } catch (e) {
+            // Если не JSON, используем как есть
+          }
+          streamTextToChat(chatText);
         }
         
         setIsLoading(false);
+        setTimeout(() => chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 0);
         return;
       }
 
@@ -442,6 +568,7 @@ function AppWithReactFlow() {
         ]);
         
         setIsLoading(false);
+        setTimeout(() => chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 0);
         return;
       }
 
@@ -477,7 +604,7 @@ ${editingElement.content}
         })
       });
 
-      setLoadingStatus('⏳ Ожидаю ответ от DeepSeek API...');
+      setLoadingStatus('⏳ Ожидаю ответ от AnythingLLM...');
       console.log('📡 Получен ответ:', response.status);
 
       if (!response.ok) {
@@ -489,15 +616,9 @@ ${editingElement.content}
       console.log('📦 Данные ответа:', data);
 
       if (data.success) {
-        setChatMessages(prev => [
-          ...prev,
-          { 
-            id: Date.now() + '-ai', 
-            type: 'ai', 
-            content: data.text_content,
-            timestamp: new Date() 
-          }
-        ]);
+        if (data.text_content) {
+          streamTextToChat(data.text_content);
+        }
 
         // Если есть визуальный контент - создаем или обновляем артефакт
         if (data.visual_content) {
@@ -505,10 +626,13 @@ ${editingElement.content}
             // РЕЖИМ РЕДАКТИРОВАНИЯ: Обновляем существующий элемент
             console.log('✏️ Обновляю существующий элемент:', editingElement.id);
             
+            // Инжектируем дизайн-токены в обновлённое содержимое
+            const contentWithTokens = cssInjector.injectDesignTokensToHTML(data.visual_content);
+            
             const updatedElement = {
               ...editingElement,
-              content: data.visual_content,
-              code: data.visual_content,
+              content: contentWithTokens,
+              code: contentWithTokens,
               width: data.width || editingElement.width,
               height: data.height === "auto" ? "auto" : (data.height || editingElement.height),
               // Обновляем промпт с новым сообщением
@@ -553,6 +677,9 @@ ${editingElement.content}
             
             // Генерируем случайную позицию, чтобы не зависеть от количества элементов
             const randomOffset = Math.floor(Math.random() * 200);
+            // Инжектируем дизайн-токены в HTML содержимое
+            const contentWithTokens = cssInjector.injectDesignTokensToHTML(data.visual_content);
+            
             const newArtifact = {
               id: 'artifact-' + Date.now(),
               type: 'artifact',
@@ -562,14 +689,20 @@ ${editingElement.content}
               height: artifactHeight,
               isAutoHeight: artifactHeight === "auto",
               name: 'Generated Artifact',
-              content: data.visual_content,
-              code: data.visual_content,
+              content: contentWithTokens, // Используем HTML с инжектированными токенами
+              code: contentWithTokens, // Также обновляем код
               prompt: message,
               createdAt: new Date().toISOString()
             };
             
             setCanvasElements(prev => [...prev, newArtifact]);
             console.log('✅ Артефакт добавлен на канвас');
+            
+            // Инжектируем дизайн-токены в новый артефакт
+            setTimeout(() => {
+              cssInjector.injectDesignTokensToAllArtifacts();
+              console.log('🎨 Дизайн-токены инжектированы в новый артефакт');
+            }, 200);
             
             // Добавляем сообщение в чат о создании артефакта
             setChatMessages(prev => [
@@ -807,8 +940,10 @@ ${editingElement.content}
               currentStep: i + 1
             }));
 
-            // Небольшая пауза между шагами
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Пауза между шагами (0 в проде)
+            if (PLAN_STEP_DELAY_MS > 0) {
+              await new Promise(resolve => setTimeout(resolve, PLAN_STEP_DELAY_MS));
+            }
 
           } else {
             throw new Error(result.error || 'Не удалось создать элемент');
@@ -883,7 +1018,7 @@ ${editingElement.content}
       {/* Левая панель - Чат */}
       <div className="chat-panel">
         <div className="panel-header">
-          🚀 AI Designer с React Flow
+          🚀 AI Designer
           {editingElement && (
             <div style={{ 
               fontSize: '12px', 
@@ -899,7 +1034,7 @@ ${editingElement.content}
           )}
           
           {/* Тестовые кнопки для отладки */}
-          <div style={{ marginTop: '8px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          {/* <div style={{ marginTop: '8px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
             <button
               onClick={() => handleSendMessage('Нарисуй флоу регистрации пользователя')}
               style={{
@@ -945,7 +1080,7 @@ ${editingElement.content}
             >
               🧪 Тест Артефакт
             </button>
-          </div>
+          </div> */}
           
 
         </div>
@@ -953,11 +1088,7 @@ ${editingElement.content}
         <div className="chat-messages">
           {chatMessages.map((message) => (
             <div key={message.id} className={`chat-message ${message.type}`}>
-              <div className="message-content">
-                {message.content.split('\n').map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
-              </div>
+              <div className="message-content">{message.content}</div>
               
               {/* Кнопки-саджесты */}
               {message.suggestions && message.suggestions.length > 0 && (
@@ -976,6 +1107,7 @@ ${editingElement.content}
               )}
             </div>
           ))}
+          <div id="chat-bottom-anchor" ref={chatBottomRef} />
           
           {/* Индикатор загрузки */}
           {isLoading && (
@@ -992,6 +1124,15 @@ ${editingElement.content}
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (inputValue.trim() && !isLoading) {
+                  handleSendMessage(inputValue);
+                  setInputValue('');
+                }
+              }
+            }}
             placeholder={isLoading ? "Обрабатываю запрос..." : editingElement ? `Редактирование "${editingElement.name}" - опишите изменения...` : "Попробуйте: 'добавить элемент' или 'расскажи про flow'"}
             rows={2}
             disabled={isLoading}

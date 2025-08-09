@@ -38,7 +38,7 @@
 ```
 d:\Projects\aidesigner\
 ├── backend/           # FastAPI сервер
-├── frontend/          # React приложение
+├── frontend/          # React приложение (React Flow)
 ├── config.py          # ✅ Исправленные настройки
 ├── env.example        # ✅ Безопасный пример конфигурации
 ├── requirements.txt   # Python зависимости

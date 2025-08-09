@@ -141,16 +141,8 @@ const VisualEditor = ({
     <div className={`visual-editor ${className}`}>
       {/* Простая панель управления */}
       <div className="visual-editor-toolbar">
-        <span className="toolbar-title">🎨 Визуальный редактор</span>
-        {selectedInternalElement ? (
-          <span className="selected-info">
-            Выбран: <code>{selectedInternalElement}</code>
-          </span>
-        ) : (
-          <span className="no-selection-info">
-            Кликните на элемент в артефакте на канвасе
-          </span>
-        )}
+        {/* <span className="toolbar-title">🎨 Визуальный редактор</span> */}
+       
       </div>
 
       {/* Только панель контролов */}

@@ -5,23 +5,17 @@ echo ========================================
 echo AI Designer - Тестовый запуск
 echo ========================================
 
-echo ✅ Проверяем структуру frontend...
-if exist "frontend\src\App.js" (
-    echo ✅ App.js найден
+echo ✅ Проверяем структуру frontend (новый интерфейс)...
+if exist "frontend\src\AppWithReactFlow.js" (
+    echo ✅ AppWithReactFlow.js найден
 ) else (
-    echo ❌ App.js не найден
+    echo ❌ AppWithReactFlow.js не найден
 )
 
-if exist "frontend\src\components\ChatPanel.js" (
-    echo ✅ ChatPanel.js найден
+if exist "frontend\src\components\CanvasFlow.js" (
+    echo ✅ CanvasFlow.js найден
 ) else (
-    echo ❌ ChatPanel.js не найден
-)
-
-if exist "frontend\src\components\DesignCanvas.js" (
-    echo ✅ DesignCanvas.js найден
-) else (
-    echo ❌ DesignCanvas.js не найден
+    echo ❌ CanvasFlow.js не найден
 )
 
 if exist "frontend\src\components\PropertiesPanel.js" (

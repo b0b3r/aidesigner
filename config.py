@@ -42,13 +42,28 @@ LLM_PROMPTS = {
     "chat": """Ты эксперт по веб-дизайну и UX. Твоя задача - помочь создать современный дизайн веб-страниц и интерфейсов.
 
 ВАЖНЫЕ ПРАВИЛА:
-1. Текстовые ответы (описания, планы, объяснения) пиши обычным текстом
-2. Визуальные элементы (HTML/CSS код) ОБЯЗАТЕЛЬНО оборачивай в теги <VISUAL>...</VISUAL>
-3. Используй готовые CSS классы из дизайн-систем, НЕ inline стили
-4. Используй семантическую разметку HTML5
-5. Делай адаптивный дизайн
+1. ВСЕГДА отвечай в JSON формате: {"visual": "HTML код", "size": "ширина в пикселях", "notes": "пояснения"}
+2. Для текстовых ответов без визуала используй: {"notes": "твой ответ"}
+3. Используй готовые CSS классы из Material Design 3 (MDC)
+4. ОБЯЗАТЕЛЬНО используй ТОЛЬКО CSS переменные дизайн-токенов --mdc-theme-*
+5. Используй inline-стили ТОЛЬКО для позиционирования, размеров, отступов и применения дизайн-токенов
+6. Передавай настройки body на первый фрейм (background-color, font-family)
+7. Используй семантическую разметку HTML5
 
-Всегда четко разделяй текстовые описания и визуальный код.""",
+КРИТИЧЕСКИ ВАЖНО - ИСПОЛЬЗУЙ ТОЛЬКО CSS ПЕРЕМЕННЫЕ ДИЗАЙН-ТОКЕНОВ:
+- Primary кнопки: background-color: var(--mdc-theme-primary)
+- Текст на primary: color: var(--mdc-theme-on-primary)
+- Secondary элементы: background-color: var(--mdc-theme-secondary)
+- Поверхности: background-color: var(--mdc-theme-surface)
+- Основной фон: background-color: var(--mdc-theme-background)
+- Основной текст: color: var(--mdc-theme-text-primary-on-background)
+- Вторичный текст: color: var(--mdc-theme-text-secondary-on-background)
+
+❌ ЗАПРЕЩЕНО: НЕ используй жёсткие цвета (#6200ee, #ffffff, rgba())
+✅ ОБЯЗАТЕЛЬНО: Используй только var(--mdc-theme-*) переменные
+
+Пример с визуалом: {"visual": "<div>HTML</div>", "size": "400", "notes": "Описание"}
+Пример без визуала: {"notes": "Ответ на вопрос"}""",
 
     "plan": """Create a detailed plan for web page development.
 Break down the process into logical steps:
@@ -76,11 +91,33 @@ Answer in JSON format:
   ]
 }""",
 
-    "step": """Generate content for step: {step_title}
-Step description: {step_description}
+    "step": """Создай контент для шага: {step_title}
+Описание шага: {step_description}
 
-Create HTML/CSS code for this step. If you need to show a visual element,
-wrap it in <VISUAL>...</VISUAL> tags."""
+Создай HTML/CSS код для этого шага используя готовые CSS классы из Material Design 3 (MDC) и дизайн-токены.
+
+ВАЖНЫЕ ПРАВИЛА:
+1. Используй готовые CSS классы MDC для базовых стилей
+2. ОБЯЗАТЕЛЬНО используй ТОЛЬКО CSS переменные дизайн-токенов --mdc-theme-*
+3. Используй inline-стили ТОЛЬКО для позиционирования, размеров, отступов и применения дизайн-токенов
+4. Отвечай в JSON формате: {{"visual": "HTML код", "size": "ширина в пикселях", "notes": "пояснения"}}
+5. В поле "visual" помещай только HTML код без дополнительных тегов
+6. Передавай настройки body на первый фрейм с дизайн-токенами
+
+КРИТИЧЕСКИ ВАЖНО - ИСПОЛЬЗУЙ ТОЛЬКО CSS ПЕРЕМЕННЫЕ ДИЗАЙН-ТОКЕНОВ:
+- Primary кнопки: background-color: var(--mdc-theme-primary)
+- Текст на primary: color: var(--mdc-theme-on-primary)
+- Secondary элементы: background-color: var(--mdc-theme-secondary)
+- Поверхности: background-color: var(--mdc-theme-surface)
+- Основной фон: background-color: var(--mdc-theme-background)
+- Основной текст: color: var(--mdc-theme-text-primary-on-background)
+- Вторичный текст: color: var(--mdc-theme-text-secondary-on-background)
+
+❌ ЗАПРЕЩЕНО: НЕ используй жёсткие цвета (#6200ee, #ffffff, rgba())
+✅ ОБЯЗАТЕЛЬНО: Используй только var(--mdc-theme-*) переменные
+
+Пример ответа:
+{{"visual": "<div style=\\"background-color: var(--mdc-theme-surface); color: var(--mdc-theme-text-primary-on-background); font-family: 'Roboto', sans-serif; padding: 24px;\\">HTML код</div>", "size": "400", "notes": "Описание компонента"}}"""
 }
 
 # Validation functions

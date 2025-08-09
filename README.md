@@ -87,7 +87,7 @@ aidesigner/
 │   ├── public/          # Статические файлы
 │   ├── src/             # Исходный код
 │   │   ├── components/  # React компоненты
-│   │   ├── App.js       # Главный компонент
+│   │   ├── AppWithReactFlow.js  # Главный компонент
 │   │   └── index.js     # Точка входа
 │   └── package.json     # Node.js зависимости
 ├── requirements.txt      # Python зависимости

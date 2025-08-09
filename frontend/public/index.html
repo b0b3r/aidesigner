@@ -10,28 +10,101 @@
       content="AI Designer - Генератор дизайна веб-страниц"
     />
     
-    <!-- Material Design 3 CSS -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Material Design 3 - ДИЗАЙН ТОКЕНЫ (ЛОКАЛЬНЫЕ) -->
+    <link href="mdc-theme.css" rel="stylesheet">
+    <link href="mdc-components.css" rel="stylesheet">
+    
+    <!-- ТЕСТ: Проверка загрузки дизайн-токенов -->
+    <style>
+      .test-tokens {
+        background-color: var(--mdc-theme-primary);
+        color: var(--mdc-theme-on-primary);
+        padding: 4px 8px;
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 9999;
+        font-size: 12px;
+        border-radius: 0 0 0 4px;
+      }
+    </style>
+    
+    <!-- Material Design 3 - ВСЕ СТИЛИ НАПРЯМУЮ -->
+    <!-- Шрифты Roboto (все веса) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons (все варианты) -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone" rel="stylesheet">
+    
+    <!-- Material Design Components - ПОЛНАЯ ВЕРСИЯ -->
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Дополнительные MDC стили (если есть отдельные компоненты) -->
+    <link href="https://unpkg.com/@material/button@latest/dist/mdc.button.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/card@latest/dist/mdc.card.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/textfield@latest/dist/mdc.textfield.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/select@latest/dist/mdc.select.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/chips@latest/dist/mdc.chips.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/data-table@latest/dist/mdc.data-table.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/top-app-bar@latest/dist/mdc.top-app-bar.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/drawer@latest/dist/mdc.drawer.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/list@latest/dist/mdc.list.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/menu@latest/dist/mdc.menu.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/dialog@latest/dist/mdc.dialog.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/snackbar@latest/dist/mdc.snackbar.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@material/tab-bar@latest/dist/mdc.tab-bar.min.css" rel="stylesheet">
     
-    <!-- Ant Design CSS - локальная версия для обхода CORB -->
-    <link href="antd-local.css" rel="stylesheet">
+    <!-- Удалены Bootstrap и Ant Design -->
     
     <title>AI Designer</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- ТЕСТ: Элемент для проверки дизайн-токенов -->
+    <div class="test-tokens">ТОКЕНЫ</div>
     <div id="root"></div>
     
-    <!-- Material Design JavaScript -->
+    <!-- Material Design JavaScript - ПОЛНАЯ ВЕРСИЯ -->
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    
+    <!-- Дополнительные MDC JavaScript модули -->
+    <script src="https://unpkg.com/@material/button@latest/dist/mdc.button.min.js"></script>
+    <script src="https://unpkg.com/@material/card@latest/dist/mdc.card.min.js"></script>
+    <script src="https://unpkg.com/@material/textfield@latest/dist/mdc.textfield.min.js"></script>
+    <script src="https://unpkg.com/@material/select@latest/dist/mdc.select.min.js"></script>
+    <script src="https://unpkg.com/@material/chips@latest/dist/mdc.chips.min.js"></script>
+    <script src="https://unpkg.com/@material/data-table@latest/dist/mdc.data-table.min.js"></script>
+    <script src="https://unpkg.com/@material/top-app-bar@latest/dist/mdc.top-app-bar.min.js"></script>
+    <script src="https://unpkg.com/@material/drawer@latest/dist/mdc.drawer.min.js"></script>
+    <script src="https://unpkg.com/@material/list@latest/dist/mdc.list.min.js"></script>
+    <script src="https://unpkg.com/@material/menu@latest/dist/mdc.menu.min.js"></script>
+    <script src="https://unpkg.com/@material/dialog@latest/dist/mdc.dialog.min.js"></script>
+    <script src="https://unpkg.com/@material/snackbar@latest/dist/mdc.snackbar.min.js"></script>
+    <script src="https://unpkg.com/@material/tab-bar@latest/dist/mdc.tab-bar.min.js"></script>
+    
     <script>
-      // Инициализация Material Design компонентов
-      mdc.autoInit();
+      // Инициализация ВСЕХ Material Design компонентов
+      console.log('🎨 Инициализация Material Design компонентов...');
+      
+      // Автоматическая инициализация
+      if (typeof mdc !== 'undefined') {
+        mdc.autoInit();
+        console.log('✅ Material Design компоненты инициализированы');
+      } else {
+        console.warn('⚠️ Material Design библиотека не загружена');
+      }
+      
+      // Дополнительная инициализация для динамически созданных элементов
+      window.initializeMDC = function() {
+        if (typeof mdc !== 'undefined') {
+          mdc.autoInit();
+          console.log('🔄 Material Design компоненты переинициализированы');
+        }
+      };
     </script>
   </body>
 </html> 

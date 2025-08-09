@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import {
   ReactFlow,
   Background,
@@ -7,13 +8,12 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
-  Panel,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { makeElementsSelectable } from '../utils/htmlParser';
 
 // Кастомный узел для UI компонента
-const UIComponentNode = ({ data, selected }) => {
+const UIComponentNode = React.memo(({ data, selected }) => {
   const contentRef = useRef(null);
   const [hoveredElementId, setHoveredElementId] = useState(null);
   
@@ -24,10 +24,14 @@ const UIComponentNode = ({ data, selected }) => {
     minHeight: data.height ? `${data.height}px` : 'auto'
   };
   
-  // Подготавливаем HTML с data-element-id для интерактивности
+  // Санитизируем HTML и добавляем data-атрибуты для интерактивности
   const selectableContent = useMemo(() => {
     if (!data.content) return '';
-    return makeElementsSelectable(data.content);
+    const sanitized = DOMPurify.sanitize(data.content, {
+      ALLOW_DATA_ATTR: true,
+      ADD_ATTR: ['style', 'role', 'aria-label', 'aria-hidden', 'aria-expanded', 'aria-controls']
+    });
+    return makeElementsSelectable(sanitized);
   }, [data.content]);
   
   // Обработчик клика на внутренние элементы
@@ -54,7 +58,7 @@ const UIComponentNode = ({ data, selected }) => {
     setHoveredElementId(null);
   }, []);
   
-  // Добавляем event listeners после рендера
+  // Добавляем event listeners после рендера + инициализируем MDC компоненты
   useEffect(() => {
     const container = contentRef.current;
     if (!container) return;
@@ -70,6 +74,17 @@ const UIComponentNode = ({ data, selected }) => {
       element.style.cursor = 'pointer';
       element.style.transition = 'all 0.2s ease';
     });
+
+    // Инициализируем Material Design компоненты для динамически созданного контента
+    setTimeout(() => {
+      if (typeof window.initializeMDC === 'function') {
+        window.initializeMDC();
+        console.log('🔄 MDC компоненты переинициализированы для артефакта:', data.id);
+      } else if (typeof window.mdc !== 'undefined') {
+        window.mdc.autoInit();
+        console.log('🔄 MDC компоненты автоинициализированы для артефакта:', data.id);
+      }
+    }, 100); // Небольшая задержка для завершения рендеринга DOM
 
     return () => {
       elements.forEach(element => {
@@ -175,7 +190,25 @@ const UIComponentNode = ({ data, selected }) => {
               height: '100%',
               overflow: 'hidden',
               fontSize: '12px',
-              position: 'relative'
+              position: 'relative',
+              // Добавляем CSS переменные правильным способом для React
+              // Используем объект с ключами в кавычках
+              ...{
+                '--mdc-theme-primary': '#6200ee',
+                '--mdc-theme-on-primary': '#ffffff',
+                '--mdc-theme-secondary': '#018786',
+                '--mdc-theme-on-secondary': '#ffffff',
+                '--mdc-theme-surface': '#ffffff',
+                '--mdc-theme-on-surface': '#000000',
+                '--mdc-theme-background': '#e8f5e8',
+                '--mdc-theme-on-background': '#000000',
+                '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
+                '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
+                '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
+                '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)',
+                '--mdc-theme-error': '#b00020',
+                '--mdc-theme-on-error': '#ffffff'
+              }
             }}
           />
         ) : (
@@ -198,7 +231,7 @@ const UIComponentNode = ({ data, selected }) => {
 
     </div>
   );
-};
+});
 
 // Кастомный узел для процесса генерации
 const ProcessNode = ({ data }) => {
@@ -328,30 +361,34 @@ const CanvasFlow = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   // Кастомный обработчик изменения узлов, который сохраняет позиции в canvasElements
+  // Throttle обновление позиций в родительском состоянии (один раз за кадр)
+  const pendingUpdatesRef = useRef({});
+  const rafRef = useRef(0);
+
+  const flushPendingUpdates = useCallback(() => {
+    if (!onElementUpdate) return;
+    const pending = pendingUpdatesRef.current;
+    pendingUpdatesRef.current = {};
+    Object.entries(pending).forEach(([id, pos]) => {
+      onElementUpdate(id, pos);
+    });
+    rafRef.current = 0;
+  }, [onElementUpdate]);
+
   const onNodesChange = useCallback((changes) => {
-    // Применяем изменения к React Flow состоянию
     originalOnNodesChange(changes);
-    
-    // Обновляем позиции в исходных данных canvasElements
     changes.forEach((change) => {
       if (change.type === 'position' && change.position && change.id) {
-        // Обновляем позицию элемента в родительском состоянии
-        const elementIndex = elements.findIndex(el => el.id === change.id);
-        if (elementIndex !== -1) {
-          const updatedElement = {
-            ...elements[elementIndex],
-            x: Math.round(change.position.x),
-            y: Math.round(change.position.y)
-          };
-          console.log('📍 Обновляем позицию элемента:', change.id, 'на', change.position);
-          // Используем колбэк для обновления родительского состояния
-          if (typeof onElementUpdate === 'function') {
-            onElementUpdate(change.id, { x: Math.round(change.position.x), y: Math.round(change.position.y) });
-          }
+        pendingUpdatesRef.current[change.id] = {
+          x: Math.round(change.position.x),
+          y: Math.round(change.position.y)
+        };
+        if (rafRef.current === 0) {
+          rafRef.current = requestAnimationFrame(flushPendingUpdates);
         }
       }
     });
-  }, [originalOnNodesChange, elements, onElementUpdate]);
+  }, [originalOnNodesChange, flushPendingUpdates]);
 
   // Обновляем узлы при изменении элементов (но сохраняем позиции)
   React.useEffect(() => {
@@ -432,25 +469,7 @@ const CanvasFlow = ({
           zoomable
         />
         
-        {/* Панель управления */}
-        <Panel position="top-left">
-          <div className="flow-panel">
-            <div className="flow-panel-controls">
-              <button 
-                onClick={handleToggleProcessFlow}
-                className={`flow-panel-btn ${showProcessFlow ? 'active' : ''}`}
-              >
-                {showProcessFlow ? '🔗' : '📦'} Workflow
-              </button>
-              <button onClick={handleFitView} className="flow-panel-btn">
-                🔍 Fit View
-              </button>
-            </div>
-            <div className="flow-panel-stats">
-              <small>Узлов: {nodes.length} | Связей: {edges.length}</small>
-            </div>
-          </div>
-        </Panel>
+        {/* Панель управления скрыта по просьбе пользователя */}
 
 
       </ReactFlow>

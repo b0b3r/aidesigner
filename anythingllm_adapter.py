@@ -4,6 +4,7 @@
 """
 
 import requests
+import os
 import json
 import logging
 from typing import Dict, List, Any, Optional
@@ -22,6 +23,9 @@ class AnythingLLMAdapter:
         self.base_url = base_url.rstrip('/')
         self.api_key = api_key
         self.workspace_slug = "myworkspace"  # Исправленный slug рабочего пространства
+        # Опциональные параметры для RAG. Если не заданы, используются настройки воркспейса в AnythingLLM
+        self.top_n_env = os.getenv("ANYTHINGLLM_TOPN")
+        self.history_env = os.getenv("ANYTHINGLLM_HISTORY")
         
         # Заголовки для запросов
         self.headers = {
@@ -31,7 +35,7 @@ class AnythingLLMAdapter:
         if self.api_key:
             self.headers["Authorization"] = f"Bearer {self.api_key}"
     
-    def chat_with_workspace(self, message: str, mode: str = "chat", thread_slug: Optional[str] = None) -> Dict[str, Any]:
+    def chat_with_workspace(self, message: str, mode: str = "chat", thread_slug: Optional[str] = None, top_n: Optional[int] = None, history: Optional[int] = None) -> Dict[str, Any]:
         """
         Отправка сообщения в workspace для чата с RAG
         
@@ -45,10 +49,20 @@ class AnythingLLMAdapter:
         """
         url = f"{self.base_url}/api/v1/workspace/{self.workspace_slug}/chat"
         
+        # Базовый payload
         payload = {
             "message": message,
             "mode": mode
         }
+
+        # Добавляем параметры только если явно задано (аргументом или через ENV)
+        eff_top_n = top_n if top_n is not None else (int(self.top_n_env) if self.top_n_env else None)
+        eff_history = history if history is not None else (int(self.history_env) if self.history_env else None)
+
+        if eff_top_n is not None:
+            payload["topN"] = eff_top_n
+        if eff_history is not None:
+            payload["openAiHistory"] = eff_history
         
         if thread_slug:
             payload["thread_slug"] = thread_slug
@@ -70,9 +84,14 @@ class AnythingLLMAdapter:
             data = response.json()
             logger.debug(f"✅ Получен ответ от AnythingLLM")
             
+            # Диагностика: логируем полный ответ от AnythingLLM
+            text_response = data.get("textResponse", "")
+            print(f"🔍 Полный ответ от AnythingLLM ({len(text_response)} символов): {text_response[:500]}...")
+            print(f"🔍 Ответ заканчивается на: ...{text_response[-100:] if len(text_response) > 100 else text_response}")
+            
             return {
                 "success": True,
-                "response": data.get("textResponse", ""),
+                "response": text_response,
                 "sources": data.get("sources", []),
                 "thread_slug": data.get("threadSlug"),
                 "raw_data": data
@@ -242,59 +261,45 @@ def convert_deepseek_to_anythingllm_format(messages: List[Dict[str, str]], adapt
             "error": "No user message found"
         }
     
-    # Простой промпт, который полагается на RAG для получения информации о классах
-    formatted_message = f"""Создай современный UI компонент используя готовые CSS классы из дизайн-систем.
+    # ПРОМПТ с обязательным использованием дизайн-токенов
+    formatted_message = """Создай современный UI компонент используя Material Design 3 (MDC классы) и ОБЯЗАТЕЛЬНО CSS переменные дизайн-токенов.
 
-ВАЖНЫЕ ПРАВИЛА:
-1. Используй готовые CSS классы для базовых стилей (mdc-button, mdc-card, ant-btn, etc.)
-2. Используй inline-стили ТОЛЬКО для:
-   - Позиционирования и layout (display: flex, margin, padding)
-   - Размеров контейнеров (width, height)
-   - Выравнивания (text-align, justify-content)
-   - Отступов между элементами (gap, margin)
-   - Цвета фона страницы (background-color)
-   - Шрифтов (font-family, font-size)
-3. Оборачивай HTML в <VISUAL>...</VISUAL>
-4. Указывай ширину в <SIZE>ширина</SIZE>
-5. Создавай адаптивные и современные макеты
-6. Используй семантическую разметку HTML5
-7. ПЕРЕДАВАЙ НАСТРОЙКИ BODY НА ПЕРВЫЙ ФРЕЙМ:
-   - Добавляй style="background-color: #f5f5f5; font-family: 'Roboto', sans-serif;" к основному контейнеру
-   - Это заменяет настройки body для фрейма
-8. ИСПОЛЬЗУЙ ПРАВИЛЬНЫЕ INPUT ПОЛЯ:
-   - Для Material Design: mdc-text-field, mdc-text-field--outlined
-   - Для Ant Design: ant-input, ant-input-search
-   - Для Bootstrap: form-control
-   - НЕ упрощай input поля - они должны работать с подсказками
+ПРАВИЛЬНЫЕ MDC КЛАССЫ КНОПОК:
+- Filled кнопка: class="mdc-button mdc-button--raised" (НЕ --filled!)
+- Outlined кнопка: class="mdc-button mdc-button--outlined"
+- Text кнопка: class="mdc-button"
+- Tonal кнопка: class="mdc-button mdc-button--tonal"
 
-ПРИМЕР ПРАВИЛЬНОГО ИСПОЛЬЗОВАНИЯ:
-```html
-<div style="background-color: #f5f5f5; font-family: 'Roboto', sans-serif; padding: 24px;">
-  <div style="display: flex; gap: 16px; align-items: center;">
-    <div class="mdc-text-field mdc-text-field--outlined">
-      <input type="text" class="mdc-text-field__input" placeholder="Поиск...">
-      <div class="mdc-notched-outline">
-        <div class="mdc-notched-outline__leading"></div>
-        <div class="mdc-notched-outline__notch"></div>
-        <div class="mdc-notched-outline__trailing"></div>
-      </div>
-    </div>
-    <button class="mdc-button mdc-button--raised">Поиск</button>
-  </div>
-</div>
-```
+КРИТИЧЕСКИ ВАЖНО - ИСПОЛЬЗУЙ MDC КЛАССЫ ВМЕСТО INLINE СТИЛЕЙ:
 
-ПРОСТЫЕ КОМПОНЕНТЫ (предпочтительно):
-- Кнопки: mdc-button, mdc-button--raised, mdc-button--outlined
-- Карточки: mdc-card
-- Чипы: mdc-chip
-- Иконки: material-icons
-- Input поля: mdc-text-field, ant-input, form-control
+✅ ПРАВИЛЬНО (как кнопки):
+- Кнопки: class="mdc-button mdc-button--raised" (автоматическая тема)
+- Карточки: class="mdc-card" (автоматическая тема)
+- Текст: class="mdc-typography--headline6" (автоматическая тема)
+- Поля: class="mdc-text-field" (автоматическая тема)
 
-Запрос: {user_message}"""
+❌ ЗАПРЕЩЕНО:
+- НЕ используй inline стили: style="background-color: var(--mdc-theme-primary)"
+- НЕ используй жёсткие цвета: style="color: #6200ee"
+- НЕ используй mdc-button--filled (не существует!)
+
+✅ ОБЯЗАТЕЛЬНО:
+- Используй ТОЛЬКО MDC классы для стилизации
+- MDC классы автоматически подхватывают правильную тему
+- Inline стили только для размеров и позиционирования
+
+CSS переменные будут автоматически инжектированы в артефакт
+
+Отвечай в JSON формате: {"visual": "HTML код", "size": "ширина в пикселях", "notes": "пояснения"}
+
+Запрос: """ + user_message
     
-    # Отправляем запрос в AnythingLLM
-    result = adapter.chat_with_workspace(formatted_message)
+    # Отправляем запрос в AnythingLLM с оптимизированными параметрами
+    result = adapter.chat_with_workspace(
+        formatted_message,
+        top_n=5,  # Используем все 5 документов Material Design
+        history=5  # Ограничиваем историю чата
+    )
     
     if result["success"]:
         # Отладочная информация
