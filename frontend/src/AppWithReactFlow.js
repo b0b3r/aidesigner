@@ -6,6 +6,7 @@ import PropertiesPanel from './components/PropertiesPanel';
 import MessageRouter from './services/MessageRouter';
 import PlannerService from './services/PlannerService';
 import cssInjector from './utils/cssInjector';
+import { testCSSClasses, createTestElements } from './utils/cssTest';
 
 function AppWithReactFlow() {
   // Используем существующие данные из App.js
@@ -171,8 +172,48 @@ function AppWithReactFlow() {
 
   // Загружаем CSS дизайн-систем при инициализации
   useEffect(() => {
-    cssInjector.loadDesignSystemsCSS();
+    console.log('🎨 Инициализация CSS дизайн-систем...');
+    
+    cssInjector.loadDesignSystemsCSS().then(() => {
+      console.log('✅ CSS дизайн-систем загружены');
+      
+      // Тестируем CSS классы после загрузки
+      setTimeout(() => {
+        console.log('🧪 Тестирую CSS классы...');
+        testCSSClasses();
+        
+        // Принудительно загружаем локальный CSS если нужно
+        forceLoadLocalCSS();
+      }, 2000);
+    }).catch(error => {
+      console.error('❌ Ошибка загрузки CSS:', error);
+    });
   }, []);
+
+  // Функция для принудительной загрузки локального CSS
+  const forceLoadLocalCSS = () => {
+    console.log('🔧 Принудительная загрузка локального CSS...');
+    
+    // Проверяем, есть ли уже загруженный CSS
+    const existingLink = document.querySelector('link[href*="antd-local.css"]');
+    if (existingLink) {
+      console.log('✅ Локальный CSS уже загружен в HTML');
+      return;
+    }
+    
+    // Создаем новый link элемент
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'antd-local.css';
+    link.onload = () => {
+      console.log('✅ Локальный CSS загружен принудительно');
+    };
+    link.onerror = (error) => {
+      console.error('❌ Ошибка загрузки локального CSS:', error);
+    };
+    
+    document.head.appendChild(link);
+  };
 
   // Обработчик клавиши Escape для очистки overlay-слоев
   useEffect(() => {

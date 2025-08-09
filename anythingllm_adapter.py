@@ -21,7 +21,7 @@ class AnythingLLMAdapter:
         """
         self.base_url = base_url.rstrip('/')
         self.api_key = api_key
-        self.workspace_slug = "MyWorkspace"  # Slug рабочего пространства
+        self.workspace_slug = "myworkspace"  # Исправленный slug рабочего пространства
         
         # Заголовки для запросов
         self.headers = {
@@ -191,6 +191,33 @@ class AnythingLLMAdapter:
                 "url": self.base_url
             }
 
+    def get_workspaces(self) -> Dict[str, Any]:
+        """
+        Получение списка доступных workspace
+        
+        Returns:
+            Список workspace
+        """
+        url = f"{self.base_url}/api/v1/workspaces"
+        
+        try:
+            response = requests.get(url, headers=self.headers, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            return {
+                "success": True,
+                "workspaces": data.get("workspaces", []),
+                "raw_data": data
+            }
+            
+        except requests.exceptions.RequestException as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "workspaces": []
+            }
+
 def convert_deepseek_to_anythingllm_format(messages: List[Dict[str, str]], adapter: AnythingLLMAdapter) -> Dict[str, Any]:
     """
     Конвертирует формат сообщений DeepSeek в формат AnythingLLM
@@ -215,27 +242,54 @@ def convert_deepseek_to_anythingllm_format(messages: List[Dict[str, str]], adapt
             "error": "No user message found"
         }
     
-    # Добавляем оптимизированный промпт для использования готовых классов
-    formatted_message = f"""Создай UI компонент используя готовые CSS классы.
+    # Простой промпт, который полагается на RAG для получения информации о классах
+    formatted_message = f"""Создай современный UI компонент используя готовые CSS классы из дизайн-систем.
 
-ВАЖНО: Используй готовые классы дизайн-систем вместо полного CSS кода!
+ВАЖНЫЕ ПРАВИЛА:
+1. Используй готовые CSS классы для базовых стилей (mdc-button, mdc-card, ant-btn, etc.)
+2. Используй inline-стили ТОЛЬКО для:
+   - Позиционирования и layout (display: flex, margin, padding)
+   - Размеров контейнеров (width, height)
+   - Выравнивания (text-align, justify-content)
+   - Отступов между элементами (gap, margin)
+   - Цвета фона страницы (background-color)
+   - Шрифтов (font-family, font-size)
+3. Оборачивай HTML в <VISUAL>...</VISUAL>
+4. Указывай ширину в <SIZE>ширина</SIZE>
+5. Создавай адаптивные и современные макеты
+6. Используй семантическую разметку HTML5
+7. ПЕРЕДАВАЙ НАСТРОЙКИ BODY НА ПЕРВЫЙ ФРЕЙМ:
+   - Добавляй style="background-color: #f5f5f5; font-family: 'Roboto', sans-serif;" к основному контейнеру
+   - Это заменяет настройки body для фрейма
+8. ИСПОЛЬЗУЙ ПРАВИЛЬНЫЕ INPUT ПОЛЯ:
+   - Для Material Design: mdc-text-field, mdc-text-field--outlined
+   - Для Ant Design: ant-input, ant-input-search
+   - Для Bootstrap: form-control
+   - НЕ упрощай input поля - они должны работать с подсказками
 
-Доступные системы:
-- Material Design: mdc-button, mdc-card, mdc-text-field
-- Bootstrap: btn, card, form-control  
-- Ant Design: ant-btn, ant-card, ant-input
+ПРИМЕР ПРАВИЛЬНОГО ИСПОЛЬЗОВАНИЯ:
+```html
+<div style="background-color: #f5f5f5; font-family: 'Roboto', sans-serif; padding: 24px;">
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <div class="mdc-text-field mdc-text-field--outlined">
+      <input type="text" class="mdc-text-field__input" placeholder="Поиск...">
+      <div class="mdc-notched-outline">
+        <div class="mdc-notched-outline__leading"></div>
+        <div class="mdc-notched-outline__notch"></div>
+        <div class="mdc-notched-outline__trailing"></div>
+      </div>
+    </div>
+    <button class="mdc-button mdc-button--raised">Поиск</button>
+  </div>
+</div>
+```
 
-Примеры:
-- Кнопка: <button class="mdc-button mdc-button--filled">Текст</button>
-- Карточка: <div class="card">Содержимое</div>
-- Форма: <input class="form-control" type="text">
-
-ОБЯЗАТЕЛЬНО используй формат:
-<VISUAL>
-HTML с готовыми классами
-</VISUAL>
-
-<SIZE>ширина</SIZE>
+ПРОСТЫЕ КОМПОНЕНТЫ (предпочтительно):
+- Кнопки: mdc-button, mdc-button--raised, mdc-button--outlined
+- Карточки: mdc-card
+- Чипы: mdc-chip
+- Иконки: material-icons
+- Input поля: mdc-text-field, ant-input, form-control
 
 Запрос: {user_message}"""
     

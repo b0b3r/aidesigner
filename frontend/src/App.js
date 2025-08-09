@@ -1,5 +1,6 @@
 ﻿import React, { useState, useCallback } from 'react';
 import './App.css';
+import { createTestElements, testCDNSources } from './utils/cssTest';
 
 function App() {
   const [selectedElement, setSelectedElement] = useState(null);
@@ -253,6 +254,12 @@ function App() {
             {showGrid ? "⊞" : "⊡"}
           </button>
           <button title="Настройки">⚙️</button>
+          <button onClick={createTestElements} title="Тест CSS классов" style={{ fontSize: '12px' }}>
+            🧪 CSS
+          </button>
+          <button onClick={testCDNSources} title="Тест CDN" style={{ fontSize: '12px' }}>
+            🌐 CDN
+          </button>
           <span className="zoom-level">{zoom}%</span>
         </div>
 

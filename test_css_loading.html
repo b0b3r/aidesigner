@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест загрузки CSS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Тест загрузки CSS</h1>
+        
+        <div class="test-item">
+            <h3>1. Проверка существования файла</h3>
+            <p>Файл: <code>antd-local.css</code></p>
+            <span class="status" id="file-status">⏳ Проверяется...</span>
+        </div>
+        
+        <div class="test-item">
+            <h3>2. Загрузка CSS</h3>
+            <button onclick="loadCSS()">Загрузить CSS</button>
+            <span class="status" id="load-status">⏳ Ожидание...</span>
+        </div>
+        
+        <div class="test-item">
+            <h3>3. Тест элементов</h3>
+            <button class="ant-btn" id="test-btn">Тест кнопка</button>
+            <span class="status" id="test-status">⏳ Ожидание CSS...</span>
+        </div>
+        
+        <div class="test-item">
+            <h3>4. Информация о стилях</h3>
+            <div id="style-info">
+                <p>Нажмите "Загрузить CSS" и "Проверить стили"</p>
+            </div>
+            <button onclick="checkStyles()">Проверить стили</button>
+        </div>
+    </div>
+    
+    <script>
+        console.log('🧪 Тест загрузки CSS начат...');
+        
+        // Проверяем существование файла
+        async function checkFile() {
+            try {
+                const response = await fetch('antd-local.css');
+                const fileStatus = document.getElementById('file-status');
+                
+                if (response.ok) {
+                    fileStatus.textContent = '✅ Файл найден';
+                    fileStatus.className = 'status success';
+                    console.log('✅ Файл antd-local.css найден');
+                } else {
+                    fileStatus.textContent = '❌ Файл не найден';
+                    fileStatus.className = 'status error';
+                    console.log('❌ Файл antd-local.css не найден');
+                }
+            } catch (error) {
+                const fileStatus = document.getElementById('file-status');
+                fileStatus.textContent = '❌ Ошибка загрузки';
+                fileStatus.className = 'status error';
+                console.error('❌ Ошибка при проверке файла:', error);
+            }
+        }
+        
+        // Загружаем CSS
+        function loadCSS() {
+            const loadStatus = document.getElementById('load-status');
+            loadStatus.textContent = '⏳ Загружается...';
+            loadStatus.className = 'status loading';
+            
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'antd-local.css';
+            link.onload = function() {
+                loadStatus.textContent = '✅ CSS загружен';
+                loadStatus.className = 'status success';
+                console.log('✅ CSS загружен успешно');
+                
+                // Проверяем стили через 1 секунду
+                setTimeout(checkStyles, 1000);
+            };
+            link.onerror = function() {
+                loadStatus.textContent = '❌ Ошибка загрузки';
+                loadStatus.className = 'status error';
+                console.error('❌ Ошибка загрузки CSS');
+            };
+            
+            document.head.appendChild(link);
+        }
+        
+        // Проверяем стили
+        function checkStyles() {
+            const testBtn = document.getElementById('test-btn');
+            const testStatus = document.getElementById('test-status');
+            const styleInfo = document.getElementById('style-info');
+            
+            if (testBtn) {
+                const styles = window.getComputedStyle(testBtn);
+                const hasStyles = styles.backgroundColor !== 'rgba(0, 0, 0, 0)' || 
+                                 styles.borderRadius !== '0px' ||
+                                 styles.padding !== '0px';
+                
+                if (hasStyles) {
+                    testStatus.textContent = '✅ Стили применены';
+                    testStatus.className = 'status success';
+                    
+                    styleInfo.innerHTML = `
+                        <h4>Информация о стилях:</h4>
+                        <ul>
+                            <li>Background: ${styles.backgroundColor}</li>
+                            <li>Border: ${styles.border}</li>
+                            <li>Border Radius: ${styles.borderRadius}</li>
+                            <li>Padding: ${styles.padding}</li>
+                            <li>Font Size: ${styles.fontSize}</li>
+                        </ul>
+                    `;
+                    
+                    console.log('✅ Стили Ant Design применены:', {
+                        backgroundColor: styles.backgroundColor,
+                        border: styles.border,
+                        borderRadius: styles.borderRadius,
+                        padding: styles.padding
+                    });
+                } else {
+                    testStatus.textContent = '❌ Стили не применены';
+                    testStatus.className = 'status error';
+                    styleInfo.innerHTML = '<p>Стили не обнаружены</p>';
+                    console.log('❌ Стили Ant Design не применены');
+                }
+            }
+        }
+        
+        // Запускаем проверку при загрузке
+        window.onload = function() {
+            checkFile();
+        };
+    </script>
+</body>
+</html>

@@ -37,15 +37,61 @@ class CSSInjector {
      */
     async loadCSSFromURL(url, id) {
         if (this.loadedCSS.has(id)) {
+            console.log(`📝 CSS ${id} уже загружен, пропускаем`);
             return;
         }
 
         try {
+            console.log(`📥 Загружаю CSS: ${url}`);
             const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const cssContent = await response.text();
+            console.log(`✅ CSS загружен: ${url} (${cssContent.length} символов)`);
+            
             this.injectCSS(cssContent, id);
+            this.loadedCSS.add(id);
+            
+            // Проверяем, что CSS действительно применился
+            setTimeout(() => {
+                this.verifyCSSLoaded(id, url);
+            }, 1000);
+            
         } catch (error) {
             console.error(`❌ Ошибка загрузки CSS ${url}:`, error);
+        }
+    }
+
+    /**
+     * Проверяет, что CSS действительно загрузился
+     * @param {string} id - идентификатор CSS
+     * @param {string} url - URL файла
+     */
+    verifyCSSLoaded(id, url) {
+        // Создаем тестовый элемент для проверки
+        const testElement = document.createElement('div');
+        testElement.className = 'ant-btn ant-btn-primary';
+        testElement.style.position = 'absolute';
+        testElement.style.left = '-9999px';
+        testElement.style.top = '-9999px';
+        testElement.textContent = 'Test';
+        
+        document.body.appendChild(testElement);
+        
+        const computedStyle = window.getComputedStyle(testElement);
+        const hasStyles = computedStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' || 
+                         computedStyle.borderRadius !== '0px' ||
+                         computedStyle.padding !== '0px';
+        
+        document.body.removeChild(testElement);
+        
+        if (hasStyles) {
+            console.log(`✅ CSS ${id} успешно применен`);
+        } else {
+            console.warn(`⚠️ CSS ${id} загружен, но стили не применены`);
         }
     }
 
@@ -55,18 +101,18 @@ class CSSInjector {
     async loadDesignSystemsCSS() {
         const designSystems = {
             'material-design': [
-                'https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css',
-                'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'
+                'https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css'
             ],
             'bootstrap': [
-                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'
+                // Bootstrap уже загружен в index.html
             ],
             'ant-design': [
-                'https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/reset.css'
+                // Загружаем локальный Ant Design CSS
+                'antd-local.css'
             ]
         };
 
-        console.log('🎨 Загружаю CSS дизайн-систем...');
+        console.log('🎨 Загружаю дополнительные CSS дизайн-систем...');
 
         for (const [system, urls] of Object.entries(designSystems)) {
             for (let i = 0; i < urls.length; i++) {
