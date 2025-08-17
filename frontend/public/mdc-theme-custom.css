@@ -88,7 +88,7 @@
 body {
   background-color: var(--mdc-theme-background);
   color: var(--mdc-theme-text-primary-on-background);
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 /* === КАСТОМНЫЕ КЛАССЫ ДЛЯ АРТЕФАКТОВ === */
@@ -122,14 +122,53 @@ body {
 
 .mdc-typography--headline6 {
   color: var(--mdc-theme-text-primary-on-background) !important;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .mdc-typography--body2 {
   color: var(--mdc-theme-text-secondary-on-background) !important;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .mdc-typography--subtitle1 {
   color: var(--mdc-theme-text-primary-on-background) !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* === MATERIAL DESIGN КОМПОНЕНТЫ С РОБОТО === */
+
+/* Все MDC компоненты используют Roboto */
+.mdc-button,
+.mdc-card,
+.mdc-text-field,
+.mdc-select,
+.mdc-chip,
+.mdc-data-table,
+.mdc-top-app-bar,
+.mdc-drawer,
+.mdc-list,
+.mdc-menu,
+.mdc-dialog,
+.mdc-snackbar,
+.mdc-tab-bar {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* MDC кнопки */
+.mdc-button__label {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* MDC поля ввода */
+.mdc-text-field__input,
+.mdc-floating-label {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* MDC карточки */
+.mdc-card__primary-action,
+.mdc-card__actions {
+  font-family: 'Roboto', sans-serif !important;
 }
 
 /* === ОТЛАДОЧНЫЕ СТИЛИ === */

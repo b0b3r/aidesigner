@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка дизайн-систем в AnythingLLM</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .file-list {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .code {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Загрузка дизайн-систем в AnythingLLM</h1>
+        <p>Пошаговое руководство по настройке RAG системы</p>
+    </div>
+
+    <div class="success">
+        <strong>✅ Готово к загрузке!</strong><br>
+        AnythingLLM запущен и база знаний дизайн-систем создана.
+    </div>
+
+    <div class="step">
+        <h2>Шаг 1: Откройте AnythingLLM</h2>
+        <p>Перейдите в AnythingLLM веб-интерфейс:</p>
+        <a href="http://localhost:3001" class="button" target="_blank">🚀 Открыть AnythingLLM</a>
+        <p><small>Если не открывается, проверьте что Docker контейнер запущен</small></p>
+    </div>
+
+    <div class="step">
+        <h2>Шаг 2: Войдите в MyWorkspace</h2>
+        <p>В AnythingLLM:</p>
+        <ol>
+            <li>Войдите в свой аккаунт (если еще не вошли)</li>
+            <li>Выберите <strong>MyWorkspace</strong> или создайте новый workspace</li>
+            <li>Перейдите в раздел <strong>Documents</strong></li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Шаг 3: Загрузите файлы дизайн-систем</h2>
+        <p>Файлы для загрузки находятся в папке:</p>
+        <div class="code">D:\Projects\aidesigner\design-systems-knowledge\</div>
+        
+        <p><strong>Список файлов для загрузки:</strong></p>
+        <div class="file-list">
+📁 design-systems-knowledge/
+├── 📄 INDEX.md                    ← Начните с этого файла
+├── 📁 material-design-3/
+│   ├── 📄 buttons.md
+│   ├── 📄 cards.md
+│   ├── 📄 text-fields.md
+│   └── 📄 navigation.md
+├── 📁 bootstrap/
+│   ├── 📄 buttons.md
+│   ├── 📄 cards.md
+│   ├── 📄 forms.md
+│   └── 📄 grid.md
+└── 📁 ant-design/
+    ├── 📄 button.md
+    ├── 📄 card.md
+    ├── 📄 form.md
+    └── 📄 table.md
+        </div>
+
+        <p><strong>Порядок загрузки:</strong></p>
+        <ol>
+            <li>Нажмите <strong>"Upload Documents"</strong> в AnythingLLM</li>
+            <li>Выберите <strong>"Upload Files"</strong></li>
+            <li>Загрузите <strong>INDEX.md</strong> первым</li>
+            <li>Затем загрузите все остальные .md файлы из всех папок</li>
+            <li>Дождитесь завершения индексации</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Шаг 4: Настройте системный промпт</h2>
+        <p>В настройках workspace установите следующий системный промпт:</p>
+        <div class="code">
+Вы - эксперт по UI/UX дизайну и современным дизайн-системам. У вас есть глубокие знания по:
+
+- Material Design 3 (Google)
+- Bootstrap 5 
+- Ant Design
+
+При ответах на вопросы о UI компонентах:
+
+1. Ссылайтесь на конкретные компоненты из загруженных дизайн-систем
+2. Предоставляйте практические примеры кода и реализации
+3. Учитывайте принципы accessibility и best practices
+4. Объясняйте различия между подходами разных дизайн-систем
+5. Предлагайте наиболее подходящие решения для конкретных задач
+
+Всегда стремитесь к созданию качественных, доступных и современных пользовательских интерфейсов.
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>Шаг 5: Тестирование RAG системы</h2>
+        <p>После загрузки и настройки протестируйте систему следующими вопросами:</p>
+        
+        <div class="code">
+🧪 Тестовые вопросы:
+
+• "Как правильно использовать кнопки в Material Design?"
+• "Какие варианты карточек есть в Bootstrap?"
+• "Чем отличаются кнопки в Ant Design от Material Design?"
+• "Покажи код адаптивной формы с валидацией"
+• "Какую дизайн-систему выбрать для админ панели?"
+        </div>
+    </div>
+
+    <div class="success">
+        <h2>🎉 Готово!</h2>
+        <p>После выполнения всех шагов ваша RAG система будет:</p>
+        <ul>
+            <li>✅ Отвечать на вопросы о дизайн-системах</li>
+            <li>✅ Предлагать правильные компоненты</li>
+            <li>✅ Генерировать качественный код</li>
+            <li>✅ Сравнивать разные подходы</li>
+            <li>✅ Следовать best practices</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h3>⚠️ Если что-то не работает:</h3>
+        <ul>
+            <li>Проверьте что AnythingLLM запущен: <code>docker ps | grep anythingllm</code></li>
+            <li>Убедитесь что все файлы загружены и проиндексированы</li>
+            <li>Проверьте настройки LLM провайдера (DeepSeek API)</li>
+        </ul>
+    </div>
+
+    <script>
+        // Проверяем доступность AnythingLLM
+        fetch('http://localhost:3001/api/system/check')
+            .then(response => {
+                if (response.ok) {
+                    document.querySelector('.success').innerHTML += '<br><strong>🟢 AnythingLLM доступен и готов к работе!</strong>';
+                }
+            })
+            .catch(() => {
+                document.querySelector('.success').innerHTML += '<br><strong>🔴 AnythingLLM недоступен. Проверьте что контейнер запущен.</strong>';
+            });
+    </script>
+</body>
+</html>

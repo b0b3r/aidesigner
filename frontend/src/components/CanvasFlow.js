@@ -8,12 +8,14 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
+  NodeResizer,
+  Position,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { makeElementsSelectable } from '../utils/htmlParser';
 
 // Кастомный узел для UI компонента
-const UIComponentNode = React.memo(({ data, selected }) => {
+const UIComponentNode = React.memo(({ data, selected, id }) => {
   const contentRef = useRef(null);
   const [hoveredElementId, setHoveredElementId] = useState(null);
   
@@ -57,7 +59,7 @@ const UIComponentNode = React.memo(({ data, selected }) => {
   const handleElementLeave = useCallback(() => {
     setHoveredElementId(null);
   }, []);
-  
+
   // Добавляем event listeners после рендера + инициализируем MDC компоненты
   useEffect(() => {
     const container = contentRef.current;
@@ -142,6 +144,8 @@ const UIComponentNode = React.memo(({ data, selected }) => {
     }
   }, [data.selectedInternalElement, hoveredElementId, selectableContent]);
 
+
+
   // Cleanup эффект для очистки всех overlay при размонтировании компонента
   useEffect(() => {
     return () => {
@@ -159,7 +163,23 @@ const UIComponentNode = React.memo(({ data, selected }) => {
   }, []);
   
   return (
-    <div className={`ui-flow-node ${selected ? 'selected' : ''}`} style={nodeStyle}>
+    <div className={`ui-flow-node ${selected ? 'selected' : ''} ${data.isResizing ? 'resizing' : ''}`} style={nodeStyle}>
+      {/* Добавляем NodeResizer для изменения размера */}
+      <NodeResizer
+        isVisible={selected || data.isResizing}
+        minWidth={100}
+        minHeight={50}
+        onResizeStart={(event, params) => {
+          console.log('🎯 Начало изменения размера через NodeResizer:', data.id);
+        }}
+        onResize={(event, params) => {
+          console.log('📏 Изменение размера через NodeResizer:', data.id, params);
+        }}
+        onResizeStop={(event, params) => {
+          console.log('✅ Завершение изменения размера через NodeResizer:', data.id, params);
+        }}
+      />
+      
       <div className="ui-flow-header">
         <span className="ui-flow-title">{data.name}</span>
         <div className="ui-flow-actions">
@@ -193,34 +213,28 @@ const UIComponentNode = React.memo(({ data, selected }) => {
               position: 'relative',
               // Добавляем CSS переменные правильным способом для React
               // Используем объект с ключами в кавычках
-              ...{
-                '--mdc-theme-primary': '#6200ee',
-                '--mdc-theme-on-primary': '#ffffff',
-                '--mdc-theme-secondary': '#018786',
-                '--mdc-theme-on-secondary': '#ffffff',
-                '--mdc-theme-surface': '#ffffff',
-                '--mdc-theme-on-surface': '#000000',
-                '--mdc-theme-background': '#e8f5e8',
-                '--mdc-theme-on-background': '#000000',
-                '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
-                '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
-                '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
-                '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)',
-                '--mdc-theme-error': '#b00020',
-                '--mdc-theme-on-error': '#ffffff'
-              }
+              // ...{
+              //   '--mdc-theme-primary': '#6200ee',
+              //   '--mdc-theme-on-primary': '#ffffff',
+              //   '--mdc-theme-secondary': '#018786',
+              //   '--mdc-theme-on-secondary': '#ffffff',
+              //   '--mdc-theme-surface': '#ffffff',
+              //   '--mdc-theme-on-surface': '#000000',
+              //   '--mdc-theme-background': '#e8f5e8',
+              //   '--mdc-theme-on-background': '#000000',
+              //   '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
+              //   '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
+              //   '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
+              //   '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)',
+              //   '--mdc-theme-error': '#b00020',
+              //   '--mdc-theme-on-error': '#ffffff'
+              // }
             }}
           />
         ) : (
           <div className="ui-flow-text">{data.name || 'Пустой элемент'}</div>
         )}
       </div>
-      
-      {data.prompt && (
-        <div className="ui-flow-footer">
-          <small title={data.prompt}>💭 {data.prompt.slice(0, 30)}...</small>
-        </div>
-      )}
       
       {/* Показываем информацию о выбранном внутреннем элементе */}
       {data.selectedInternalElement && (
@@ -266,33 +280,45 @@ const CanvasFlow = ({
   selectedInternalElement,
   onInternalElementSelect
 }) => {
+  // Состояние для отслеживания процесса изменения размера
+  const [resizingNodeId, setResizingNodeId] = useState(null);
+
   // Конвертируем существующие элементы в React Flow узлы
   const convertToFlowNodes = useCallback((elements) => {
-    return elements.map((element) => ({
-      id: element.id,
-      type: 'uiComponent',
-      position: { 
-        x: element.x || 100, 
-        y: element.y || 100 
-      },
-      data: {
+    return elements.map((element) => {
+      const nodeWidth = element.width || 200;
+      const nodeHeight = element.height === 'auto' ? undefined : (element.height || 150);
+      
+      console.log('🔄 Конвертируем элемент в узел:', element.id, 'размеры:', { width: nodeWidth, height: nodeHeight });
+      
+      return {
         id: element.id,
-        name: element.name || element.type || 'UI Element',
-        content: element.content,
-        type: element.type,
-        prompt: element.prompt,
-        createdAt: element.createdAt,
-        onRegenerate: onElementRegenerate,
-        onEdit: onElementEdit,
-        onElementSelect: onInternalElementSelect,
-        selectedInternalElement: selectedInternalElement?.artifactId === element.id ? selectedInternalElement.elementId : null,
-      },
-      style: {
-        width: element.width || 200,
-        height: element.height === 'auto' ? undefined : (element.height || 150),
-      }
-    }));
-  }, [onElementRegenerate, onElementEdit, onInternalElementSelect, selectedInternalElement]);
+        type: 'uiComponent',
+        position: { 
+          x: element.x || 100, 
+          y: element.y || 100 
+        },
+        data: {
+          id: element.id,
+          name: element.name || element.type || 'UI Element',
+          content: element.content,
+          type: element.type,
+          prompt: element.prompt,
+          createdAt: element.createdAt,
+          onRegenerate: onElementRegenerate,
+          onEdit: onElementEdit,
+          onElementSelect: onInternalElementSelect,
+          isResizing: resizingNodeId === element.id,
+
+          selectedInternalElement: selectedInternalElement?.artifactId === element.id ? selectedInternalElement.elementId : null,
+        },
+        style: {
+          width: nodeWidth,
+          height: nodeHeight,
+        }
+      };
+    });
+  }, [onElementRegenerate, onElementEdit, onInternalElementSelect, selectedInternalElement, resizingNodeId]);
 
   // Создаем процессные узлы для демонстрации workflow
   const processNodes = useMemo(() => [
@@ -387,8 +413,18 @@ const CanvasFlow = ({
           rafRef.current = requestAnimationFrame(flushPendingUpdates);
         }
       }
+      // Обрабатываем изменения размера через onNodesChange
+      if (change.type === 'dimensions' && change.dimensions && change.id) {
+        console.log('📏 Изменение размера через onNodesChange:', change.id, change.dimensions);
+        if (onElementUpdate) {
+          onElementUpdate(change.id, {
+            width: Math.round(change.dimensions.width),
+            height: Math.round(change.dimensions.height)
+          });
+        }
+      }
     });
-  }, [originalOnNodesChange, flushPendingUpdates]);
+  }, [originalOnNodesChange, flushPendingUpdates, onElementUpdate]);
 
   // Обновляем узлы при изменении элементов (но сохраняем позиции)
   React.useEffect(() => {
@@ -439,15 +475,51 @@ const CanvasFlow = ({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        onPaneClick={(event) => {
+          // При клике на пустую область завершаем изменение размера
+          if (resizingNodeId) {
+            console.log('🖱️ Клик на пустую область - завершение изменения размера для узла:', resizingNodeId);
+            setResizingNodeId(null);
+            // Размеры уже сохранены через onNodesChange
+          }
+        }}
         nodeTypes={nodeTypes}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         fitView={false}
+        onNodeResizeStart={(event, node) => {
+          console.log('🚀 Начало изменения размера узла:', node.id);
+          setResizingNodeId(node.id);
+        }}
+        onNodeResizeStop={(event, node) => {
+          console.log('✅ Завершение изменения размера узла:', node.id);
+          setResizingNodeId(null);
+        }}
+        resizeOnScroll={false}
+        zoomOnScroll={true}
+        panOnScroll={false}
+        zoomOnPinch={true}
+        panOnDrag={true}
+        nodeResizable={true}
+        nodesDraggable={true}
+        nodesConnectable={false}
+        elementsSelectable={true}
+        selectNodesOnDrag={false}
+        multiSelectionKeyCode="Shift"
+        deleteKeyCode="Delete"
+        onKeyDown={(event) => {
+          // Обработка клавиши Escape для завершения изменения размера
+          if (event.key === 'Escape' && resizingNodeId) {
+            console.log('⌨️ Escape - завершение изменения размера для узла:', resizingNodeId);
+            setResizingNodeId(null);
+            // Размеры уже сохранены через onNodesChange
+          }
+        }}
       >
         {/* Сетка из точек */}
         <Background 
           variant="dots" 
-          gap={20} 
-          size={1}
+          gap={25} 
+          size={3}
           color="#d1d5db"
         />
         

@@ -8,6 +8,7 @@
     "claude-3-5-sonnet-latest": 200000,
     "claude-3-5-sonnet-20240620": 200000,
     "claude-opus-4-20250514": 200000,
+    "claude-opus-4-1": 200000,
     "claude-opus-4-1-20250805": 200000,
     "claude-sonnet-4-20250514": 200000,
     "claude-4-opus-20250514": 200000,
@@ -42,6 +43,14 @@
     "gpt-4o-mini-search-preview-2025-03-11": 128000,
     "gpt-4o-mini-search-preview": 128000,
     "gpt-4o-mini-2024-07-18": 128000,
+    "gpt-5": 400000,
+    "gpt-5-mini": 400000,
+    "gpt-5-nano": 400000,
+    "gpt-5-chat": 400000,
+    "gpt-5-chat-latest": 400000,
+    "gpt-5-2025-08-07": 400000,
+    "gpt-5-mini-2025-08-07": 400000,
+    "gpt-5-nano-2025-08-07": 400000,
     "codex-mini-latest": 200000,
     "o1-pro": 200000,
     "o1-pro-2025-03-19": 200000,
@@ -190,7 +199,9 @@
     "llama3-groq-8b-8192-tool-use-preview": 8192,
     "qwen3-32b": 131000,
     "kimi-k2-instruct": 131072,
-    "playai-tts": 10000
+    "playai-tts": 10000,
+    "gpt-oss-20b": 131072,
+    "gpt-oss-120b": 131072
   },
   "xai": {
     "grok-beta": 131072,

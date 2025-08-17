@@ -261,35 +261,35 @@ class CSSInjector {
      * @returns {string} - HTML с инжектированными токенами
      */
     injectDesignTokensToHTML(htmlContent) {
-        // Определяем значения токенов
-        const tokens = {
-            '--mdc-theme-primary': '#6200ee',
-            '--mdc-theme-on-primary': '#ffffff',
-            '--mdc-theme-primary-variant': '#3700b3',
-            '--mdc-theme-secondary': '#018786',
-            '--mdc-theme-on-secondary': '#ffffff',
-            '--mdc-theme-secondary-variant': '#018786',
-            '--mdc-theme-surface': '#ffffff',
-            '--mdc-theme-on-surface': '#000000',
-            '--mdc-theme-background': '#f5f5f5',
-            '--mdc-theme-on-background': '#000000',
-            '--mdc-theme-error': '#b00020',
-            '--mdc-theme-on-error': '#ffffff',
-            '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
-            '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
-            '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
-            '--mdc-theme-text-disabled-on-background': 'rgba(0, 0, 0, 0.38)',
-            '--mdc-theme-text-icon-on-background': 'rgba(0, 0, 0, 0.38)',
-            '--mdc-theme-text-primary-on-light': 'rgba(0, 0, 0, 0.87)',
-            '--mdc-theme-text-secondary-on-light': 'rgba(0, 0, 0, 0.54)',
-            '--mdc-theme-text-hint-on-light': 'rgba(0, 0, 0, 0.38)',
-            '--mdc-theme-text-disabled-on-light': 'rgba(0, 0, 0, 0.38)',
-            '--mdc-theme-text-primary-on-dark': 'rgba(255, 255, 255, 1)',
-            '--mdc-theme-text-secondary-on-dark': 'rgba(255, 255, 255, 0.7)',
-            '--mdc-theme-text-hint-on-dark': 'rgba(255, 255, 255, 0.5)',
-            '--mdc-theme-text-disabled-on-dark': 'rgba(255, 255, 255, 0.5)',
-            '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)'
-        };
+        // Определяем значения токенов (закомментировано - не используется)
+        // const tokens = {
+        //     '--mdc-theme-primary': '#6200ee',
+        //     '--mdc-theme-on-primary': '#ffffff',
+        //     '--mdc-theme-primary-variant': '#3700b3',
+        //     '--mdc-theme-secondary': '#018786',
+        //     '--mdc-theme-on-secondary': '#ffffff',
+        //     '--mdc-theme-secondary-variant': '#018786',
+        //     '--mdc-theme-surface': '#ffffff',
+        //     '--mdc-theme-on-surface': '#000000',
+        //     '--mdc-theme-background': '#f5f5f5',
+        //     '--mdc-theme-on-background': '#000000',
+        //     '--mdc-theme-error': '#b00020',
+        //     '--mdc-theme-on-error': '#ffffff',
+        //     '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
+        //     '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
+        //     '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
+        //     '--mdc-theme-text-disabled-on-background': 'rgba(0, 0, 0, 0.38)',
+        //     '--mdc-theme-text-icon-on-background': 'rgba(0, 0, 0, 0.38)',
+        //     '--mdc-theme-text-primary-on-light': 'rgba(0, 0, 0, 0.87)',
+        //     '--mdc-theme-text-secondary-on-light': 'rgba(0, 0, 0, 0.54)',
+        //     '--mdc-theme-text-hint-on-light': 'rgba(0, 0, 0, 0.38)',
+        //     '--mdc-theme-text-disabled-on-light': 'rgba(0, 0, 0, 0.38)',
+        //     '--mdc-theme-text-primary-on-dark': 'rgba(255, 255, 255, 1)',
+        //     '--mdc-theme-text-secondary-on-dark': 'rgba(255, 255, 255, 0.7)',
+        //     '--mdc-theme-text-hint-on-dark': 'rgba(255, 255, 255, 0.5)',
+        //     '--mdc-theme-text-disabled-on-dark': 'rgba(255, 255, 255, 0.5)',
+        //     '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)'
+        // };
         
         console.log('🎨 CSS переменные уже доступны через CanvasFlow.js inline стили');
         console.log('⚡ Пропускаем добавление дублирующего <style> блока');

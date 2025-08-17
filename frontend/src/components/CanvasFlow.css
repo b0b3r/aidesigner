@@ -3,8 +3,9 @@
   width: 100%;
   height: 100%;
   position: relative;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: Inter, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   overflow: hidden;
+  background:#F3f4f6;
 }
 
 .canvas-flow-container .react-flow {
@@ -15,7 +16,7 @@
 /* UI Component Node Styles */
 .ui-flow-node {
   /* Убираем принудительный белый фон - пусть содержимое само определяет цвета */
-  background: transparent;
+  background: white;
   border: 2px solid #e1e5e9;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -353,4 +354,73 @@
   .flow-help {
     max-width: 150px;
   }
+}
+
+/* Resize Handle Styles */
+.resize-handle {
+  position: absolute;
+  z-index: 1000;
+  transition: all 0.2s ease;
+  width: 8px;
+  height: 8px;
+  background: #007bff;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.resize-handle:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Линии изменения размера */
+.resize-line {
+  stroke: #007bff;
+  stroke-width: 2;
+  stroke-dasharray: 5;
+}
+
+/* Показываем ручки только при наведении на узел или выборе */
+.ui-flow-node:not(:hover):not(.selected) .resize-handle {
+  opacity: 0.3;
+}
+
+.ui-flow-node:hover .resize-handle,
+.ui-flow-node.selected .resize-handle {
+  opacity: 1;
+}
+
+/* Анимация при изменении размера */
+.ui-flow-node.resizing {
+  transition: none;
+}
+
+.ui-flow-node.resizing .resize-handle {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Стили для NodeResizer */
+.react-flow__node-resizer {
+  pointer-events: all;
+}
+
+.react-flow__node-resizer-handle {
+  width: 8px;
+  height: 8px;
+  background: #007bff;
+  border: 2px solid white;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.react-flow__node-resizer-handle:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.react-flow__node-resizer-line {
+  stroke: #007bff;
+  stroke-width: 2;
+  stroke-dasharray: 5;
 }

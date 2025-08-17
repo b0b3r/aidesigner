@@ -2,14 +2,14 @@
 .app {
   display: flex;
   height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: Inter;
 }
 
 /* Левая панель - Чат */
-.chat-panel {
+.chс-panel {
   width: 350px;
-  background: #f8f9fa;
-  border-right: 1px solid #e9ecef;
+  background: hsl(var(--background));
+  border-right: 1px solid hsl(var(--border));
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -23,34 +23,10 @@
   gap: 6px;
 }
 
-.suggestion-btn {
-  background: #e3f2fd;
-  border: 1px solid #2196f3;
-  color: #1976d2;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.suggestion-btn:hover:not(:disabled) {
-  background: #2196f3;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.suggestion-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* Центральная область - Канвас */
 .design-canvas {
   flex: 1;
-  background: #ffffff;
+  background: hsl(var(--background));
   position: relative;
   overflow: hidden;
 }
@@ -64,14 +40,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: white;
+  background: hsl(var(--card));
   padding: 8px 12px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border: 1px solid #e1e5e9;
+  border: 1px solid hsl(var(--border));
 }
 
-.canvas-toolbar button {
+/* .canvas-toolbar button {
   width: 32px;
   height: 32px;
   border: none;
@@ -81,27 +57,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .canvas-toolbar button:hover {
-  background: #f1f3f4;
-}
+  background: hsl(var(--accent));
+} */
 
 .zoom-level {
   padding: 0 8px;
   font-size: 14px;
-  color: #666;
+  color: hsl(var(--muted-foreground));
 }
 
 .canvas-area {
   width: 100%;
   height: 100%;
   position: relative;
-  background: #f8f9fa;
+  /* background: #f8f9fa; */
   /* Добавляем сетку из точек */
   background-image: 
-    radial-gradient(circle, #d1d5db 1px, transparent 1px);
+    radial-gradient(circle, hsl(var(--muted)) 10px, transparent 1px);
   background-size: 20px 20px;
   background-position: 0 0;
   transform-origin: center center;
@@ -116,7 +92,7 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle, #9ca3af 2px, transparent 2px);
+    radial-gradient(circle, hsl(var(--muted-foreground)) 2px, transparent 2px);
   background-size: 100px 100px;
   background-position: 0 0;
   opacity: 0.3;
@@ -129,11 +105,11 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #333;
-  color: white;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   padding: 4px 12px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   z-index: 3; /* Поверх сетки */
 }
@@ -141,18 +117,21 @@
 /* Правая панель - Свойства */
 .properties-panel {
   width: 400px;
-  background: #f8f9fa;
-  border-left: 1px solid #e9ecef;
+  background: hsl(var(--muted));
+  border-left: 1px solid hsl(var(--border));
   display: flex;
   flex-direction: column;
 }
 
 /* Общие стили для панелей */
 .panel-header {
-  padding: 16px;
-  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
   font-weight: 600;
-  background: white;
 }
 
 .panel-content {
@@ -165,7 +144,7 @@
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding-right: 16px;
 }
 
 .chat-message {
@@ -176,24 +155,42 @@
 }
 
 .chat-message.user {
-  background: #e3f2fd;
-  margin-left: 20px;
+  background: hsl(var(--primary) / 0.1);
+  margin-left: 24px;
 }
 
 .chat-message.assistant {
-  background: #f5f5f5;
+  /* background: #f5f5f5; */
   margin-right: 20px;
 }
 
 .chat-message.ai {
-  background: #f5f5f5;
+  background: hsl(var(--muted));
   margin-right: 20px;
+}
+
+/* Стили для содержимого сообщений */
+.message-content {
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  font-size: 14px;
+  /* color: #333; */
+}
+
+.message-content p {
+  margin: 0 0 8px 0;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
 }
 
 /* Стили для индикатора загрузки */
 .chat-message.loading {
-  background: #fff3cd;
-  border: 1px solid #ffeaa3;
+  background: hsl(var(--warning) / 0.1);
+  border: 1px solid hsl(var(--warning));
   margin-right: 20px;
 }
 
@@ -206,7 +203,7 @@
 
 .loading-text {
   display: inline-block;
-  color: #856404;
+  color: hsl(var(--warning-foreground));
   font-style: italic;
 }
 
@@ -217,57 +214,22 @@
 
 .chat-input {
   padding: 16px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid hsl(var(--border));
 }
 
-.chat-input textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  resize: vertical;
-  min-height: 120px;
-  font-family: inherit;
-}
-
-.chat-input button {
-  margin-top: 8px;
-  padding: 8px 16px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.chat-input button:hover {
-  background: #0056b3;
-}
-
-.chat-input button:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.chat-input textarea:disabled {
-  background: #f8f9fa;
-  color: #6c757d;
-  cursor: not-allowed;
-  border-color: #dee2e6;
-}
+/* Textarea стили теперь используют Tailwind классы в JSX */
 
 .canvas-help {
   position: absolute;
   bottom: 16px;
   left: 16px;
   z-index: 10;
-  background: rgba(255,255,255,0.9);
-  border: 1px solid #e9ecef;
+  background: hsl(var(--card) / 0.9);
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   padding: 12px;
-  color: #6c757d;
-  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  font-size: 14px;
   line-height: 1.4;
 }
 
@@ -281,31 +243,31 @@
 }
 
 .canvas-element:hover {
-  border: 1px solid #007bff;
+  border: 1px solid hsl(var(--primary));
 }
 
 .canvas-element.selected {
-  border: 2px solid #007bff;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  border: 2px solid hsl(var(--primary));
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
 }
 
 /* Специальные стили для артефактов */
 .canvas-element.artifact {
-  background: white;
-  border: 2px solid #e1e5e9;
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .canvas-element.artifact:hover {
-  border-color: #007bff;
-  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.15);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 6px 16px hsl(var(--primary) / 0.15);
 }
 
 .canvas-element.artifact.selected {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.25);
 }
 
 /* Специальные стили для артефактов с автоматической высотой */
@@ -332,23 +294,23 @@
 }
 
 .artifact-header {
-  background: #f8f9fa;
+  background: hsl(var(--muted));
   padding: 8px 12px;
-  border-bottom: 1px solid #e1e5e9;
+  border-bottom: 1px solid hsl(var(--border));
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #666;
+  color: hsl(var(--muted-foreground));
 }
 
 .artifact-title {
   font-weight: 600;
-  color: #333;
+  color: hsl(var(--foreground));
 }
 
 .artifact-time {
-  color: #999;
+  color: hsl(var(--muted-foreground));
   font-size: 11px;
 }
 
@@ -361,23 +323,23 @@
 
 /* Стили для обычных элементов (wireframe) */
 .canvas-element.wireframe {
-  background: #f8f9fa;
-  border: 2px dashed #ccc;
+  background: hsl(var(--muted));
+  border: 2px dashed hsl(var(--border));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .canvas-element.component {
-  background: #f8f9fa;
-  border: 2px dashed #ccc;
+  background: hsl(var(--muted));
+  border: 2px dashed hsl(var(--border));
 }
 
 /* Правая панель - Свойства */
 .properties-panel {
   width: 360px;
-  background: white;
-  border-left: 1px solid #e1e5e9;
+  background: hsl(var(--card));
+  border-left: 1px solid hsl(var(--border));
   display: flex;
   flex-direction: column;
 }
@@ -388,23 +350,12 @@
   align-items: center;
 }
 
-.properties-panel .panel-header button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-.properties-panel .panel-header button:hover {
-  background: #f1f3f4;
-}
+/* Удаляем закомментированные стили для кнопок панели свойств - теперь используем shadcn/ui Button */
 
 .properties-tabs {
   display: flex;
-  border-bottom: 1px solid #e1e5e9;
-  background: #f8f9fa;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
 }
 
 .tab {
@@ -414,14 +365,14 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: hsl(var(--muted-foreground));
   border-bottom: 2px solid transparent;
 }
 
 .tab.active {
-  color: #007bff;
-  border-bottom-color: #007bff;
-  background: white;
+  color: hsl(var(--primary));
+  border-bottom-color: hsl(var(--primary));
+  background: hsl(var(--card));
 }
 
 .properties-content {
@@ -433,17 +384,17 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #333;
+  color: hsl(var(--foreground));
 }
 
 .prompt-section textarea {
   width: 100%;
   height: 120px;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   resize: vertical;
-  font-family: inherit;
+  font-family: Inter;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -452,8 +403,8 @@
   width: 100%;
   margin-top: 16px;
   padding: 12px;
-  background: #28a745;
-  color: white;
+  background: hsl(var(--success));
+  color: hsl(var(--success-foreground));
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -461,21 +412,21 @@
 }
 
 .generate-btn:hover {
-  background: #218838;
+  background: hsl(var(--success) / 0.9);
 }
 
 .element-content {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: white;
+  background: hsl(var(--card));
   border-radius: 4px;
 }
 
 /* Стили для управления видимостью сетки */
 .canvas-area.hide-grid {
   background-image: none;
-  background-color: #f8f9fa;
+  background-color: hsl(var(--muted));
 }
 
 .canvas-area.hide-grid::before {
@@ -483,25 +434,25 @@
 }
 
 .canvas-area.show-grid {
-  background-color: #f8f9fa;
+  background-color: hsl(var(--muted));
   background-image: 
-    radial-gradient(circle, #d1d5db 1px, transparent 1px);
+    radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
   background-size: 20px 20px;
   background-position: 0 0;
 }
 
-/* Responsive дизайн */
-@media (max-width: 1200px) {
+/* Responsive дизайн
+@media (max-width: 1200px) { */
   .chat-panel {
-    width: 300px;
-  }
-  
-  .properties-panel {
     width: 350px;
   }
-}
+  
+.properties-panel {
+    width: 350px;
+  }
 
-@media (max-width: 768px) {
+
+/* @media (max-width: 768px) {
   .app {
     flex-direction: column;
   }
@@ -516,4 +467,29 @@
     flex: 1;
     min-height: 400px;
   }
+} */
+
+/* Контекстное меню теперь использует Tailwind классы */
+
+/* Стили для выделенного текста теперь используют Tailwind классы */
+
+/* Кастомные стили для кнопки отправки */
+.send-button {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: background-color 0.2s !important;
 }
+
+.send-button:hover {
+  background-color: #2563eb !important;
+}
+
+.send-button:disabled {
+  background-color: #9ca3af !important;
+  opacity: 0.5 !important;
+}
+

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐛 Отладка цветов фона</title>
+    
+    <!-- Подключаем те же стили что и в приложении -->
+    <link href="frontend/public/mdc-theme-custom.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 20px;
+            background-color: #e0e0e0; /* Серый фон для контраста */
+        }
+        
+        .test-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        
+        /* Имитируем стили из cssInjector */
+        .with-injected-styles {
+            --mdc-theme-primary: #6200ee !important;
+            --mdc-theme-on-primary: #ffffff !important;
+            --mdc-theme-secondary: #018786 !important;
+            --mdc-theme-on-secondary: #ffffff !important;
+            --mdc-theme-surface: #ffffff !important;
+            --mdc-theme-on-surface: #000000 !important;
+            --mdc-theme-background: #f5f5f5 !important;
+            --mdc-theme-on-background: #000000 !important;
+            --mdc-theme-text-primary-on-background: rgba(0, 0, 0, 0.87) !important;
+            --mdc-theme-text-secondary-on-background: rgba(0, 0, 0, 0.54) !important;
+            --mdc-theme-shadow: rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .debug-info {
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐛 Отладка цветов фона в карточке</h1>
+    
+    <div class="test-container">
+        <h2>1. Ваша карточка БЕЗ инжектированных стилей</h2>
+        <div class="debug-info">
+            Переменные берутся из глобальных CSS файлов
+        </div>
+        
+        <div class="mdc-card" style="width: 100%; max-width: 360px;">
+            <div class="mdc-card__media" style="height: 200px; background-color: var(--mdc-theme-background); display: flex; justify-content: center; align-items: center; border: 2px solid red;">
+                <span class="material-icons" style="font-size: 48px; color: var(--mdc-theme-text-secondary-on-background);">image</span>
+            </div>
+            <div class="mdc-card__primary-action" tabindex="0">
+                <div style="padding: 16px; background-color: var(--mdc-theme-surface); border: 2px solid blue;">
+                    <h3 class="mdc-typography--headline6" style="margin: 0 0 8px 0; color: var(--mdc-theme-text-primary-on-background);">Название товара</h3>
+                    <p class="mdc-typography--body2" style="margin: 0 0 16px 0; color: var(--mdc-theme-text-secondary-on-background);">Краткое описание товара</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>2. Ваша карточка С инжектированными стилями</h2>
+        <div class="debug-info">
+            Переменные переопределены через !important
+        </div>
+        
+        <div class="with-injected-styles">
+            <div class="mdc-card" style="width: 100%; max-width: 360px;">
+                <div class="mdc-card__media" style="height: 200px; background-color: var(--mdc-theme-background); display: flex; justify-content: center; align-items: center; border: 2px solid red;">
+                    <span class="material-icons" style="font-size: 48px; color: var(--mdc-theme-text-secondary-on-background);">image</span>
+                </div>
+                <div class="mdc-card__primary-action" tabindex="0">
+                    <div style="padding: 16px; background-color: var(--mdc-theme-surface); border: 2px solid blue;">
+                        <h3 class="mdc-typography--headline6" style="margin: 0 0 8px 0; color: var(--mdc-theme-text-primary-on-background);">Название товара</h3>
+                        <p class="mdc-typography--body2" style="margin: 0 0 16px 0; color: var(--mdc-theme-text-secondary-on-background);">Краткое описание товара</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>3. Проверка значений переменных</h2>
+        <div class="debug-info" id="css-vars-debug">
+            Загружаем значения переменных...
+        </div>
+    </div>
+    
+    <script>
+        // Проверяем значения CSS переменных
+        function debugCSSVariables() {
+            const testElement = document.querySelector('.with-injected-styles');
+            const computedStyle = getComputedStyle(testElement);
+            
+            const vars = [
+                '--mdc-theme-primary',
+                '--mdc-theme-background', 
+                '--mdc-theme-surface',
+                '--mdc-theme-text-primary-on-background'
+            ];
+            
+            let debugText = 'Значения CSS переменных:\n';
+            vars.forEach(varName => {
+                const value = computedStyle.getPropertyValue(varName).trim();
+                debugText += `${varName}: ${value || 'НЕ НАЙДЕНА'}\n`;
+            });
+            
+            document.getElementById('css-vars-debug').textContent = debugText;
+            console.log('🔍 CSS Variables Debug:', debugText);
+        }
+        
+        // Проверяем цвета элементов
+        function debugElementColors() {
+            const mediaElement = document.querySelector('.with-injected-styles .mdc-card__media');
+            const surfaceElement = document.querySelector('.with-injected-styles [style*="background-color: var(--mdc-theme-surface)"]');
+            
+            if (mediaElement) {
+                const bgColor = getComputedStyle(mediaElement).backgroundColor;
+                console.log('🎨 Media background:', bgColor);
+            }
+            
+            if (surfaceElement) {
+                const bgColor = getComputedStyle(surfaceElement).backgroundColor;
+                console.log('🎨 Surface background:', bgColor);
+            }
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                debugCSSVariables();
+                debugElementColors();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
