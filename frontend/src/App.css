@@ -6,7 +6,7 @@
 }
 
 /* Левая панель - Чат */
-.chс-panel {
+.chat-panel {
   width: 350px;
   background: hsl(var(--background));
   border-right: 1px solid hsl(var(--border));
@@ -441,37 +441,7 @@
   background-position: 0 0;
 }
 
-/* Responsive дизайн
-@media (max-width: 1200px) { */
-  .chat-panel {
-    width: 350px;
-  }
-  
-.properties-panel {
-    width: 350px;
-  }
 
-
-/* @media (max-width: 768px) {
-  .app {
-    flex-direction: column;
-  }
-  
-  .chat-panel,
-  .properties-panel {
-    width: 100%;
-    height: 200px;
-  }
-  
-  .design-canvas {
-    flex: 1;
-    min-height: 400px;
-  }
-} */
-
-/* Контекстное меню теперь использует Tailwind классы */
-
-/* Стили для выделенного текста теперь используют Tailwind классы */
 
 /* Кастомные стили для кнопки отправки */
 .send-button {
