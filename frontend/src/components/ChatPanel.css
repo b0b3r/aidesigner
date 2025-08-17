@@ -1,0 +1,92 @@
+/* Левая панель - Чат */
+.chat-panel {
+  width: 350px;
+  background: hsl(var(--background));
+  border-right: 1px solid hsl(var(--border));
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Стили для чата */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 16px;
+}
+
+.chat-message {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+
+.chat-message.user {
+  background: hsl(var(--primary) / 0.1);
+  margin-left: 24px;
+}
+
+.chat-message.assistant {
+  margin-right: 20px;
+}
+
+.chat-message.ai {
+  background: hsl(var(--muted));
+  margin-right: 20px;
+}
+
+/* Стили для содержимого сообщений */
+.message-content {
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+
+.message-content p {
+  margin: 0 0 8px 0;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Саджесты в сообщениях */
+.message-suggestions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Стили для индикатора загрузки */
+.chat-message.loading {
+  background: hsl(var(--warning) / 0.1);
+  border: 1px solid hsl(var(--warning));
+  margin-right: 20px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  font-size: 18px;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+.loading-text {
+  display: inline-block;
+  color: hsl(var(--warning-foreground));
+  font-style: italic;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chat-input {
+  padding: 16px;
+  border-top: 1px solid hsl(var(--border));
+}
