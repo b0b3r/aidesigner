@@ -11,6 +11,7 @@ import ResizeTest from './utils/resizeTest';
 import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
 import { Separator } from './components/ui/separator';
+import { Copy, Palette, FileText, X } from 'lucide-react';
 
 function App() {
   // Используем существующие данные из App.js
@@ -1221,40 +1222,40 @@ ${editingElement.content}
 
       {/* Контекстное меню */}
       {contextMenu.isVisible && (
-        <div 
+        <div
           className="fixed z-50 bg-popover border border-border rounded-lg shadow-lg p-1 min-w-[180px] text-sm"
           style={{
             left: contextMenu.x,
             top: contextMenu.y,
           }}
         >
-          <div 
+          <div
             className="flex items-center px-3 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors select-none"
             onClick={() => copyTextToClipboard(contextMenu.selectedText)}
           >
-            <span className="mr-2 text-sm">📋</span>
+            <Copy className="w-4 h-4 mr-2" />
             <span className="text-popover-foreground font-medium">Копировать</span>
           </div>
-          <div 
+          <div
             className="flex items-center px-3 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors select-none"
             onClick={() => handleCreateArtifactFromText(contextMenu.selectedText)}
           >
-            <span className="mr-2 text-sm">🎨</span>
+            <Palette className="w-4 h-4 mr-2" />
             <span className="text-popover-foreground font-medium">Использовать как промпт</span>
           </div>
-          <div 
+          <div
             className="flex items-center px-3 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors select-none"
             onClick={() => handleCreateSimpleArtifactFromText(contextMenu.selectedText)}
           >
-            <span className="mr-2 text-sm">📝</span>
+            <FileText className="w-4 h-4 mr-2" />
             <span className="text-popover-foreground font-medium">Создать артефакт</span>
           </div>
           <Separator className="my-1" />
-          <div 
+          <div
             className="flex items-center px-3 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors select-none"
             onClick={closeContextMenu}
           >
-            <span className="mr-2 text-sm">✕</span>
+            <X className="w-4 h-4 mr-2" />
             <span className="text-popover-foreground font-medium">Отмена</span>
           </div>
         </div>
