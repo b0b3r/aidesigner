@@ -3,7 +3,7 @@ import './ChatPanel.css';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { ThemeToggle } from './ThemeToggle';
-import { Send, X } from 'lucide-react';
+import { Send, X, Loader2 } from 'lucide-react';
 
 const ChatPanel = ({ 
   chatMessages, 
@@ -104,7 +104,7 @@ const ChatPanel = ({
               <div className="chat-message ai loading">
                 <div className="message-content">
                   <div className="flex items-center gap-2">
-                    <div className="loading-spinner">⏳</div>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     <div className="loading-text">{loadingStatus}</div>
                     {/* <Badge variant="secondary" className="ml-auto">Обработка...</Badge> */}
                   </div>

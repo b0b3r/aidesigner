@@ -77,8 +77,6 @@
 
 .loading-text {
   display: inline-block;
-  color: hsl(var(--warning-foreground));
-  font-style: italic;
 }
 
 @keyframes spin {
