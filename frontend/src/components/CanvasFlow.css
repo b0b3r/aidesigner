@@ -5,7 +5,7 @@
   position: relative;
   font-family: Inter, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   overflow: hidden;
-  background:#F3f4f6;
+  background:hsl(var(--muted));
 }
 
 .canvas-flow-container .react-flow {
@@ -45,7 +45,6 @@
   align-items: center;
 }
 
-/* Удаляем дублирующее определение - оставляем только правильное ниже */
 
 .ui-flow-title {
   font-weight: 600;

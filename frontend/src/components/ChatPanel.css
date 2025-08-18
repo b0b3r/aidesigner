@@ -5,25 +5,27 @@
   border-right: 1px solid hsl(var(--border));
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+
 }
 
 /* Стили для чата */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding-right: 16px;
+  padding: 16px;
+  min-height: 0;
 }
 
 .chat-message {
-  margin-bottom: 16px;
-  padding: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
   border-radius: 8px;
   white-space: pre-wrap;
+  min-height: 0;
 }
 
 .chat-message.user {
-  background: hsl(var(--primary) / 0.1);
+  background: hsl(var(--muted));
   margin-left: 24px;
 }
 
@@ -32,8 +34,8 @@
 }
 
 .chat-message.ai {
-  background: hsl(var(--muted));
-  margin-right: 20px;
+  padding: 0;
+  /* margin-top: 32px; */
 }
 
 /* Стили для содержимого сообщений */
@@ -45,9 +47,9 @@
   font-size: 14px;
 }
 
-.message-content p {
+/* .message-content p {
   margin: 0 0 8px 0;
-}
+} */
 
 .message-content p:last-child {
   margin-bottom: 0;
@@ -63,9 +65,7 @@
 
 /* Стили для индикатора загрузки */
 .chat-message.loading {
-  background: hsl(var(--warning) / 0.1);
-  border: 1px solid hsl(var(--warning));
-  margin-right: 20px;
+  
 }
 
 .loading-spinner {
@@ -89,4 +89,24 @@
 .chat-input {
   padding: 16px;
   border-top: 1px solid hsl(var(--border));
+  flex-shrink: 0;
+  -ms-flex-direction: column;
+  padding: 16px;
+  margin: 16px;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  resize: none;
+  /* min-height: 120px; */
+  outline: none;
+}
+
+.textinput {
+  background: hsl(var(--muted));
+  width: 100%;
+  border: none;
+  resize: none;
+  font-size: 14px;
+  outline: none;
+  padding-bottom: 16px;
 }

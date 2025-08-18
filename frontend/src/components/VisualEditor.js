@@ -139,11 +139,6 @@ const VisualEditor = ({
 
   return (
     <div className={`visual-editor ${className}`}>
-      {/* Простая панель управления */}
-      <div className="visual-editor-toolbar">
-        {/* <span className="toolbar-title">🎨 Визуальный редактор</span> */}
-       
-      </div>
 
       {/* Только панель контролов */}
       <div className="visual-editor-content">

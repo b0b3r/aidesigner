@@ -66,7 +66,7 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
           <button 
             onClick={() => onElementDelete?.(element.id)}
             className="btn btn-danger" 
-            style={{ padding: '4px 8px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
+            style={{ padding: '4px 8px', color: 'white', border: 'none', borderRadius: '4px' }}
             title="Удалить элемент"
           >
             🗑️
@@ -79,7 +79,7 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
 
       <div className="panel-content" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Информация */}
-        <div className="p-3 border-b border-gray-200" style={{ position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
+        <div className="p-3 border-b border-gray-200" style={{ position: 'sticky', top: 0, zIndex: 1 }}>
           <div className="selected-info" style={{ fontSize: '14px', color: '#999', marginTop: '0px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             Выбран: {selectedInternalElementId || element?.name || element?.id}
           </div>
@@ -93,7 +93,7 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
               activeTab === 'visual' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'
             }`}
           >
-            Visual
+            Настройки
           </button>
           <button
             onClick={() => setActiveTab('prompt')}
@@ -159,7 +159,7 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
             </div>
           )}
 
-          {/* Дополнительные секции убраны, чтобы не дублировать визуальное редактирование */}
+       
         </div>
       </div>
     </div>

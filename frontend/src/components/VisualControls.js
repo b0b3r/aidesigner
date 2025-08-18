@@ -309,11 +309,8 @@ const PropertyGroup = ({ title, children, isCollapsed = false }) => {
 const VisualControls = ({ selectedElement, onPropertyChange }) => {
   if (!selectedElement) {
     return (
-      <div className="visual-controls no-selection">
-        {/* <p>Выберите элемент для редактирования</p> */}
-        <p style={{ fontSize: '14px', color: '#999', marginTop: '5px' }}>
-        Выберите элемент для редактирования
-        </p>
+      <div className="visual-controls no-selection text-sm text-muted-foreground">
+         Выберите элемент для редактирования
       </div>
     );
   }

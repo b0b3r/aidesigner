@@ -2,7 +2,7 @@ import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { Search } from "lucide-react"
 
-import { cn } from "src/lib/utils"
+import { cn } from "../../lib/utils"
 import { Dialog, DialogContent } from "src/components/ui/ui/dialog"
 
 const Command = React.forwardRef(({ className, ...props }, ref) => (

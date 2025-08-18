@@ -81,7 +81,7 @@ function App() {
     {
       id: '1',
       type: 'ai',
-      content: 'Готов к работе!\n\nДоступны новые возможности:\n\n• 💬 Умный чат - задавайте вопросы, получайте ответы\n• 🎨 Создание артефактов - генерация UI элементов\n• 📋 Пошаговые планы - создание флоу по этапам\n\n Пример задачи:',
+      content: 'Готов к работе!',
       timestamp: new Date(),
       suggestions: [
         {
@@ -403,7 +403,7 @@ function App() {
       {
         id: Date.now() + '-edit',
         type: 'ai',
-        content: `📝 Выбран элемент "${element.name}" для редактирования.\n\n**Текущий контент:**\n\`\`\`html\n${element.content?.slice(0, 200)}${element.content?.length > 200 ? '...' : ''}\n\`\`\`\n\n**Исходный промпт:** ${element.prompt}\n\nОпишите, какие изменения вы хотите внести.`,
+        content: `Выбран элемент ${element.name} для редактирования`,
         timestamp: new Date()
       }
     ]);
@@ -666,7 +666,7 @@ function App() {
 
       // Обработка обычных чат-ответов
       if (classification.type === 'chat_response') {
-        setLoadingStatus('💬 Отвечаю на вопрос...');
+        setLoadingStatus('Отвечаю на вопрос...');
         
         const response = await fetch('/api/chat', {
           method: 'POST',
@@ -701,7 +701,7 @@ function App() {
 
       // Обработка пошагового планирования
       if (classification.type === 'step_by_step_plan') {
-        setLoadingStatus('📋 Создаю план выполнения...');
+        setLoadingStatus('Создаю план выполнения...');
         
         const plan = await plannerService.createExecutionPlan(message);
         console.log('📋 Создан план:', plan);
@@ -713,7 +713,7 @@ function App() {
         plan.steps?.forEach((step, index) => {
           planText += `\n${index + 1}. **${step.title}**\n   ${step.description}\n   ⏱️ ${step.estimated_time}`;
         });
-        planText += '\n\n🚀 Нажмите кнопку ниже, чтобы выполнить все шаги последовательно:';
+        planText += '\n\nНажмите кнопку ниже, чтобы выполнить все шаги последовательно:';
         
         setChatMessages(prev => [
           ...prev,
@@ -725,7 +725,7 @@ function App() {
             suggestions: [
               {
                 id: 'execute-plan',
-                text: '🚀 Выполнить план',
+                text: 'Выполнить план',
                 action: 'execute_plan',
                 data: plan
               }
@@ -738,7 +738,7 @@ function App() {
       }
 
       // Обработка создания/редактирования артефактов
-      setLoadingStatus('📤 Отправляю запрос к LLM...');
+      setLoadingStatus('Отправляю запрос к LLM...');
       
       // Формируем контекст для редактирования или создания нового элемента
       let requestMessage = message;

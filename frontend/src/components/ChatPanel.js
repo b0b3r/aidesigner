@@ -1,10 +1,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import './ChatPanel.css';
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { Separator } from './ui/separator';
 import { ThemeToggle } from './ThemeToggle';
+import { Send, X } from 'lucide-react';
 
 const ChatPanel = ({ 
   chatMessages, 
@@ -49,7 +48,7 @@ const ChatPanel = ({
       {
         id: Date.now() + '-cancel',
         type: 'ai',
-        content: `🔄 Режим редактирования отменен. Теперь вы можете создавать новые элементы или выбрать другой элемент для редактирования.`,
+        // content: `🔄 Режим редактирования отменен. Теперь вы можете создавать новые элементы или выбрать другой элемент для редактирования.`,
         timestamp: new Date()
       }
     ]);
@@ -57,27 +56,19 @@ const ChatPanel = ({
 
   return (
     <div className="chat-panel">
-      <Card className="border-0 shadow-none">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-lg">🚀 UI Design Assistant</CardTitle>
-              {editingElement && (
-                <Badge variant="outline" className="text-xs">
-                  Редактирование: {editingElement.name}
-                </Badge>
-              )}
-            </div>
-            <ThemeToggle />
-          </div>
-          {editingElement && (
-            <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">
-              ✏️ Редактирование: {editingElement.name}
-            </div>
-          )}
-        </CardHeader>
+      <div className="panel-header items-center justify-between w-full">
+          <div className="flex items-center gap-2">
+            <h2 className="text-md font-semibold">UI Design Assistant</h2>
         
-        <CardContent className="p-0">
+          </div>
+          <ThemeToggle />
+        {/* {editingElement && (
+          <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200 mt-2">
+            ✏️ Редактирование: {editingElement.name}
+          </div>
+        )} */}
+      </div>
+      
           <div className="chat-messages">
             {chatMessages.map((message) => (
               <div 
@@ -115,7 +106,7 @@ const ChatPanel = ({
                   <div className="flex items-center gap-2">
                     <div className="loading-spinner">⏳</div>
                     <div className="loading-text">{loadingStatus}</div>
-                    <Badge variant="secondary" className="ml-auto">Обработка...</Badge>
+                    {/* <Badge variant="secondary" className="ml-auto">Обработка...</Badge> */}
                   </div>
                 </div>
               </div>
@@ -123,41 +114,51 @@ const ChatPanel = ({
           </div>
           
           <div className="chat-input">
-            <textarea
+
+
+          
+            {editingElement && (
+              <Badge className="text-xs inline-flex items-center gap-1 mb-2">
+                {editingElement.name}
+                <button
+                  onClick={handleCancelEditing}
+                  // className=" hover:bg-muted-foreground/20 p-0.5"
+                  title="Отменить"
+                  disabled={isLoading}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            )}
+
+
+            <textarea className='textinput'
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isLoading ? "Обрабатываю запрос..." : editingElement ? `Редактирование "${editingElement.name}" - опишите изменения...` : "Попробуйте: 'добавить элемент' или 'расскажи про flow'"}
+              placeholder={isLoading ? "Обрабатываю запрос..." : editingElement ? `Редактирование "${editingElement.name}" - опишите изменения...` : "Задавайте вопросы, описывайте задачи, создавайте дизайн экранов и флоу"}
               rows={2}
               disabled={isLoading}
-              className="w-full p-3 bg-muted border border-border rounded-lg resize-none min-h-[120px] font-inter text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
             />
-            {editingElement && (
-              <Button 
-                onClick={handleCancelEditing}
-                variant="secondary"
-                size="sm"
-                className="mr-2"
-                title="Отменить редактирование"
-                disabled={isLoading}
-              >
-                ✕ Отменить
-              </Button>
-            )}
+
+    
+            <div className="flex gap-2 mt-2 justify-end">
+
+
             <Button 
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
               variant="default"
-              size="default"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              size="icon"
+              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white"
             >
-              Отправить
+              <Send className="w-4 h-4" />
             </Button>
-          </div>
-        </CardContent>
-      </Card>
+            
+            </div>
+            </div>
     </div>
   );
 };
 
-export default ChatPanel;
+  export default ChatPanel;

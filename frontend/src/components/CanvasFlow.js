@@ -520,7 +520,7 @@ const CanvasFlow = ({
           variant="dots" 
           gap={25} 
           size={3}
-          color="#d1d5db"
+          color="hsl(var(--muted-foreground) / 0.2)"
         />
         
         {/* Контролы масштабирования */}
