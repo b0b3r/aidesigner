@@ -248,7 +248,7 @@
 .artifact-header {
   background: hsl(var(--muted));
   padding: 8px 12px;
-  border-bottom: 1px solid hsl(var(--border));
+  /* border-bottom: 1px solid hsl(var(--border)); */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -306,7 +306,7 @@
 
 .properties-tabs {
   display: flex;
-  border-bottom: 1px solid hsl(var(--border));
+  /* border-bottom: 1px solid hsl(var(--border)); */
   background: hsl(var(--muted));
 }
 

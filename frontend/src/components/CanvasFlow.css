@@ -1,11 +1,11 @@
-/* React Flow Canvas Styles - Исправляем переполнение */
+/* React Flow Canvas Styles - Полностью переведены на shadcn/ui */
 .canvas-flow-container {
   width: 100%;
   height: 100%;
   position: relative;
   font-family: Inter, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   overflow: hidden;
-  background:hsl(var(--muted));
+  background: hsl(var(--muted));
 }
 
 .canvas-flow-container .react-flow {
@@ -13,11 +13,120 @@
   height: 100%;
 }
 
+/* React Flow Controls - Кастомизация панели управления */
+.react-flow__controls {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+}
+
+.react-flow__controls button {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
+  color: hsl(var(--foreground));
+  width: 28px;
+  height: 28px;
+  margin: 2px;
+  transition: all 0.2s ease;
+}
+
+.react-flow__controls button:hover {
+  background: hsl(var(--muted));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+}
+
+.react-flow__controls button:active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.react-flow__controls button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* React Flow MiniMap - Кастомизация мини-карты */
+.react-flow__minimap {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__minimap-mask {
+  fill: hsl(var(--muted) / 0.3);
+}
+
+.react-flow__minimap-node {
+  fill: hsl(var(--primary));
+  stroke: hsl(var(--border));
+  stroke-width: 1px;
+}
+
+.react-flow__minimap-node.selected {
+  fill: hsl(var(--destructive));
+  stroke: hsl(var(--destructive));
+}
+
+/* React Flow Background - Кастомизация фоновой сетки */
+.react-flow__background {
+  background: hsl(var(--background));
+}
+
+.react-flow__background-pattern {
+  color: hsl(var(--muted-foreground) / 0.2);
+}
+
+/* React Flow Panel - Кастомизация панелей */
+.react-flow__panel {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}
+
+/* React Flow Handle - Кастомизация точек соединения */
+.react-flow__handle {
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
+  width: 8px;
+  height: 8px;
+}
+
+.react-flow__handle:hover {
+  background: hsl(var(--primary) / 0.8);
+  transform: scale(1.2);
+}
+
+.react-flow__handle.connecting {
+  background: hsl(var(--destructive));
+}
+
+/* React Flow Edge - Кастомизация линий соединения */
+.react-flow__edge-path {
+  stroke: hsl(var(--border));
+  stroke-width: 2px;
+}
+
+.react-flow__edge-path:hover {
+  stroke: hsl(var(--primary));
+  stroke-width: 3px;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary));
+  stroke-width: 3px;
+}
+
 /* UI Component Node Styles */
 .ui-flow-node {
-  /* Убираем принудительный белый фон - пусть содержимое само определяет цвета */
-  background: white;
-  border: 2px solid #e1e5e9;
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -27,28 +136,27 @@
 }
 
 .ui-flow-node:hover {
-  border-color: #007bff;
-  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.15);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 6px 16px hsl(var(--primary) / 0.15);
 }
 
 .ui-flow-node.selected {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.25);
 }
 
 .ui-flow-header {
-  background: #f8f9fa;
+  background: hsl(var(--muted));
   padding: 8px 12px;
-  border-bottom: 1px solid #e1e5e9;
+  border-bottom: 1px solid hsl(var(--border));
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-
 .ui-flow-title {
   font-weight: 600;
-  color: #333;
+  color: hsl(var(--foreground));
   font-size: 14px;
 }
 
@@ -65,39 +173,41 @@
   cursor: pointer;
   font-size: 12px;
   transition: background-color 0.2s;
+  color: hsl(var(--muted-foreground));
 }
 
 .ui-flow-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: hsl(var(--muted) / 0.5);
+  color: hsl(var(--foreground));
 }
 
 .ui-flow-content {
   padding: 12px;
-  /* Убираем принудительный белый фон - пусть контент сам определяет цвета */
   flex: 1;
   overflow: hidden;
+  background: white;
 }
 
 .ui-flow-text {
   font-size: 12px;
-  color: #666;
+  color: hsl(var(--muted-foreground));
   line-height: 1.4;
 }
 
 .ui-flow-footer {
-  background: #f1f3f4;
+  background: hsl(var(--muted));
   padding: 6px 12px;
-  border-top: 1px solid #e1e5e9;
+  border-top: 1px solid hsl(var(--border));
   font-size: 11px;
-  color: #666;
+  color: hsl(var(--muted-foreground));
 }
 
 .ui-flow-timestamp {
   position: absolute;
   top: -8px;
   right: 8px;
-  background: #333;
-  color: white;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 10px;
@@ -105,12 +215,12 @@
 
 /* Process Node Styles */
 .process-flow-node {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+  color: hsl(var(--primary-foreground));
   border-radius: 12px;
   padding: 16px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
   min-width: 120px;
   position: relative;
 }
@@ -137,20 +247,20 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  border: 2px solid white;
+  border: 2px solid hsl(var(--background));
 }
 
 .process-flow-status.completed {
-  background: #22c55e;
+  background: hsl(var(--success));
 }
 
 .process-flow-status.processing {
-  background: #f59e0b;
+  background: hsl(var(--warning));
   animation: pulse 2s infinite;
 }
 
 .process-flow-status.pending {
-  background: #6b7280;
+  background: hsl(var(--muted-foreground));
 }
 
 @keyframes pulse {
@@ -160,8 +270,8 @@
 
 /* Flow Panel Styles */
 .flow-panel {
-  background: white;
-  border: 1px solid #e1e5e9;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -172,7 +282,7 @@
   margin: 0 0 8px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: hsl(var(--foreground));
 }
 
 .flow-panel-controls {
@@ -183,38 +293,39 @@
 
 .flow-panel-btn {
   padding: 6px 12px;
-  border: 1px solid #e1e5e9;
-  background: white;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
   border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s;
+  color: hsl(var(--foreground));
 }
 
 .flow-panel-btn:hover {
-  background: #f8f9fa;
-  border-color: #007bff;
+  background: hsl(var(--muted));
+  border-color: hsl(var(--primary));
 }
 
 .flow-panel-btn.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
 }
 
 .flow-panel-stats {
-  color: #666;
+  color: hsl(var(--muted-foreground));
   font-size: 11px;
 }
 
 /* Flow Help Styles */
 .flow-help {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #e1e5e9;
+  background: hsl(var(--card) / 0.95);
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   padding: 12px;
   font-size: 12px;
-  color: #666;
+  color: hsl(var(--muted-foreground));
   backdrop-filter: blur(4px);
   max-width: 200px;
 }
@@ -225,43 +336,43 @@
 
 .flow-help > div:first-child {
   font-weight: 600;
-  color: #333;
+  color: hsl(var(--foreground));
   margin-bottom: 8px;
 }
 
 /* React Flow Override Styles */
 .react-flow__background {
-  background: #f8f9fa;
+  background: hsl(var(--muted));
 }
 
 .react-flow__controls {
-  background: white;
-  border: 1px solid #e1e5e9;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .react-flow__controls-button {
-  background: white;
-  border-bottom: 1px solid #e1e5e9;
-  color: #666;
+  background: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
   transition: all 0.2s;
 }
 
 .react-flow__controls-button:hover {
-  background: #f8f9fa;
-  color: #333;
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
 
 .react-flow__minimap {
-  background: white;
-  border: 1px solid #e1e5e9;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .react-flow__edge-path {
-  stroke: #007bff;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
@@ -271,14 +382,14 @@
 }
 
 .react-flow__edge-textbg {
-  fill: white;
-  stroke: #e1e5e9;
+  fill: hsl(var(--background));
+  stroke: hsl(var(--border));
   stroke-width: 1;
 }
 
 .react-flow__edge-text {
   font-size: 11px;
-  fill: #666;
+  fill: hsl(var(--muted-foreground));
 }
 
 @keyframes dashdraw {
@@ -289,7 +400,7 @@
 
 /* Connection Line */
 .react-flow__connection-line {
-  stroke: #007bff;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
   stroke-dasharray: 5;
 }
@@ -297,8 +408,8 @@
 /* Selection */
 .react-flow__nodesselection-rect,
 .react-flow__selection {
-  background: rgba(0, 123, 255, 0.1);
-  border: 1px solid #007bff;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary));
 }
 
 /* Node Drag */
@@ -312,8 +423,8 @@
   bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #007bff;
-  color: white;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   font-size: 10px;
   padding: 2px 8px;
   border-radius: 10px;
@@ -329,7 +440,7 @@
 }
 
 .ui-flow-content [data-element-id]:hover {
-  background-color: rgba(0, 123, 255, 0.05) !important;
+  background-color: hsl(var(--primary) / 0.05) !important;
 }
 
 /* Стили для правильной очистки overlay-слоев */
@@ -362,8 +473,8 @@
   transition: all 0.2s ease;
   width: 8px;
   height: 8px;
-  background: #007bff;
-  border: 2px solid white;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
   border-radius: 50%;
 }
 
@@ -374,7 +485,7 @@
 
 /* Линии изменения размера */
 .resize-line {
-  stroke: #007bff;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
   stroke-dasharray: 5;
 }
@@ -407,8 +518,8 @@
 .react-flow__node-resizer-handle {
   width: 8px;
   height: 8px;
-  background: #007bff;
-  border: 2px solid white;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
   border-radius: 50%;
   transition: all 0.2s ease;
 }
@@ -419,7 +530,7 @@
 }
 
 .react-flow__node-resizer-line {
-  stroke: #007bff;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
   stroke-dasharray: 5;
 }

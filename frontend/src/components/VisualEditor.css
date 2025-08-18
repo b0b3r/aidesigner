@@ -23,7 +23,7 @@
 
 /* Visual Controls */
 .visual-controls {
-  @apply mt-4 h-full w-full overflow-y-auto;
+  @apply mt-4 h-full w-full overflow-y-auto bg-background;
   scrollbar-width: none;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .property-group-content {
-  @apply p-4 bg-background;
+  @apply p-4 bg-muted/30;
 }
 
 /* Individual Controls */
@@ -67,15 +67,15 @@
 
 /* Color Picker */
 .color-picker-container {
-  @apply flex gap-2 items-center;
+  @apply flex gap-2 items-center fill-none;
 }
 
 .color-input {
-  @apply w-10 h-8 border border-border rounded cursor-pointer p-0;
+  @apply w-10 h-8 border border-border rounded cursor-pointer p-0 fill-none;
 }
 
 .color-text-input {
-  @apply flex-1 px-2 py-1.5 border border-border rounded text-xs font-mono;
+  @apply flex-1 px-2 py-1.5 border border-border rounded text-xs font-mono fill-none bg-background;
 }
 
 /* Slider */
@@ -88,7 +88,7 @@
 }
 
 .number-input {
-  @apply w-16 px-1.5 py-1 border border-border rounded text-xs text-center;
+  @apply w-16 px-1.5 py-1 border border-border rounded text-xs text-center fill-none bg-background;
 }
 
 .unit-label {
@@ -102,7 +102,7 @@
 
 /* Spacing Control */
 .spacing-control {
-  @apply border border-border rounded p-2 bg-muted;
+  @apply border border-border rounded p-2 bg-muted/50;
 }
 
 .spacing-inputs {
@@ -114,7 +114,7 @@
 }
 
 .spacing-input {
-  @apply w-10 px-1 border border-border rounded text-center text-xs;
+  @apply w-10 px-1 border border-border rounded text-center text-xs bg-background;
 }
 
 .spacing-center {

@@ -59,19 +59,21 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
   }, [editedPrompt, element.id, onElementUpdate]);
 
   return (
-    <div className="panel properties-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div className="properties-panel flex flex-col h-full overflow-hidden">
       <div className="panel-header">
-        <span>⚙️ Свойства элемента</span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+        <span>Свойства</span>
+        <div className="ml-auto flex gap-2">
           <button 
             onClick={() => onElementDelete?.(element.id)}
-            className="btn btn-danger" 
-            style={{ padding: '4px 8px', color: 'white', border: 'none', borderRadius: '4px' }}
+            className="px-2 py-1 bg-destructive text-destructive-foreground rounded text-sm hover:bg-destructive/90 transition-colors" 
             title="Удалить элемент"
           >
             🗑️
           </button>
-          <button onClick={onClose} className="btn btn-ghost" style={{ padding: '4px 8px' }}>
+          <button 
+            onClick={onClose} 
+            className="px-2 py-1 bg-muted text-muted-foreground rounded text-sm hover:bg-muted/80 transition-colors"
+          >
             ✕
           </button>
         </div>
@@ -79,14 +81,14 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
 
       <div className="panel-content" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Информация */}
-        <div className="p-3 border-b border-gray-200" style={{ position: 'sticky', top: 0, zIndex: 1 }}>
+        <div  style={{ position: 'sticky', top: 0, zIndex: 1 }}>
           <div className="selected-info" style={{ fontSize: '14px', color: '#999', marginTop: '0px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             Выбран: {selectedInternalElementId || element?.name || element?.id}
           </div>
         </div>
 
         {/* Вкладки */}
-        <div className="flex border-b border-gray-200" style={{ flex: '0 0 auto' }}>
+        <div className="flex" style={{ flex: '0 0 auto' }}>
           <button
             onClick={() => setActiveTab('visual')}
             className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 ${
@@ -133,28 +135,32 @@ const PropertiesPanel = ({ element, selectedInternalElement, onElementUpdate, on
 
           {activeTab === 'prompt' && (
             <div className="p-3">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Промпт для генерации</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Промпт для генерации</label>
               <textarea
                 value={editedPrompt}
                 onChange={(e) => setEditedPrompt(e.target.value)}
                 placeholder="Введите описание..."
-                className="w-full h-32 p-3 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-32 p-3 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               />
               <div className="flex gap-2 mt-3">
-                <button onClick={handleRegenerate} className="btn btn-primary flex-1" disabled={!editedPrompt.trim() || isRegenerating}>
-                  {isRegenerating ? '⏳ Генерирую...' : '🔄 Перегенерировать'}
+                <button 
+                  onClick={handleRegenerate} 
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" 
+                  disabled={!editedPrompt.trim() || isRegenerating}
+                >
+                  {isRegenerating ? '⏳ Генерирую...' : 'Генерировать заново'}
                 </button>
               </div>
             </div>
           )}
 
           {activeTab === 'code' && (
-            <div className="p-3">
-              <label className="block text-sm font-medium text-gray-700 mb-2">HTML/CSS код</label>
+            <div className="p-3 h-full flex flex-col">
+              <label className="block text-sm font-medium text-foreground mb-2">HTML/CSS код</label>
               <textarea
                 value={editedCode}
                 onChange={(e) => handleCodeChange(e.target.value)}
-                className="w-full h-64 p-3 border border-gray-300 rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full flex-1 p-3 border border-border rounded-lg text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               />
             </div>
           )}
