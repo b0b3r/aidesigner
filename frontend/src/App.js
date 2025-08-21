@@ -6,7 +6,6 @@ import PropertiesPanel from './components/PropertiesPanel';
 import ChatPanel from './components/ChatPanel';
 import MessageRouter from './services/MessageRouter';
 import PlannerService from './services/PlannerService';
-import cssInjector from './utils/cssInjector';
 import ResizeTest from './utils/resizeTest';
 import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
@@ -232,31 +231,10 @@ function App() {
     }
   }, [canvasElements, selectedElement, clearAllOverlays]);
 
-  // CSS инъектор для дизайн-токенов в артефакты
+  // Следим за изменениями DOM для новых артефактов
   useEffect(() => {
-    console.log('🎨 Инициализация CSS инъектора...');
-    
-    // Инжектируем дизайн-токены в существующие артефакты
-    // setTimeout(() => {
-      // cssInjector.injectDesignTokensToAllArtifacts();
-    // }, 1000);
-    
-    // Следим за изменениями DOM для новых артефактов
     const observer = new MutationObserver((mutations) => {
-      // mutations.forEach((mutation) => {
-      //   mutation.addedNodes.forEach((node) => {
-      //     if (node.nodeType === Node.ELEMENT_NODE) {
-      //       // Проверяем, является ли добавленный элемент артефактом
-      //       if (node.classList?.contains('react-flow__node') || 
-      //           node.querySelector?.('.react-flow__node')) {
-      //         console.log('🎨 Обнаружен новый артефакт, инжектируем токены');
-      //         setTimeout(() => {
-      //           cssInjector.injectDesignTokensToAllArtifacts();
-      //         }, 100);
-      //       }
-      //     }
-      //   });
-      // });
+      // Код для отслеживания новых артефактов удален - стили уже подключены глобально
     });
     
     observer.observe(document.body, {
@@ -269,15 +247,15 @@ function App() {
 
   // Инициализация при загрузке компонента
   useEffect(() => {
-    // Инициализируем CSS инжектор
-    cssInjector.injectDesignTokensToAllArtifacts();
-    
     // Инициализируем тест изменения размера
     if (typeof window !== 'undefined') {
       window.resizeTest = new ResizeTest();
-      console.log('🧪 Тест изменения размера инициализирован. Используйте:');
-      console.log('  - window.resizeTest.quickCheck() - быстрая проверка');
-      console.log('  - window.resizeTest.runFullTest() - полный тест');
+    }
+    
+    // Инициализируем Material Design компоненты
+    if (typeof window.mdc !== 'undefined') {
+      window.mdc.autoInit();
+      console.log('🎨 Material Design компоненты инициализированы');
     }
   }, []);
 
@@ -454,7 +432,7 @@ function App() {
   const handleCreateArtifactFromText = useCallback(async (selectedText) => {
     if (!selectedText.trim()) return;
 
-    console.log('🎨 Генерирую артефакт по фрагменту:', selectedText);
+    console.log('�� Генерирую артефакт по фрагменту:', selectedText);
     
     setChatMessages(prev => [
       ...prev,
@@ -959,7 +937,7 @@ ${editingElement.content}
             console.log('✏️ Обновляю существующий элемент:', editingElement.id);
             
             // Инжектируем дизайн-токены в обновлённое содержимое
-            const contentWithTokens = cssInjector.injectDesignTokensToHTML(data.visual_content);
+            const contentWithTokens = data.visual_content;
             
             const updatedElement = {
               ...editingElement,
@@ -1010,7 +988,7 @@ ${editingElement.content}
             // Генерируем случайную позицию, чтобы не зависеть от количества элементов
             const randomOffset = Math.floor(Math.random() * 200);
             // Инжектируем дизайн-токены в HTML содержимое
-            const contentWithTokens = cssInjector.injectDesignTokensToHTML(data.visual_content);
+            const contentWithTokens = data.visual_content;
             
             const newArtifact = {
               id: 'artifact-' + Date.now(),
@@ -1032,8 +1010,7 @@ ${editingElement.content}
             
             // Инжектируем дизайн-токены в новый артефакт
             setTimeout(() => {
-              cssInjector.injectDesignTokensToAllArtifacts();
-              console.log('🎨 Дизайн-токены инжектированы в новый артефакт');
+              console.log('🎨 Артефакт создан и готов к использованию');
             }, 200);
             
             // Добавляем сообщение в чат о создании артефакта
