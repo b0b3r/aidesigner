@@ -29,7 +29,6 @@ function App() {
   // Состояние для планов
   const [activePlan, setActivePlan] = useState(null);
   const [isExecutingPlan, setIsExecutingPlan] = useState(false);
-  const PLAN_STEP_DELAY_MS = process.env.NODE_ENV === 'development' ? 300 : 0;
   
   const [canvasElements, setCanvasElements] = useState([
     // 
@@ -1008,11 +1007,6 @@ ${editingElement.content}
             setCanvasElements(prev => [...prev, newArtifact]);
             console.log('✅ Артефакт добавлен на канвас');
             
-            // Инжектируем дизайн-токены в новый артефакт
-            setTimeout(() => {
-              console.log('🎨 Артефакт создан и готов к использованию');
-            }, 200);
-            
             // Добавляем сообщение в чат о создании артефакта
             setChatMessages(prev => [
               ...prev,
@@ -1249,11 +1243,6 @@ ${editingElement.content}
               currentStep: i + 1
             }));
 
-            // Пауза между шагами (0 в проде)
-            if (PLAN_STEP_DELAY_MS > 0) {
-              await new Promise(resolve => setTimeout(resolve, PLAN_STEP_DELAY_MS));
-            }
-
           } else {
             throw new Error(result.error || 'Не удалось создать элемент');
           }
@@ -1306,7 +1295,7 @@ ${editingElement.content}
       setIsLoading(false);
       setLoadingStatus('');
     }
-  }, [plannerService, isExecutingPlan, PLAN_STEP_DELAY_MS]);
+  }, [plannerService, isExecutingPlan]);
 
   // Обработчик кликов по саджестам
   const handleSuggestionClick = useCallback(async (suggestion) => {

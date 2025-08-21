@@ -78,15 +78,13 @@ const UIComponentNode = React.memo(({ data, selected, id }) => {
     });
 
     // Инициализируем Material Design компоненты для динамически созданного контента
-    setTimeout(() => {
-      if (typeof window.initializeMDC === 'function') {
-        window.initializeMDC();
-        console.log('🔄 MDC компоненты переинициализированы для артефакта:', data.id);
-      } else if (typeof window.mdc !== 'undefined') {
-        window.mdc.autoInit();
-        console.log('🔄 MDC компоненты автоинициализированы для артефакта:', data.id);
-      }
-    }, 100); // Небольшая задержка для завершения рендеринга DOM
+    if (typeof window.initializeMDC === 'function') {
+      window.initializeMDC();
+      console.log('🔄 MDC компоненты переинициализированы для артефакта:', data.id);
+    } else if (typeof window.mdc !== 'undefined') {
+      window.mdc.autoInit();
+      console.log('🔄 MDC компоненты автоинициализированы для артефакта:', data.id);
+    }
 
     return () => {
       elements.forEach(element => {

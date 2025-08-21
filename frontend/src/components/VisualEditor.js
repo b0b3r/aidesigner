@@ -82,7 +82,7 @@ const VisualEditor = ({
       }
     }));
 
-    // Debounce обновления HTML (300ms)
+    // Debounce обновления HTML (100ms)
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
@@ -115,7 +115,7 @@ const VisualEditor = ({
       }
       
       console.log('✅ HTML обновлен с debounce');
-    }, 300);
+    }, 100);
   }, [selectedInternalElement, selectedElementData, currentContent, onContentChange, onElementUpdate, element]);
 
   // Cleanup timeout при размонтировании
