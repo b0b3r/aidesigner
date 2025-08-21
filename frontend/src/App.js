@@ -12,6 +12,7 @@ import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
 import { Separator } from './components/ui/separator';
 import { Copy, Palette, FileText, X } from 'lucide-react';
+import CanvasStorage from './services/CanvasStorage';
 
 function App() {
   // Используем существующие данные из App.js
@@ -22,6 +23,9 @@ function App() {
   // Инициализируем сервисы с useMemo для стабильности зависимостей
   const messageRouter = useMemo(() => new MessageRouter(), []);
   const plannerService = useMemo(() => new PlannerService(), []);
+  
+  // Инициализируем сервис сохранения
+  const canvasStorage = useMemo(() => new CanvasStorage(), []);
   
   // Состояние для планов
   const [activePlan, setActivePlan] = useState(null);
@@ -233,26 +237,26 @@ function App() {
     console.log('🎨 Инициализация CSS инъектора...');
     
     // Инжектируем дизайн-токены в существующие артефакты
-    setTimeout(() => {
-      cssInjector.injectDesignTokensToAllArtifacts();
-    }, 1000);
+    // setTimeout(() => {
+      // cssInjector.injectDesignTokensToAllArtifacts();
+    // }, 1000);
     
     // Следим за изменениями DOM для новых артефактов
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            // Проверяем, является ли добавленный элемент артефактом
-            if (node.classList?.contains('react-flow__node') || 
-                node.querySelector?.('.react-flow__node')) {
-              console.log('🎨 Обнаружен новый артефакт, инжектируем токены');
-              setTimeout(() => {
-                cssInjector.injectDesignTokensToAllArtifacts();
-              }, 100);
-            }
-          }
-        });
-      });
+      // mutations.forEach((mutation) => {
+      //   mutation.addedNodes.forEach((node) => {
+      //     if (node.nodeType === Node.ELEMENT_NODE) {
+      //       // Проверяем, является ли добавленный элемент артефактом
+      //       if (node.classList?.contains('react-flow__node') || 
+      //           node.querySelector?.('.react-flow__node')) {
+      //         console.log('🎨 Обнаружен новый артефакт, инжектируем токены');
+      //         setTimeout(() => {
+      //           cssInjector.injectDesignTokensToAllArtifacts();
+      //         }, 100);
+      //       }
+      //     }
+      //   });
+      // });
     });
     
     observer.observe(document.body, {
@@ -391,6 +395,42 @@ function App() {
       return filtered;
     });
     setSelectedElement(null);
+  }, [canvasElements]);
+
+  // Дублирование элемента
+  const handleElementDuplicate = useCallback((elementId) => {
+    console.log('📋 Дублируем элемент с ID:', elementId);
+    
+    const originalElement = canvasElements.find(el => el.id === elementId);
+    if (!originalElement) {
+      console.error('❌ Элемент для дублирования не найден:', elementId);
+      return;
+    }
+    
+    // Создаем копию элемента со смещением позиции
+    const duplicatedElement = {
+      ...originalElement,
+      id: `artifact-${Date.now()}`,
+      name: `${originalElement.name} (копия)`,
+      x: originalElement.x + 50,
+      y: originalElement.y + 50,
+      createdAt: new Date().toISOString()
+    };
+    
+    setCanvasElements(prev => [...prev, duplicatedElement]);
+    
+    console.log('✅ Элемент продублирован:', duplicatedElement.id);
+    
+    // Уведомляем в чате
+    setChatMessages(prev => [
+      ...prev,
+      {
+        id: Date.now() + '-duplicate-success',
+        type: 'ai',
+        content: `✅ **Элемент продублирован!**\n\n"${duplicatedElement.name}" добавлен на канвас.`,
+        timestamp: new Date()
+      }
+    ]);
   }, [canvasElements]);
 
   const handleElementEdit = useCallback((elementId) => {
@@ -555,6 +595,132 @@ function App() {
     ]);
     
     setContextMenu({ isVisible: false, x: 0, y: 0, selectedText: '' });
+  }, []);
+
+  // Функция сохранения канваса в файл
+  const handleSaveCanvas = useCallback(async () => {
+    const result = await canvasStorage.saveCanvasToFile(canvasElements);
+    
+    if (result.success) {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-save-success',
+          type: 'ai',
+          content: `✅ ${result.message}`,
+          timestamp: new Date()
+        }
+      ]);
+    } else {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-save-error',
+          type: 'ai',
+          content: `❌ Ошибка сохранения: ${result.error}`,
+          timestamp: new Date()
+        }
+      ]);
+    }
+  }, [canvasElements, canvasStorage]);
+
+  // Функция загрузки канваса из файла
+  const handleLoadCanvas = useCallback(async () => {
+    const result = await canvasStorage.loadCanvasFromFile();
+    
+    if (result.success) {
+      setCanvasElements(result.elements);
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-load-success',
+          type: 'ai',
+          content: `📂 ${result.message}`,
+          timestamp: new Date()
+        }
+      ]);
+    } else {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-load-error',
+          type: 'ai',
+          content: `❌ Ошибка загрузки: ${result.error}`,
+          timestamp: new Date()
+        }
+      ]);
+    }
+  }, [canvasStorage]);
+
+  // Функция экспорта в HTML
+  const handleExportToHTML = useCallback(async () => {
+    if (canvasElements.length === 0) {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-export-error',
+          type: 'ai',
+          content: '❌ Нет элементов для экспорта',
+          timestamp: new Date()
+        }
+      ]);
+      return;
+    }
+    
+    const fileName = prompt('Введите имя HTML файла (без расширения):', 'aidesigner-export');
+    
+    if (!fileName) {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-export-cancelled',
+          type: 'ai',
+          content: '❌ Экспорт отменен',
+          timestamp: new Date()
+        }
+      ]);
+      return;
+    }
+    
+    const result = canvasStorage.exportToHTML(canvasElements, `${fileName}.html`);
+    
+    if (result.success) {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-export-success',
+          type: 'ai',
+          content: `📄 ${result.message}`,
+          timestamp: new Date()
+        }
+      ]);
+    } else {
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-export-error',
+          type: 'ai',
+          content: `❌ Ошибка экспорта: ${result.error}`,
+          timestamp: new Date()
+        }
+      ]);
+    }
+  }, [canvasElements, canvasStorage]);
+
+  // Функция очистки канваса
+  const handleClearCanvas = useCallback(() => {
+    if (window.confirm('Вы уверены, что хотите очистить канвас? Это действие нельзя отменить.')) {
+      setCanvasElements([]);
+      setChatMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + '-clear-success',
+          type: 'ai',
+          content: '🗑️ Канвас очищен',
+          timestamp: new Date()
+        }
+      ]);
+    }
   }, []);
 
   // Обработчик правого клика на сообщениях чата
@@ -993,7 +1159,7 @@ ${editingElement.content}
         { 
           id: Date.now() + '-step-error', 
           type: 'ai', 
-          content: `❌ **Ошибка выполнения шага "${step.title}"**\n\n${error.message}`,
+          content: `❌ **Ошибка выполнения шага "${step.title}"**\n\n${error.message}\n\nПродолжаю выполнение следующих шагов...`,
           timestamp: new Date() 
         }
       ]);
@@ -1196,6 +1362,42 @@ ${editingElement.content}
 
       {/* Центральная область - React Flow Canvas */}
       <div className="design-canvas">
+        {/* Добавляем кнопки управления канвасом */}
+        <div className="canvas-controls" style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          zIndex: 10,
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <button
+            onClick={handleSaveCanvas}
+            className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+            title="Сохранить канвас в файл"
+          >
+            💾 Сохранить
+          </button>
+          
+          <button
+            onClick={handleLoadCanvas}
+            className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+            title="Загрузить канвас из файла"
+          >
+            📂 Загрузить
+          </button>
+          
+          {canvasElements.length > 0 && (
+            <button
+              onClick={handleClearCanvas}
+              className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+              title="Очистить канвас"
+            >
+              🗑️ Очистить
+            </button>
+          )}
+        </div>
+
         <CanvasFlow
           elements={canvasElements}
           selectedElement={selectedElement}
@@ -1203,8 +1405,10 @@ ${editingElement.content}
           onElementSelect={handleElementSelect}
           onElementRegenerate={handleElementRegenerate}
           onElementEdit={handleElementEdit}
-          
           onInternalElementSelect={handleInternalElementSelect}
+          onElementUpdate={handleElementUpdate}
+          onElementDelete={handleElementDelete}
+          onElementDuplicate={handleElementDuplicate}
         />
       </div>
 

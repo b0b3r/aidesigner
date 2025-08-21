@@ -56,9 +56,9 @@ class CSSInjector {
             this.loadedCSS.add(id);
             
             // Проверяем, что CSS действительно применился
-            setTimeout(() => {
-                this.verifyCSSLoaded(id, url);
-            }, 1000);
+            // setTimeout(() => {
+            //     this.verifyCSSLoaded(id, url);
+            // }, 1000);
             
         } catch (error) {
             console.error(`❌ Ошибка загрузки CSS ${url}:`, error);
