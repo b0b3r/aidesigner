@@ -1332,7 +1332,7 @@ ${editingElement.content}
         <div className="canvas-controls" style={{
           position: 'absolute',
           top: '10px',
-          right: '10px',
+          left: '10px',
           zIndex: 10,
           display: 'flex',
           gap: '8px'

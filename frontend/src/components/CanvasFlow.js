@@ -209,24 +209,7 @@ const UIComponentNode = React.memo(({ data, selected, id }) => {
               overflow: 'hidden',
               fontSize: '12px',
               position: 'relative',
-              // Добавляем CSS переменные правильным способом для React
-              // Используем объект с ключами в кавычках
-              // ...{
-              //   '--mdc-theme-primary': '#6200ee',
-              //   '--mdc-theme-on-primary': '#ffffff',
-              //   '--mdc-theme-secondary': '#018786',
-              //   '--mdc-theme-on-secondary': '#ffffff',
-              //   '--mdc-theme-surface': '#ffffff',
-              //   '--mdc-theme-on-surface': '#000000',
-              //   '--mdc-theme-background': '#e8f5e8',
-              //   '--mdc-theme-on-background': '#000000',
-              //   '--mdc-theme-text-primary-on-background': 'rgba(0, 0, 0, 0.87)',
-              //   '--mdc-theme-text-secondary-on-background': 'rgba(0, 0, 0, 0.54)',
-              //   '--mdc-theme-text-hint-on-background': 'rgba(0, 0, 0, 0.38)',
-              //   '--mdc-theme-shadow': 'rgba(0, 0, 0, 0.2)',
-              //   '--mdc-theme-error': '#b00020',
-              //   '--mdc-theme-on-error': '#ffffff'
-              // }
+
             }}
           />
         ) : (
@@ -539,8 +522,6 @@ const CanvasFlow = ({
           zoomable
         />
         
-        {/* Панель управления скрыта по просьбе пользователя */}
-
 
       </ReactFlow>
     </div>

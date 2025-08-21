@@ -55,7 +55,9 @@
   border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 9999 !important; /* Увеличиваем z-index */
 }
+
 
 .react-flow__minimap-mask {
   fill: hsl(var(--muted) / 0.3);
@@ -70,9 +72,10 @@
 .react-flow__minimap-node.selected {
   fill: hsl(var(--destructive));
   stroke: hsl(var(--destructive));
+  z-index: 0 !important;
 }
 
-/* React Flow Background - Кастомизация фоновой сетки */
+/* React Flow Background - Кастомизация фоновой сетки */ 
 .react-flow__background {
   background: hsl(var(--background));
 }
@@ -364,12 +367,7 @@
   color: hsl(var(--foreground));
 }
 
-.react-flow__minimap {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+
 
 .react-flow__edge-path {
   stroke: hsl(var(--primary));
