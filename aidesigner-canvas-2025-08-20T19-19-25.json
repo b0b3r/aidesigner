@@ -1,0 +1,105 @@
+{
+  "elements": [
+    {
+      "id": "test-mdc-theming",
+      "type": "artifact",
+      "x": 400,
+      "y": 300,
+      "width": 320,
+      "height": 400,
+      "isAutoHeight": true,
+      "name": "Демо 1",
+      "content": "\n        <div style=\"padding: 16px; background-color: var(--mdc-theme-background); font-family: 'Roboto', sans-serif;\">\n          <h3 style=\"color: var(--mdc-theme-text-primary-on-background); margin: 0 0 16px; font-size: 18px;\">MDC Темизация</h3>\n          \n          <!-- Отладочные цвета -->\n          <div class=\"debug-theme-colors\">\n            <div class=\"debug-color-sample debug-primary\">P</div>\n            <div class=\"debug-color-sample debug-secondary\">S</div>\n            <div class=\"debug-color-sample debug-surface\">Sur</div>\n          </div>\n          \n          <!-- Filled кнопка (должна использовать тему автоматически) -->\n          <button class=\"mdc-button mdc-button--raised\">\n            <span class=\"mdc-button__label\">Filled Button</span>\n          </button>\n          \n          <br><br>\n          \n          <!-- Outlined кнопка -->\n          <button class=\"mdc-button mdc-button--outlined\">\n            <span class=\"mdc-button__label\">Outlined Button</span>\n          </button>\n          \n          <br><br>\n          \n          <!-- Карточка с поверхностью -->\n          <div style=\"background-color: var(--mdc-theme-surface); padding: 12px; border-radius: 8px; margin-top: 16px; box-shadow: 0 2px 4px var(--mdc-theme-shadow);\">\n            <p style=\"color: var(--mdc-theme-text-primary-on-background); margin: 0; font-size: 14px;\">\n              Карточка с surface цветом\n            </p>\n          </div>\n        </div>\n      ",
+      "prompt": "Тестовый артефакт с правильной MDC темизацией",
+      "createdAt": "2025-08-20T19:04:16.259Z"
+    },
+    {
+      "id": "simple-artifact-1755716680444",
+      "type": "artifact",
+      "x": 221.91352027308133,
+      "y": 105.15967645660444,
+      "width": 400,
+      "height": 192,
+      "isAutoHeight": true,
+      "name": "Простой артефакт",
+      "content": "\n      <div style=\"\n        width: 400px;\n        height: auto;\n        padding: 16px;\n        background-color: var(--mdc-theme-surface);\n        border: 1px solid var(--mdc-theme-outline);\n        border-radius: 8px;\n        font-family: 'Roboto', sans-serif;\n        color: var(--mdc-theme-on-surface);\n        line-height: 1.5;\n        white-space: pre-wrap;\n        word-wrap: break-word;\n        box-shadow: 0px 1px 3px 1px var(--mdc-theme-shadow);\n      \">\n        о 1 элементов в файл \"aidesigner-canvas-2025-08-20T19-04-23.json\"\n📂 Загружено 1 элементов из фа\n      </div>\n    ",
+      "prompt": "Создан простой артефакт из выделенного текста: \"о 1 элементов в файл \"aidesigner-canvas-2025-08-20T19-04-23.json\"\n📂 Загружено 1 элементов из фа\"",
+      "createdAt": "2025-08-20T19:04:40.444Z"
+    },
+    {
+      "id": "artifact-1755760574294",
+      "type": "artifact",
+      "x": 852,
+      "y": 204,
+      "width": 120,
+      "height": 122,
+      "isAutoHeight": true,
+      "name": "Generated Artifact",
+      "content": "<button class=\"mdc-button mdc-button--raised\">\n  <div class=\"mdc-button__ripple\"></div>\n  <span class=\"mdc-button__label\">Кнопка</span>\n</button>",
+      "code": "<button class=\"mdc-button mdc-button--raised\">\n  <div class=\"mdc-button__ripple\"></div>\n  <span class=\"mdc-button__label\">Кнопка</span>\n</button>",
+      "prompt": "Создай красивую кнопку в стиле Material design",
+      "createdAt": "2025-08-21T07:16:14.294Z"
+    },
+    {
+      "id": "artifact-1755760807132",
+      "type": "artifact",
+      "x": 938,
+      "y": 126,
+      "width": 1200,
+      "height": 898,
+      "isAutoHeight": true,
+      "name": "Generated Artifact",
+      "content": "<div style=\"max-width: 1200px; margin: 0 auto; padding: 20px;\">\n  <!-- Header -->\n  <header class=\"mdc-card\" style=\"padding: 24px; margin-bottom: 32px; text-align: center;\">\n    <h1 class=\"mdc-typography--headline4\">Приют для котиков \"Мурлыка\"</h1>\n    <p class=\"mdc-typography--body1\">Дарим дом и любовь каждому пушистому другу</p>\n  </header>\n\n  <!-- Hero Section -->\n  <section class=\"mdc-card\" style=\"padding: 40px 24px; margin-bottom: 32px; text-align: center;\">\n    <h2 class=\"mdc-typography--headline5\">Найдите своего лучшего друга</h2>\n    <p class=\"mdc-typography--body1\" style=\"margin-bottom: 24px;\">Более 100 котиков ждут своего дома</p>\n    <button class=\"mdc-button mdc-button--raised\" style=\"margin-right: 16px;\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Посмотреть котиков</span>\n    </button>\n    <button class=\"mdc-button mdc-button--outlined\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Помочь приюту</span>\n    </button>\n  </section>\n\n  <!-- Features -->\n  <section style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;\">\n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">pets</span>\n      <h3 class=\"mdc-typography--headline6\">Все котики здоровы</h3>\n      <p class=\"mdc-typography--body2\">Все животные привиты и проходят регулярный осмотр у ветеринара</p>\n    </div>\n    \n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">home</span>\n      <h3 class=\"mdc-typography--headline6\">Временная передержка</h3>\n      <p class=\"mdc-typography--body2\">Помогаем с адаптацией и предоставляем консультации по уходу</p>\n    </div>\n    \n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">favorite</span>\n      <h3 class=\"mdc-typography--headline6\">Ответственное усыновление</h3>\n      <p class=\"mdc-typography--body2\">Помогаем найти идеального питомца для вашей семьи</p>\n    </div>\n  </section>\n\n  <!-- CTA Section -->\n  <section class=\"mdc-card\" style=\"padding: 40px 24px; text-align: center;\">\n    <h2 class=\"mdc-typography--headline5\" style=\"margin-bottom: 16px;\">Готовы встретить нового друга?</h2>\n    <button class=\"mdc-button mdc-button--raised\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Заполнить анкету</span>\n    </button>\n  </section>\n</div>",
+      "code": "<div style=\"max-width: 1200px; margin: 0 auto; padding: 20px;\">\n  <!-- Header -->\n  <header class=\"mdc-card\" style=\"padding: 24px; margin-bottom: 32px; text-align: center;\">\n    <h1 class=\"mdc-typography--headline4\">Приют для котиков \"Мурлыка\"</h1>\n    <p class=\"mdc-typography--body1\">Дарим дом и любовь каждому пушистому другу</p>\n  </header>\n\n  <!-- Hero Section -->\n  <section class=\"mdc-card\" style=\"padding: 40px 24px; margin-bottom: 32px; text-align: center;\">\n    <h2 class=\"mdc-typography--headline5\">Найдите своего лучшего друга</h2>\n    <p class=\"mdc-typography--body1\" style=\"margin-bottom: 24px;\">Более 100 котиков ждут своего дома</p>\n    <button class=\"mdc-button mdc-button--raised\" style=\"margin-right: 16px;\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Посмотреть котиков</span>\n    </button>\n    <button class=\"mdc-button mdc-button--outlined\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Помочь приюту</span>\n    </button>\n  </section>\n\n  <!-- Features -->\n  <section style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;\">\n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">pets</span>\n      <h3 class=\"mdc-typography--headline6\">Все котики здоровы</h3>\n      <p class=\"mdc-typography--body2\">Все животные привиты и проходят регулярный осмотр у ветеринара</p>\n    </div>\n    \n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">home</span>\n      <h3 class=\"mdc-typography--headline6\">Временная передержка</h3>\n      <p class=\"mdc-typography--body2\">Помогаем с адаптацией и предоставляем консультации по уходу</p>\n    </div>\n    \n    <div class=\"mdc-card\" style=\"padding: 24px; text-align: center;\">\n      <span class=\"material-icons\" style=\"font-size: 48px; margin-bottom: 16px;\">favorite</span>\n      <h3 class=\"mdc-typography--headline6\">Ответственное усыновление</h3>\n      <p class=\"mdc-typography--body2\">Помогаем найти идеального питомца для вашей семьи</p>\n    </div>\n  </section>\n\n  <!-- CTA Section -->\n  <section class=\"mdc-card\" style=\"padding: 40px 24px; text-align: center;\">\n    <h2 class=\"mdc-typography--headline5\" style=\"margin-bottom: 16px;\">Готовы встретить нового друга?</h2>\n    <button class=\"mdc-button mdc-button--raised\">\n      <div class=\"mdc-button__ripple\"></div>\n      <span class=\"mdc-button__label\">Заполнить анкету</span>\n    </button>\n  </section>\n</div>",
+      "prompt": "создай целый лендинг для приюта котиков",
+      "createdAt": "2025-08-21T07:20:07.132Z"
+    },
+    {
+      "id": "artifact-1755762229973",
+      "type": "artifact",
+      "x": 1917,
+      "y": -148,
+      "width": 400,
+      "height": 530,
+      "isAutoHeight": true,
+      "name": "Generated Artifact",
+      "content": "<div class=\"mdc-card\" style=\"width: 100%; max-width: 400px; margin: 0 auto; padding: 32px 24px; text-align: center;\">\n  <span class=\"material-icons\" style=\"font-size: 64px; margin-bottom: 24px; color: var(--mdc-theme-success);\">check_circle</span>\n  \n  <h2 class=\"mdc-typography--headline6\" style=\"margin-bottom: 16px;\">Устройство привязано</h2>\n  \n  <p class=\"mdc-typography--body1\" style=\"margin-bottom: 32px;\">\n    К вашему номеру телефона теперь привязано новое устройство\n  </p>\n  \n  <div style=\"background: var(--mdc-theme-surface); padding: 16px; border-radius: 8px; margin-bottom: 24px;\">\n    <div class=\"mdc-list\">\n      <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n        <span class=\"mdc-list-item__graphic material-icons\" style=\"color: var(--mdc-theme-error);\">smartphone</span>\n        <span class=\"mdc-list-item__text\">Старое устройство: Samsung Galaxy S21</span>\n      </div>\n      <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n        <span class=\"mdc-list-item__graphic material-icons\" style=\"color: var(--mdc-theme-success);\">smartphone</span>\n        <span class=\"mdc-list-item__text\">Новое устройство: iPhone 14 Pro</span>\n      </div>\n    </div>\n  </div>\n  \n  <button class=\"mdc-button mdc-button--raised\" style=\"width: 100%;\">\n    <div class=\"mdc-button__ripple\"></div>\n    <span class=\"mdc-button__label\">Подтвердить</span>\n  </button>\n</div>",
+      "code": "<div class=\"mdc-card\" style=\"width: 100%; max-width: 400px; margin: 0 auto; padding: 32px 24px; text-align: center;\">\n  <span class=\"material-icons\" style=\"font-size: 64px; margin-bottom: 24px; color: var(--mdc-theme-success);\">check_circle</span>\n  \n  <h2 class=\"mdc-typography--headline6\" style=\"margin-bottom: 16px;\">Устройство привязано</h2>\n  \n  <p class=\"mdc-typography--body1\" style=\"margin-bottom: 32px;\">\n    К вашему номеру телефона теперь привязано новое устройство\n  </p>\n  \n  <div style=\"background: var(--mdc-theme-surface); padding: 16px; border-radius: 8px; margin-bottom: 24px;\">\n    <div class=\"mdc-list\">\n      <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n        <span class=\"mdc-list-item__graphic material-icons\" style=\"color: var(--mdc-theme-error);\">smartphone</span>\n        <span class=\"mdc-list-item__text\">Старое устройство: Samsung Galaxy S21</span>\n      </div>\n      <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n        <span class=\"mdc-list-item__graphic material-icons\" style=\"color: var(--mdc-theme-success);\">smartphone</span>\n        <span class=\"mdc-list-item__text\">Новое устройство: iPhone 14 Pro</span>\n      </div>\n    </div>\n  </div>\n  \n  <button class=\"mdc-button mdc-button--raised\" style=\"width: 100%;\">\n    <div class=\"mdc-button__ripple\"></div>\n    <span class=\"mdc-button__label\">Подтвердить</span>\n  </button>\n</div>",
+      "prompt": "создай экран для мобилки с функционалом показывающим, что к номеру телефона теперь привязано новое устройство. Было одно, а стало другое. И внизу кнопка Подтвердить.",
+      "createdAt": "2025-08-21T07:43:49.973Z"
+    },
+    {
+      "id": "artifact-1755762328040",
+      "type": "artifact",
+      "x": 1900,
+      "y": 397,
+      "width": 400,
+      "height": 450,
+      "isAutoHeight": true,
+      "name": "Generated Artifact",
+      "content": "<div class=\"mdc-card\" style=\"width: 100%; max-width: 400px; margin: 0 auto; padding: 32px 24px;\">\n  <h2 class=\"mdc-typography--headline6\" style=\"margin-bottom: 24px; text-align: center;\">Смена устройства</h2>\n  \n  <div class=\"mdc-list\" style=\"margin-bottom: 32px;\">\n    <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n      <span class=\"mdc-list-item__graphic material-icons\">info</span>\n      <span class=\"mdc-list-item__text\">К вашему номеру будет привязано новое устройство</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 16px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">smartphone</span>\n      <span class=\"mdc-list-item__text\">Текущее устройство: Samsung Galaxy S21</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 8px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">arrow_downward</span>\n      <span class=\"mdc-list-item__text\">Будет заменено на</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 8px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">smartphone</span>\n      <span class=\"mdc-list-item__text\">Новое устройство: iPhone 14 Pro</span>\n    </div>\n  </div>\n  \n  <button class=\"mdc-button mdc-button--raised\" style=\"width: 100%;\">\n    <div class=\"mdc-button__ripple\"></div>\n    <span class=\"mdc-button__label\">Подтвердить смену устройства</span>\n  </button>\n</div>",
+      "code": "<div class=\"mdc-card\" style=\"width: 100%; max-width: 400px; margin: 0 auto; padding: 32px 24px;\">\n  <h2 class=\"mdc-typography--headline6\" style=\"margin-bottom: 24px; text-align: center;\">Смена устройства</h2>\n  \n  <div class=\"mdc-list\" style=\"margin-bottom: 32px;\">\n    <div class=\"mdc-list-item\" style=\"padding-left: 0;\">\n      <span class=\"mdc-list-item__graphic material-icons\">info</span>\n      <span class=\"mdc-list-item__text\">К вашему номеру будет привязано новое устройство</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 16px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">smartphone</span>\n      <span class=\"mdc-list-item__text\">Текущее устройство: Samsung Galaxy S21</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 8px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">arrow_downward</span>\n      <span class=\"mdc-list-item__text\">Будет заменено на</span>\n    </div>\n    \n    <div class=\"mdc-list-item\" style=\"padding-left: 0; margin-top: 8px;\">\n      <span class=\"mdc-list-item__graphic material-icons\">smartphone</span>\n      <span class=\"mdc-list-item__text\">Новое устройство: iPhone 14 Pro</span>\n    </div>\n  </div>\n  \n  <button class=\"mdc-button mdc-button--raised\" style=\"width: 100%;\">\n    <div class=\"mdc-button__ripple\"></div>\n    <span class=\"mdc-button__label\">Подтвердить смену устройства</span>\n  </button>\n</div>",
+      "prompt": "создай экран для мобилки с функционалом показывающим, что к номеру телефона будет привязано новое устройство. Было одно, а станет другое. И внизу кнопка Подтвердить.",
+      "createdAt": "2025-08-21T07:45:28.040Z"
+    },
+    {
+      "id": "simple-artifact-1755777098827",
+      "type": "artifact",
+      "x": 578,
+      "y": 857,
+      "width": 400,
+      "height": 336,
+      "isAutoHeight": true,
+      "name": "Простой артефакт",
+      "content": "<div style=\"width: 400px; height: auto; padding: 16px; border: 1px solid var(--mdc-theme-outline); border-radius: 8px; font-family: Roboto, sans-serif; color: var(--mdc-theme-on-surface); line-height: 1.5; white-space: pre-wrap; overflow-wrap: break-word; box-shadow: 0px 1px 3px 1px var(--mdc-theme-shadow);\">IMEI можно найти несколькими способами:\n\n1. **Наберите код**: *#06# в телефонной клавиатуре - сразу покажет IMEI\n2. **В настройках**: Настройки → О телефоне → Статус → IMEI информация\n3. **На устройстве**: Посмотрите на задней панели телефона или в лотке для SIM-карты\n4. **На упаковке**: Обычно указан на коробке от телефона\n5. **В Google/Apple аккаунте**: Для Android - google.com/android/find, для iPhone - appleid.apple.com\n      </div>\n    ",
+      "prompt": "Создан простой артефакт из выделенного текста: \"MEI можно найти несколькими способами:\n\n1. **Наберите код**: *#06# в телефонной клавиатуре - сразу покажет IMEI\n2. **В настройках**: Настройки → О телефоне → Статус → IMEI информация\n3. **На устройстве**: Посмотрите на задней панели телефона или в лотке для SIM-карты\n4. **На упаковке**: Обычно указан на коробке от телефона\n5. **В Google/Apple аккаунте**: Для Android - google.com/android/find, для iPhone - appleid.apple.com\"",
+      "createdAt": "2025-08-21T11:51:38.827Z"
+    }
+  ],
+  "savedAt": "2025-08-21T14:00:43.321Z",
+  "version": "1.0",
+  "metadata": {
+    "totalElements": 7,
+    "appVersion": "1.0.0"
+  }
+}

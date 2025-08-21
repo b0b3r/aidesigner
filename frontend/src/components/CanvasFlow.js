@@ -16,6 +16,8 @@ import { makeElementsSelectable } from '../utils/htmlParser';
 
 // Кастомный узел для UI компонента
 const UIComponentNode = React.memo(({ data, selected, id }) => {
+  // УБИРАЕМ ЛОГ - он засоряет консоль
+  // console.log('🔄 UIComponentNode render:', id, 'selected:', selected, 'content length:', data.content?.length);
   const contentRef = useRef(null);
   const [hoveredElementId, setHoveredElementId] = useState(null);
   
@@ -62,6 +64,8 @@ const UIComponentNode = React.memo(({ data, selected, id }) => {
 
   // Добавляем event listeners после рендера + инициализируем MDC компоненты
   useEffect(() => {
+    // УБИРАЕМ ЛОГ - он засоряет консоль
+    // console.log('🔄 UIComponentNode useEffect triggered:', data.id, 'selectableContent length:', selectableContent?.length);
     const container = contentRef.current;
     if (!container) return;
 
@@ -93,10 +97,12 @@ const UIComponentNode = React.memo(({ data, selected, id }) => {
         element.removeEventListener('mouseleave', handleElementLeave);
       });
     };
-  }, [selectableContent, handleElementClick, handleElementHover, handleElementLeave]);
+  }, [selectableContent, handleElementClick, handleElementHover, handleElementLeave, data.id]);
   
   // Применяем стили outline для выбранного и hovered элементов
   useEffect(() => {
+    // УБИРАЕМ ЛОГ - он засоряет консоль
+    // console.log('🔄 UIComponentNode outline useEffect triggered:', data.id, 'selectedInternalElement:', data.selectedInternalElement, 'hoveredElementId:', hoveredElementId);
     const container = contentRef.current;
     if (!container) return;
 
@@ -261,6 +267,8 @@ const CanvasFlow = ({
   selectedInternalElement,
   onInternalElementSelect
 }) => {
+  // УБИРАЕМ ЛОГ - он засоряет консоль
+  // console.log('🔄 CanvasFlow render:', Date.now(), 'elements:', elements.length, 'selectedElement:', selectedElement?.id);
   // Состояние для отслеживания процесса изменения размера
   const [resizingNodeId, setResizingNodeId] = useState(null);
 
@@ -270,7 +278,8 @@ const CanvasFlow = ({
       const nodeWidth = element.width || 200;
       const nodeHeight = element.height === 'auto' ? undefined : (element.height || 150);
       
-      console.log('🔄 Конвертируем элемент в узел:', element.id, 'размеры:', { width: nodeWidth, height: nodeHeight });
+      // УБИРАЕМ ЛОГ - он засоряет консоль
+      // console.log('🔄 Конвертируем элемент в узел:', element.id, 'размеры:', { width: nodeWidth, height: nodeHeight });
       
       return {
         id: element.id,
@@ -397,15 +406,16 @@ const CanvasFlow = ({
       // Обрабатываем изменения размера через onNodesChange
       if (change.type === 'dimensions' && change.dimensions && change.id) {
         console.log('📏 Изменение размера через onNodesChange:', change.id, change.dimensions);
-        if (onElementUpdate) {
-          onElementUpdate(change.id, {
-            width: Math.round(change.dimensions.width),
-            height: Math.round(change.dimensions.height)
-          });
-        }
+        // УБИРАЕМ НЕМЕДЛЕННОЕ ОБНОВЛЕНИЕ - это вызывает бесконечный цикл!
+        // if (onElementUpdate) {
+        //   onElementUpdate(change.id, {
+        //     width: Math.round(change.dimensions.width),
+        //     height: Math.round(change.dimensions.height)
+        //   });
+        // }
       }
     });
-  }, [originalOnNodesChange, flushPendingUpdates, onElementUpdate]);
+  }, [originalOnNodesChange, flushPendingUpdates]);
 
   // Обновляем узлы при изменении элементов (но сохраняем позиции)
   React.useEffect(() => {
@@ -475,6 +485,8 @@ const CanvasFlow = ({
           console.log('✅ Завершение изменения размера узла:', node.id);
           setResizingNodeId(null);
         }}
+        minZoom={0.2}          // Минимальный зум (10%)
+        maxZoom={4} 
         resizeOnScroll={false}
         zoomOnScroll={true}
         panOnScroll={false}

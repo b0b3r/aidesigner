@@ -58,7 +58,7 @@ const ChatPanel = ({
     <div className="chat-panel">
       <div className="panel-header items-center justify-between w-full">
           <div className="flex items-center gap-2">
-            <h2 className="text-md font-semibold">UI Design Assistant</h2>
+            <h2 className="text-md font-semibold --accent-foreground">UI Design Assistant</h2>
         
           </div>
           <ThemeToggle />

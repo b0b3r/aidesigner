@@ -7,20 +7,6 @@
 ## Доступные дизайн-системы
 
 
-### Ant Design
-
-- Button
-- Card
-- Form
-- Table
-
-### Bootstrap
-
-- Buttons
-- Cards
-- Forms
-- Grid
-
 ### Material Design 3
 
 - Buttons

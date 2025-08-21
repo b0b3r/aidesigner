@@ -80,6 +80,9 @@ function App() {
     }
   ]);
 
+  // Логирование ре-рендеров App для отладки
+  console.log('🔄 App render:', Date.now(), 'canvasElements:', canvasElements?.length);
+
   const [chatMessages, setChatMessages] = useState([
     {
       id: '1',

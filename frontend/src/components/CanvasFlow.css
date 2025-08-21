@@ -50,12 +50,14 @@
 }
 
 /* React Flow MiniMap - Кастомизация мини-карты */
+/* В CanvasFlow.css временно закомментируйте все стили миникарты */
+
 .react-flow__minimap {
-  background: hsl(var(--card));
+  background: transparent;
   border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 9999 !important; /* Увеличиваем z-index */
+  z-index: 9999 !important;
 }
 
 
@@ -68,11 +70,12 @@
   stroke: hsl(var(--border));
   stroke-width: 1px;
 }
+*/
 
 .react-flow__minimap-node.selected {
   fill: hsl(var(--destructive));
   stroke: hsl(var(--destructive));
-  z-index: 0 !important;
+  z-index: 10000 !important;
 }
 
 /* React Flow Background - Кастомизация фоновой сетки */ 

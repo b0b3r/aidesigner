@@ -302,7 +302,6 @@
   align-items: center;
 }
 
-/* Удаляем закомментированные стили для кнопок панели свойств - теперь используем shadcn/ui Button */
 
 .properties-tabs {
   display: flex;
