@@ -3,12 +3,27 @@
   display: flex;
   height: 100vh;
   font-family: Inter;
+  margin: 0; /* Добавляем это */
+  padding: 0; /* Добавляем это */
 }
 
 
 * {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+.canvas-controls {
+  position: relative;
+  background: hsl(var(--card));
+  padding: 16px;
+  z-index: 9999;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid hsl(var(--border));
+  width: 100%;
+  justify-content: center; /* Выравнивание по горизонтали по центру */
+  align-items: center; /* Выравнивание по вертикали по центру */
 }
 
 /* WebKit скроллбары (Chrome, Safari, Edge) */
@@ -53,9 +68,12 @@
 /* Центральная область - Канвас */
 .design-canvas {
   flex: 1;
+  min-width: 0;
   background: hsl(var(--background));
   position: relative;
   overflow: hidden;
+  margin: 0; /* Добавляем это */
+  padding: 0; /* Добавляем это */
 }
 
 .canvas-toolbar {
@@ -144,6 +162,7 @@
 /* Правая панель - Свойства */
 .properties-panel {
   width: 400px;
+  flex-shrink: 0; /* Добавьте эту строку */
   background: hsl(var(--muted));
   border-left: 1px solid hsl(var(--border));
   display: flex;

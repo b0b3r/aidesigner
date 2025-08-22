@@ -14,6 +14,8 @@ import { Copy, Palette, FileText, X } from 'lucide-react';
 import CanvasStorage from './services/CanvasStorage';
 
 function App() {
+  // Логирование ре-рендеров App для отладки
+
   // Используем существующие данные из App.js
   const [selectedElement, setSelectedElement] = useState(null);
   const [editingElement, setEditingElement] = useState(null);
@@ -79,9 +81,6 @@ function App() {
       createdAt: new Date().toISOString()
     }
   ]);
-
-  // Логирование ре-рендеров App для отладки
-  console.log('🔄 App render:', Date.now(), 'canvasElements:', canvasElements?.length);
 
   const [chatMessages, setChatMessages] = useState([
     {
@@ -1333,16 +1332,11 @@ ${editingElement.content}
       <div className="design-canvas">
         {/* Добавляем кнопки управления канвасом */}
         <div className="canvas-controls" style={{
-          position: 'absolute',
-          top: '10px',
-          left: '10px',
-          zIndex: 10,
-          display: 'flex',
-          gap: '8px'
+  
         }}>
           <button
             onClick={handleSaveCanvas}
-            className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+            className="px-3 py-1 rounded text-sm transition-colors"
             title="Сохранить канвас в файл"
           >
             💾 Сохранить
@@ -1350,7 +1344,7 @@ ${editingElement.content}
           
           <button
             onClick={handleLoadCanvas}
-            className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
+            className="px-3 py-1 rounded text-sm transition-colors"
             title="Загрузить канвас из файла"
           >
             📂 Загрузить
@@ -1359,7 +1353,7 @@ ${editingElement.content}
           {canvasElements.length > 0 && (
             <button
               onClick={handleClearCanvas}
-              className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+              className="px-3 py-1 rounded text-sm transition-colors"
               title="Очистить канвас"
             >
               🗑️ Очистить
